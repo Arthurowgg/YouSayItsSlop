@@ -6,7 +6,7 @@ const { JSDOM } = require('jsdom');
 
 const REPO = process.env.REPO || path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(REPO, 'public/index.html'), 'utf8');
-const catalog = JSON.parse(fs.readFileSync(path.join(REPO, 'data/catalog.json'), 'utf8'));
+const catalog = JSON.parse(fs.readFileSync(path.join(REPO, 'public/data/catalog.json'), 'utf8'));
 
 const dom = new JSDOM(html, { url: 'http://localhost:8080/', pretendToBeVisual: true });
 const w = dom.window;

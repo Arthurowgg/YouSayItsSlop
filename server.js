@@ -9,7 +9,7 @@ const PORT = Number(process.env.PORT || 8080);
 const ROOT = path.join(__dirname, 'public');
 const DATA = path.join(__dirname, 'data');
 const SAVE = path.join(DATA, 'save.json');
-const CATALOG = path.join(DATA, 'catalog.json');
+const CATALOG = path.join(ROOT, 'data', 'catalog.json');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
