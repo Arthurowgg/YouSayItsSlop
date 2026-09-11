@@ -9,7 +9,20 @@ so it can grow into the real game later.
 > trademark of Epic Games. Using them in a public release requires licenses. Keep this
 > repo private until then.
 
-## Run it
+## Run it from GitHub (no server needed)
+
+The client is static-first: when `/api` is absent it falls back to `localStorage` and the
+static catalog, so the repo itself can host the game.
+
+- **CDN mirror (works today):**
+  `https://cdn.jsdelivr.net/gh/Arthurowgg/YouSayItsSlop@arena/01a09264-yousayitsslop/public/index.html`
+  (jsdelivr serves the files straight from this branch; pin `@<commit>` for immutable links.)
+- **GitHub Pages:** `.github/workflows/deploy-pages.yml` deploys `public/` on push.
+  Enabling Pages requires one owner click (Settings → Pages → Source: *GitHub Actions*)
+  because the automation token has no Pages-admin scope; once enabled, every push deploys
+  to `https://arthurowgg.github.io/YouSayItsSlop/` automatically.
+
+## Run it locally
 
 ```bash
 npm start          # serves http://0.0.0.0:8080 (static menu + JSON API)
