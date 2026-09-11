@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+"""Hand-painted 16x16 pixel sprites for items/modes/coin, exported via ImageMagick.
+Deterministic stand-ins that match the generated art's chunky style."""
+import os, subprocess, math
+
+OUT = os.path.join(os.path.dirname(__file__), "..", "public", "assets", "spr")
+os.makedirs(OUT, exist_ok=True)
+
+class C:
+    def __init__(self, w=16, h=16):
+        self.w, self.h = w, h
+        self.px = {}
+    def set(self, x, y, c):
+        if 0 <= x < self.w and 0 <= y < self.h and c: self.px[(int(x), int(y))] = c
+    def rect(self, x, y, w, h, c):
+        for j in range(h):
+            for i in range(w): self.set(x + i, y + j, c)
+    def hline(self, x0, x1, y, c):
+        for x in range(min(x0, x1), max(x0, x1) + 1): self.set(x, y, c)
+    def vline(self, x, y0, y1, c):
+        for y in range(min(y0, y1), max(y0, y1) + 1): self.set(x, y, c)
+    def line(self, x0, y0, x1, y1, c):
+        x0, y0, x1, y1 = (int(round(v)) for v in (x0, y0, x1, y1))
+        dx, dy = abs(x1 - x0), -abs(y1 - y0)
+        sx, sy = (1 if x0 < x1 else -1), (1 if y0 < y1 else -1)
+        err = dx + dy
+        x, y = x0, y0
+        while True:
+            self.set(x, y, c)
+            if x == x1 and y == y1: break
+            e2 = 2 * err
+            if e2 >= dy: err += dy; x += sx
+            if e2 <= dx: err += dx; y += sy
+    def circle(self, cx, cy, r, c, fill=False):
+        for y in range(self.h):
+            for x in range(self.w):
+                d = math.hypot(x - cx, y - cy)
+                if fill and d <= r + 0.5: self.set(x, y, c)
+                elif not fill and abs(d - r) < 0.6: self.set(x, y, c)
+    def star(self, cx, cy, r, c):
+        pts = [(cx, cy - r), (cx + r * .3, cy - r * .3), (cx + r, cy - r * .2), (cx + r * .45, cy + r * .25),
+               (cx + r * .6, cy + r), (cx, cy + r * .45), (cx - r * .6, cy + r), (cx - r * .45, cy + r * .25),
+               (cx - r, cy - r * .2), (cx - r * .3, cy - r * .3)]
+        for a, b in zip(pts, pts[1:] + pts[:1]):
+            self.line(a[0], a[1], b[0], b[1], c)
+
+def save(name, cv):
+    txt = f"# ImageMagick pixel enumeration: {cv.w},{cv.h},255,srgba\n"
+    for y in range(cv.h):
+        for x in range(cv.w):
+            c = cv.px.get((x, y))
+            if c: txt += f"{x},{y} ({c[0]},{c[1]},{c[2]},255) #{c[0]:02X}{c[1]:02X}{c[2]:02X}FF srgba({c[0]},{c[1]},{c[2]},255)\n"
+    p = os.path.join(OUT, f".{name}.txt")
+    with open(p, "w") as f: f.write(txt)
+    subprocess.run(["convert", "-size", f"{cv.w}x{cv.h}", f"txt:{p}",
+                    "-filter", "point", "-resize", "128x128", os.path.join(OUT, f"{name}.png")],
+                   check=True)
+    os.remove(p)
+    print(f"  -> {name}.png")
+
+GOLD, DARK, LITE = (255, 210, 60), (138, 90, 0), (255, 243, 176)
+SKIN, JUMP, HAIR = (240, 190, 140), (90, 120, 200), (60, 40, 20)
+STEEL, SHADOW = (190, 200, 220), (40, 44, 60)
+RED, BLUE, GREEN, PURP, WHT, BLK = (230, 50, 60), (50, 110, 230), (70, 200, 90), (170, 70, 230), (245, 245, 250), (20, 20, 28)
+CYAN, ORNG, PINK, ICE = (53, 224, 255), (255, 150, 40), (255, 90, 170), (160, 230, 255)
+BROWN, WOOD = (140, 90, 40), (190, 140, 70)
+
+# ---------------- coin ----------------
+def coin():
+    cv = C()
+    cv.circle(7.5, 7.5, 6.5, DARK, fill=True)
+    cv.circle(7.5, 7.5, 5.5, GOLD, fill=True)
+    cv.rect(4, 3, 3, 2, LITE)
+    cv.star(7.5, 8, 3, (200, 140, 10))
+    return cv
+
+# ---------------- pickaxes ----------------
+def pick(kind):
+    cv = C()
+    cv.line(3, 13, 12, 4, BROWN)      # handle
+    cv.line(4, 13, 12, 5, (90, 60, 25))
+    if kind == "axe":
+        cv.rect(10, 1, 4, 3, STEEL); cv.rect(11, 4, 3, 2, STEEL); cv.set(10, 1, WHT)
+    elif kind == "hammer":
+        cv.rect(9, 0, 6, 4, GOLD); cv.rect(9, 0, 6, 1, LITE); cv.set(14, 1, CYAN); cv.set(10, 4, CYAN)
+    elif kind in ("ice", "scythe"):
+        col = ICE if kind == "ice" else PURP
+        edge = WHT if kind == "ice" else PINK
+        # curved head arc
+        for a in range(0, 90, 6):
+            x = 12 + 5 * math.cos(math.radians(a + 90))
+            y = 4 + 5 * math.sin(math.radians(a + 90))
+            cv.line(int(x), int(y), 12, 4, col)
+        cv.set(9, 0, edge); cv.set(7, 1, edge)
+        if kind == "ice":
+            cv.set(5, 2, ICE); cv.set(14, 6, ICE)
+    return cv
+
+# ---------------- gliders / back bling ----------------
+def glider(kind):
+    cv = C()
+    if kind == "wings":
+        for i in range(7):
+            h = 7 - abs(i - 3)
+            cv.vline(6 - i, 8 - h, 8, WHT); cv.vline(9 + i, 8 - h, 8, WHT)
+            cv.set(6 - i, 8 - h, GOLD); cv.set(9 + i, 8 - h, GOLD)
+        cv.rect(7, 6, 2, 4, GOLD)
+    elif kind == "shield":
+        cv.circle(7.5, 7.5, 6.5, RED, fill=True)
+        cv.circle(7.5, 7.5, 4.6, WHT, fill=True)
+        cv.circle(7.5, 7.5, 2.8, BLUE, fill=True)
+        cv.star(7.5, 7.5, 2, WHT)
+    elif kind == "cosmic":
+        for y in range(3, 14):
+            w = 3 + (y - 3) // 2
+            cv.hline(7 - w, 8 + w, y, (60, 20, 110))
+        for (x, y) in [(6, 5), (9, 7), (5, 9), (10, 10), (7, 12)]: cv.set(x, y, WHT)
+        cv.hline(5, 10, 3, PURP)
+    elif kind == "claws":
+        cv.vline(3, 1, 14, BROWN)
+        cv.rect(4, 2, 10, 8, BLK)
+        for i in range(3): cv.line(6 + i * 3, 3, 8 + i * 3, 9, STEEL)
+    return cv
+
+# ---------------- emotes (chibi figure poses) ----------------
+def figure(cv, arms):
+    cv.rect(6, 2, 4, 4, SKIN)              # head
+    cv.hline(6, 9, 2, HAIR)
+    cv.rect(6, 6, 4, 5, JUMP)              # torso
+    cv.vline(6, 11, 14, (50, 60, 90)); cv.vline(9, 11, 14, (50, 60, 90))  # legs
+    for (x0, y0, x1, y1) in arms: cv.line(x0, y0, x1, y1, JUMP)
+
+def emote(kind):
+    cv = C()
+    if kind == "dance":
+        figure(cv, [(6, 7, 3, 4), (9, 7, 12, 10)])
+        cv.set(2, 2, CYAN); cv.set(3, 3, CYAN); cv.set(13, 8, PINK)
+        cv.line(6, 14, 5, 14, (50, 60, 90))
+    elif kind == "salute":
+        figure(cv, [(6, 7, 5, 10), (9, 7, 11, 4), (11, 4, 12, 3)])
+    elif kind == "flex":
+        figure(cv, [(6, 7, 3, 7), (3, 7, 3, 4), (9, 7, 12, 7), (12, 7, 12, 4)])
+        cv.set(3, 3, SKIN); cv.set(12, 3, SKIN)
+    elif kind == "heart":
+        figure(cv, [(6, 7, 4, 3), (9, 7, 11, 3)])
+        for (x, y) in [(6, 1), (8, 1), (5, 2), (7, 2), (9, 2), (6, 3), (8, 3), (7, 4)]: cv.set(x, y, PINK)
+    return cv
+
+# ---------------- mode tiles ----------------
+def mode(kind):
+    cv = C()
+    if kind == "br":
+        cv.circle(7.5, 8, 6.6, PURP)                    # storm ring
+        cv.circle(7.5, 8, 4.5, (40, 140, 90), fill=True)  # island
+        cv.rect(6, 6, 2, 2, (220, 200, 120)); cv.set(9, 9, (30, 90, 60))
+    elif kind == "rumble":
+        for (x, y) in [(2, 5), (3, 8), (2, 11), (4, 6)]: cv.rect(x, y, 2, 3, RED)
+        for (x, y) in [(12, 5), (11, 8), (12, 11), (10, 6)]: cv.rect(x, y, 2, 3, BLUE)
+        for (x, y) in [(7, 6), (8, 8), (7, 10)]: cv.set(x, y, GOLD)
+    elif kind == "stw":
+        cv.rect(5, 5, 6, 6, WOOD); cv.rect(5, 5, 6, 1, BROWN); cv.rect(7, 8, 2, 3, BROWN)
+        cv.vline(7, 2, 4, WOOD); cv.rect(6, 1, 3, 2, CYAN)
+        for (x, y) in [(1, 9), (2, 12), (13, 10), (12, 13)]: cv.rect(x, y, 2, 3, GREEN)
+    elif kind == "creative":
+        cv.rect(3, 10, 10, 3, (120, 90, 60))
+        for (x, y, c) in [(4, 8, RED), (6, 8, BLUE), (8, 8, GREEN), (5, 6, ORNG), (7, 6, PURP), (6, 4, CYAN)]:
+            cv.rect(x, y, 2, 2, c)
+        cv.line(12, 10, 12, 2, STEEL); cv.hline(9, 12, 2, STEEL); cv.vline(9, 2, 4, STEEL)
+    return cv
+
+def main():
+    print("[paint] hand-drawn sprites")
+    save("coin", coin())
+    save("pick_axe", pick("axe"))
+    save("pick_hammer", pick("hammer"))
+    save("pick_ice", pick("ice"))
+    save("pick_scythe", pick("scythe"))
+    save("glider_wings", glider("wings"))
+    save("glider_shield", glider("shield"))
+    save("glider_cosmic", glider("cosmic"))
+    save("glider_claws", glider("claws"))
+    save("emote_dance", emote("dance"))
+    save("emote_salute", emote("salute"))
+    save("emote_flex", emote("flex"))
+    save("emote_heart", emote("heart"))
+    save("mode_br", mode("br"))
+    save("mode_rumble", mode("rumble"))
+    save("mode_stw", mode("stw"))
+    save("mode_creative", mode("creative"))
+    print("done.")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,15 @@
+{
+  "name": "marvel-pixel-royale",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fortnite-inspired 2D pixel menu prototype with Marvel characters (fan/test build).",
+  "scripts": {
+    "start": "node server.js",
+    "assets": "bash tools/build_assets.sh",
+    "smoke": "esbuild public/js/main.js --bundle --format=cjs --outfile=/tmp/mpr_bundle.js --log-level=warning && node tools/smoke_test.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.0",
+    "jsdom": "^26.0.0"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "game": "MARVEL PIXEL ROYALE",
+  "rarities": {
+    "common":    { "label": "COMMON",    "color": "#9aa7b8" },
+    "uncommon":  { "label": "UNCOMMON",  "color": "#5fd35f" },
+    "rare":      { "label": "RARE",      "color": "#3fb6ff" },
+    "epic":      { "label": "EPIC",      "color": "#c65cff" },
+    "legendary": { "label": "LEGENDARY", "color": "#ffb02e" },
+    "marvel":    { "label": "MARVEL",    "color": "#ff3d5a" }
+  },
+  "heroes": [
+    { "id": "spiderman",     "name": "SPIDER-HERO",        "art": "assets/spr/spiderman.png",     "rarity": "marvel",    "price": 1500, "desc": "Friendly neighborhood web-slinger. Thwip!" },
+    { "id": "spiderman_classic", "name": "SPIDER-HERO CLASSIC", "art": "assets/spr/spiderman_classic.png", "rarity": "epic", "price": 1200, "desc": "The timeless red-and-blue look." },
+    { "id": "miles",         "name": "MILES",              "art": "assets/spr/miles.png",         "rarity": "epic",      "price": 1200, "desc": "Black-suit spider with a venom strike." },
+    { "id": "gwen",          "name": "SPIDER-GWEN",        "art": "assets/spr/gwen.png",          "rarity": "epic",      "price": 1200, "desc": "Hooded hero from another dimension." },
+    { "id": "venom",         "name": "VENOM",              "art": "assets/spr/venom.png",         "rarity": "epic",      "price": 1100, "desc": "We are Venom. Mostly hungry." },
+    { "id": "ironman",       "name": "IRON MAN",           "art": "assets/spr/ironman.png",       "rarity": "legendary", "price": 1600, "desc": "Billionaire. Genius. Philanthropist. Pixel." },
+    { "id": "capamerica",    "name": "CAPTAIN AMERICA",    "art": "assets/spr/capamerica.png",    "rarity": "legendary", "price": 1500, "desc": "I can do this all day." },
+    { "id": "thor",          "name": "THOR",               "art": "assets/spr/thor.png",          "rarity": "legendary", "price": 1600, "desc": "God of Thunder. Bring an umbrella." },
+    { "id": "hulk",          "name": "HULK",               "art": "assets/spr/hulk.png",          "rarity": "marvel",    "price": 1700, "desc": "HULK SMASH (the lobby button)." },
+    { "id": "wolverine",     "name": "WOLVERINE",          "art": "assets/spr/wolverine.png",     "rarity": "epic",      "price": 1400, "desc": "Bub. It's been a long day." },
+    { "id": "blackwidow",    "name": "BLACK WIDOW",        "art": "assets/spr/blackwidow.png",    "rarity": "rare",      "price": 800,  "desc": "Red Room's finest spy." },
+    { "id": "hawkeye",       "name": "HAWKEYE",            "art": "assets/spr/hawkeye.png",       "rarity": "rare",      "price": 800,  "desc": "Never misses. Seriously, never." },
+    { "id": "drstrange",     "name": "DOCTOR STRANGE",     "art": "assets/spr/drstrange.png",     "rarity": "legendary", "price": 1500, "desc": "Dormammu, I've come to bargain." },
+    { "id": "scarletwitch",  "name": "SCARLET WITCH",      "art": "assets/spr/scarletwitch.png",  "rarity": "epic",      "price": 1300, "desc": "Chaos magic, now in 16 bits." },
+    { "id": "scarletwitch_azure", "name": "SCARLET WITCH AZURE", "art": "assets/spr/scarletwitch_azure.png", "rarity": "epic", "price": 1300, "desc": "An alternate hex hue." },
+    { "id": "blackpanther",  "name": "BLACK PANTHER",      "art": "assets/spr/blackpanther.png",  "rarity": "epic",      "price": 1400, "desc": "Wakanda forever." },
+    { "id": "captainmarvel", "name": "CAPTAIN MARVEL",     "art": "assets/spr/captainmarvel.png", "rarity": "marvel",    "price": 1600, "desc": "Higher. Further. Faster." },
+    { "id": "captainmarvel_classic", "name": "CAPTAIN MARVEL CLASSIC", "art": "assets/spr/captainmarvel_classic.png", "rarity": "epic", "price": 1300, "desc": "Vintage Kree-star look." },
+    { "id": "antman",        "name": "ANT-MAN",            "art": "assets/spr/antman.png",        "rarity": "rare",      "price": 900,  "desc": "Size not included." },
+    { "id": "antman_unmasked", "name": "ANT-MAN UNMASKED", "art": "assets/spr/antman_unmasked.png", "rarity": "rare",    "price": 900,  "desc": "It's Scott. He's fine." },
+    { "id": "jonesy",        "name": "RECRUIT JONESY",     "art": "assets/spr/jonesy.png",        "rarity": "common",    "price": 0,    "desc": "The default guy. Everybody starts somewhere." },
+    { "id": "ramirez",       "name": "SGT. RAMIREZ",       "art": "assets/spr/ramirez.png",       "rarity": "uncommon",  "price": 500,  "desc": "Camo, ponytail, zero nonsense." },
+    { "id": "ramirez_casual","name": "RAMIREZ CASUAL",     "art": "assets/spr/ramirez_casual.png","rarity": "uncommon",  "price": 500,  "desc": "Off-duty look." },
+    { "id": "nightshade",    "name": "NIGHTSHADE",         "art": "assets/spr/nightshade.png",    "rarity": "rare",      "price": 700,  "desc": "Hood up. Lights out." },
+    { "id": "skullface",     "name": "SKULLFACE",          "art": "assets/spr/skullface.png",     "rarity": "epic",      "price": 1000, "desc": "Spooky season, every season." },
+    { "id": "raven",         "name": "RAVEN",              "art": "assets/spr/raven.png",         "rarity": "epic",      "price": 1100, "desc": "Nevermore." }
+  ],
+  "picks": [
+    { "id": "pick_axe",     "name": "RAIDER AXE",    "art": "assets/spr/pick_axe.png",     "rarity": "uncommon",  "price": 0,    "desc": "Standard issue chopper." },
+    { "id": "pick_ice",     "name": "FROSTBITE",     "art": "assets/spr/pick_ice.png",     "rarity": "rare",      "price": 600,  "desc": "Chips blocks and teeth." },
+    { "id": "pick_scythe",  "name": "VOID SCYTHE",   "art": "assets/spr/pick_scythe.png",  "rarity": "epic",      "price": 800,  "desc": "Harvests loot dramatically." },
+    { "id": "pick_hammer",  "name": "STORM HAMMER",  "art": "assets/spr/pick_hammer.png",  "rarity": "legendary", "price": 1200, "desc": "Worthy only." }
+  ],
+  "gliders": [
+    { "id": "glider_shield", "name": "STAR SHIELD",   "art": "assets/spr/glider_shield.png", "rarity": "epic",      "price": 1000, "desc": "Round. Iconic. Indestructible-ish." },
+    { "id": "glider_wings",  "name": "ANGEL WINGS",   "art": "assets/spr/glider_wings.png",  "rarity": "legendary", "price": 1200, "desc": "Feathered descent." },
+    { "id": "glider_cosmic", "name": "COSMIC CAPE",   "art": "assets/spr/glider_cosmic.png", "rarity": "epic",      "price": 900,  "desc": "Wear the night sky." },
+    { "id": "glider_claws",  "name": "PANTHER BANNER","art": "assets/spr/glider_claws.png",  "rarity": "rare",      "price": 700,  "desc": "Claw-marked war flag." }
+  ],
+  "emotes": [
+    { "id": "emote_salute", "name": "SALUTE",     "art": "assets/spr/emote_salute.png", "rarity": "common",   "price": 0,   "desc": "Respect." },
+    { "id": "emote_dance",  "name": "PIXEL GROOVE","art": "assets/spr/emote_dance.png", "rarity": "rare",     "price": 300, "desc": "Certified lobby moves." },
+    { "id": "emote_flex",   "name": "MEGA FLEX",  "art": "assets/spr/emote_flex.png",    "rarity": "uncommon", "price": 400, "desc": "Show those gains." },
+    { "id": "emote_heart",  "name": "HEART SIGN", "art": "assets/spr/emote_heart.png",   "rarity": "rare",     "price": 300, "desc": "For the fans." }
+  ],
+  "modes": [
+    { "id": "solo",    "name": "SOLO",         "tile": "assets/spr/mode_br.png",       "players": 100, "mult": 1.0, "desc": "100 drop in. One walks out. Classic Battle Royale." },
+    { "id": "duos",    "name": "DUOS",         "tile": "assets/spr/mode_br.png",       "players": 100, "mult": 1.1, "desc": "Squad of two. Share loot, share blame." },
+    { "id": "squads",  "name": "SQUADS",       "tile": "assets/spr/mode_br.png",       "players": 100, "mult": 1.2, "desc": "Four-player teams. Chaos guaranteed." },
+    { "id": "rumble",  "name": "TEAM RUMBLE",  "tile": "assets/spr/mode_rumble.png",   "players": 32,  "mult": 0.8, "desc": "16v16 respawn brawl. First to 100 eliminations." },
+    { "id": "stw",     "name": "SAVE THE WORLD","tile": "assets/spr/mode_stw.png",     "players": 4,   "mult": 1.3, "desc": "Co-op vs pixel husks. Build. Defend. Survive." },
+    { "id": "creative","name": "CREATIVE",     "tile": "assets/spr/mode_creative.png", "players": 16,  "mult": 0.5, "desc": "Your island, your rules. Infinite blocks." }
+  ],
+  "maps": [
+    { "id": "pixel_island", "name": "PIXEL ISLAND", "palette": ["#0e2a4f", "#1c5d8a", "#35c06b"] },
+    { "id": "neo_kunai",    "name": "NEO KUNAI CITY", "palette": ["#1a0b33", "#5b1e6e", "#ff4fa0"] },
+    { "id": "battle_nexus", "name": "BATTLE NEXUS", "palette": ["#33110b", "#8a3a1c", "#ffb02e"] }
+  ],
+  "styles": [
+    { "id": "default", "name": "DEFAULT", "filter": "none" },
+    { "id": "crimson", "name": "CRIMSON", "filter": "hue-rotate(-28deg) saturate(1.5)" },
+    { "id": "gold",    "name": "GOLD",    "filter": "sepia(1) saturate(3) hue-rotate(-18deg)" },
+    { "id": "void",    "name": "VOID",    "filter": "hue-rotate(160deg) saturate(1.2) brightness(.9)" },
+    { "id": "noir",    "name": "NOIR",    "filter": "grayscale(1) contrast(1.2)" },
+    { "id": "frost",   "name": "FROST",   "filter": "hue-rotate(190deg) saturate(.8) brightness(1.15)" }
+  ],
+  "tasks": [
+    { "id": "d_play",  "type": "daily",  "metric": "matches",  "count": 3, "coins": 100, "xp": 40, "desc": "Play 3 matches" },
+    { "id": "d_win",   "type": "daily",  "metric": "wins",     "count": 1, "coins": 150, "xp": 60, "desc": "Win a match" },
+    { "id": "d_buy",   "type": "daily",  "metric": "purchases","count": 1, "coins": 75,  "xp": 20, "desc": "Purchase 1 item from the shop" },
+    { "id": "d_load",  "type": "daily",  "metric": "equips",   "count": 2, "coins": 50,  "xp": 15, "desc": "Change your loadout 2 times" },
+    { "id": "d_emote", "type": "daily",  "metric": "emotes",   "count": 1, "coins": 25,  "xp": 10, "desc": "Use an emote in the lobby" },
+    { "id": "w_play",  "type": "weekly", "metric": "matches",  "count": 10,"coins": 400, "xp": 150,"desc": "Play 10 matches" },
+    { "id": "w_win",   "type": "weekly", "metric": "wins",     "count": 3, "coins": 450, "xp": 180,"desc": "Win 3 matches" },
+    { "id": "w_buy",   "type": "weekly", "metric": "purchases","count": 3, "coins": 200, "xp": 80, "desc": "Purchase 3 items" }
+  ]
+}
