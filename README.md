@@ -24,15 +24,15 @@ falls back to `localStorage` when the API is unreachable.
 
 | Tab | What it does |
 | --- | --- |
-| **▶ PLAY** | Lobby pedestal with your hero (idle bob, emotes with floating notes), game-mode cards (Solo / Duos / Squads / Team Rumble / Save the World / Creative), map select, and **LAUNCH** — a simulated match (countdown → match log → results) that pays out coins + XP and feeds tasks/stats. |
-| **◆ SHOP** | Featured heroes + daily gear/gliders/emotes with rarity frames (common→MARVEL), shine sweeps on legendaries, buy flow with deny-shake when broke, confetti + 8-bit fanfare on purchase. Daily stock timer (ignored in test mode). |
-| **▣ LOCKER** | Pick your hero, harvesting tool, back bling and emote; **STYLES** recolor any hero with pixel-friendly CSS filters (Crimson/Gold/Void/Noir/Frost). Locked items point you to the shop. |
-| **✔ TASKS** | Daily + weekly tasks with progress bars (play, win, buy, loadout, emote). Claiming pays coins + XP. In test mode claimed tasks re-arm instantly — no cooldown. |
-| **⚙ DEV** | Test-only currency lab: base **500** coins, +100/+500/+5000, SET BASE 500, ×2, NO-COOLDOWN and UNLOCK-ALL flags, task re-arm, save wipe, raw save viewer. |
+| **PLAY** | True lobby: your hero shown **in-game** (24x24 animated sprite: IDLE / WALK / ATTACK / POWER / EMOTE previews) standing over the next map. Left panel: 5 original modes (Hero Rush, Squad Siege, Symbiote Siege, Infinity Hunt, Kree Arena), NEXT MAP card with reroll (map is random at match start), big skewed yellow PLAY. |
+| **SHOP** | Spotlight layout: animated hero preview + buy/equip on the left with a hero rail; featured heroes and relics/back-bling/emotes grids on the right. Rarity frames, shine sweeps, deny-shake, confetti. |
+| **LOCKER** | Animated preview + styles (CSS filter recolors); select hero, relic, back bling, emote. Locked items point to the shop. |
+| **TASKS** | Stored **LEVEL + XP bar** up top, daily/weekly tasks with progress bars and claimable coin rewards (no cooldown in test mode). |
+| **DEV** | Test-only currency lab: base **500** coins, +100/+500/+5000, SET BASE 500, x2, NO-COOLDOWN / UNLOCK-ALL flags, task re-arm, save wipe, raw save viewer. |
 
-Extras: level/XP bar in the HUD with level-up fanfare, chunky bevel pixel buttons,
-animated neon-skyline background with floating pixel motes + scanlines, WebAudio square-wave
-SFX (mutable), keyboard tabs `1–5`, staggered card entrances, toasts.
+Top bar: names-only tabs that never scroll, coins pill, **settings** gear (sound / particles /
+scanlines). Light pixel UI font (VT323), Press Start 2P only for accents. Performance:
+no full re-render on state change, ~30fps particle canvas, static backgrounds, no blend modes.
 
 ## Architecture (ready for the real game)
 
@@ -47,16 +47,21 @@ data/save.json       your save (git-ignored)
 public/
   index.html         shell (topbar, tabs, HUD, screen mount)
   style.css          pixel design system + all animations
-  js/main.js         boot, tab router, HUD
+  js/main.js         boot, name-only tab router, HUD, settings modal
   js/store.js        save-state store (server-backed, localStorage fallback), economy, tasks, inventory
-  js/screens.js      renderers for PLAY / SHOP / LOCKER / TASKS / DEV + item modal
-  js/match.js        simulated match (deploy -> results -> rewards)
-  js/fx.js           particle canvas + WebAudio 8-bit sfx + confetti
+  js/screens.js      renderers: lobby / shop spotlight / locker / tasks(level) / dev
+  js/anim.js         24x24 sprite-strip animator (idle/walk/attack/power)
+  js/match.js        simulated match: RANDOM map at start -> results -> rewards
+  js/fx.js           lightweight particle canvas + WebAudio 8-bit sfx + confetti
   js/util.js         DOM/helpers + procedural coin fallback
-  assets/spr/*.png   128px chunky sprites (image-rendering: pixelated everywhere)
+  assets/spr/*.png   item/mode/coin icons (kept, hand-painted 16x16)
+  assets/anim/*.png  in-game hero animation strips (12 frames of 24x24)
+  assets/maps/*.png  five 192x108 side-view 2D battle maps
 tools/
-  build_assets.sh    slices magenta-bg AI sheets into transparent sprites (ImageMagick)
-  make_sprites.py    deterministic hand-painted 16x16 sprites (coin, tools, gliders, emotes, mode tiles)
+  build_assets.sh    slices magenta-bg AI sheets into transparent bust sprites
+  make_sprites.py    deterministic hand-painted 16x16 item icons
+  make_heroes.py     parametric hero animation strips (edit configs to restyle)
+  make_maps.py       paints the five 2D maps + survival mode icon
   smoke_test.js      jsdom end-to-end click-through (npm run smoke)
 ```
 

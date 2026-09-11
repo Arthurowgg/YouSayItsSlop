@@ -6,30 +6,25 @@
 <title>Marvel Pixel Royale — Menu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <canvas id="fx"></canvas>
-<div id="skyline" class="pixel"></div>
 <div id="scanlines"></div>
 
 <header id="topbar">
   <div id="logo">
-    <span class="l1">MARVEL</span>
+    <span class="l1 pix">MARVEL</span>
     <span class="l2">PIXEL ROYALE</span>
   </div>
   <nav id="tabs"></nav>
   <div id="hud">
-    <div id="lvl" title="Level / XP">
-      <span id="lvlNum">1</span>
-      <div class="xpbar"><div id="xpFill"></div></div>
-    </div>
-    <div id="coinPill" class="pixelbox" title="Coins">
-      <img id="coinIcon" class="pixel" src="assets/spr/coin.png" alt="coin" width="20" height="20">
+    <div id="coinPill" title="Coins">
+      <img id="coinIcon" class="pixel" src="assets/spr/coin.png" alt="coin" width="18" height="18">
       <span id="coinCount">0</span>
     </div>
-    <button id="muteBtn" class="iconbtn" title="Sound on/off">♪</button>
+    <button id="settingsBtn" class="iconbtn" title="Settings">⚙</button>
   </div>
 </header>
 
@@ -38,7 +33,7 @@
 <div id="toasts"></div>
 <div id="modalRoot"></div>
 <footer id="foot">
-  FAN-MADE TEST BUILD — Marvel &amp; characters © Marvel/Disney; Fortnite © Epic Games. Prototype for private testing; license required for release.
+  FAN-MADE TEST BUILD — Marvel &amp; characters © Marvel/Disney. Prototype for private testing; license required for release.
 </footer>
 
 <script type="module" src="js/main.js"></script>

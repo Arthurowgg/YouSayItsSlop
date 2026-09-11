@@ -1,9 +1,11 @@
-// Ambient pixel particles + tiny WebAudio 8-bit sfx.
+// Ambient pixel motes (lightweight) + tiny WebAudio 8-bit sfx.
 let ctx = null;
 let muted = false;
+let particlesOn = true;
 
 export function toggleMute() { muted = !muted; return muted; }
 export function isMuted() { return muted; }
+export function setParticlesEnabled(on) { particlesOn = !!on; }
 
 function ac() {
   if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -40,7 +42,7 @@ export const sfx = {
   tick: () => blip(1000, 0.04, 'square', 0.04),
 };
 
-// ---- floating pixel motes ----
+// ---- floating pixel motes: 20 particles @ ~30fps, no shadows ----
 export function startParticles() {
   const cv = document.getElementById('fx');
   const g = cv.getContext('2d');
@@ -48,31 +50,31 @@ export function startParticles() {
   const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
   resize();
   addEventListener('resize', resize);
-  const cols = ['#35e0ff', '#ffd23c', '#ff3d5a', '#7dffb0', '#c65cff'];
-  const N = 60;
-  const ps = Array.from({ length: N }, () => ({
+  const cols = ['#35e0ff', '#ffd23c', '#ff3d5a', '#7dffb0'];
+  const ps = Array.from({ length: 20 }, () => ({
     x: Math.random() * innerWidth,
     y: Math.random() * innerHeight,
-    s: 2 + Math.floor(Math.random() * 3) * 2,
-    v: 0.2 + Math.random() * 0.7,
+    s: 2 + Math.floor(Math.random() * 2) * 2,
+    v: 0.3 + Math.random() * 0.6,
     c: cols[Math.floor(Math.random() * cols.length)],
-    tw: Math.random() * Math.PI * 2,
   }));
-  let t = 0;
-  (function loop() {
-    t += 0.016;
+  let last = 0, skip = 0;
+  (function loop(t) {
+    requestAnimationFrame(loop);
+    if (t - last < 33) return; // ~30fps
+    last = t;
     g.clearRect(0, 0, W, H);
+    if (!particlesOn) return;
+    skip ^= 1;
     for (const p of ps) {
       p.y -= p.v;
-      if (p.y < -8) { p.y = H + 8; p.x = Math.random() * W; }
-      const a = 0.25 + 0.5 * Math.abs(Math.sin(t * 2 + p.tw));
-      g.globalAlpha = a;
+      if (p.y < -6) { p.y = H + 6; p.x = Math.random() * W; }
+      g.globalAlpha = 0.4;
       g.fillStyle = p.c;
-      g.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s);
+      g.fillRect(p.x | 0, p.y | 0, p.s, p.s);
     }
     g.globalAlpha = 1;
-    requestAnimationFrame(loop);
-  })();
+  })(0);
 }
 
 export function confetti(n = 60) {
@@ -81,6 +83,7 @@ export function confetti(n = 60) {
     const d = document.createElement('div');
     d.className = 'confetti';
     d.style.left = Math.random() * 100 + 'vw';
+    d.background = cols[i % cols.length];
     d.style.background = cols[i % cols.length];
     d.style.animationDuration = 0.9 + Math.random() * 1.2 + 's';
     d.style.animationDelay = Math.random() * 0.3 + 's';

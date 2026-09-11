@@ -8,7 +8,7 @@ export function defaultSave() {
     coins: COIN_BASE,
     level: 1,
     xp: 0,
-    owned: ['jonesy', 'spiderman'],
+    owned: ['spiderman', 'blackwidow'],
     picks: ['pick_axe'],
     gliders: [],
     emotes: ['emote_salute'],
@@ -16,6 +16,7 @@ export function defaultSave() {
     stats: { matches: 0, wins: 0, purchases: 0, equips: 0, emotes: 0 },
     tasks: {},
     dev: { noCooldown: true, unlockAll: false },
+    settings: { sound: true, particles: true, scanlines: true },
     day: todayKey(),
     week: weekKey(),
   };

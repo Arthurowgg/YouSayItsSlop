@@ -56,6 +56,7 @@ function sanitize(input) {
   }
   if (input.tasks && typeof input.tasks === 'object') out.tasks = input.tasks;
   if (input.dev && typeof input.dev === 'object') out.dev = { ...d.dev, ...input.dev };
+  if (input.settings && typeof input.settings === 'object') out.settings = { ...(d.settings || {}), ...input.settings };
   if ('day' in input) out.day = String(input.day);
   out.updatedAt = Date.now();
   return out;

@@ -28,44 +28,39 @@
     { "id": "captainmarvel", "name": "CAPTAIN MARVEL",     "art": "assets/spr/captainmarvel.png", "rarity": "marvel",    "price": 1600, "desc": "Higher. Further. Faster." },
     { "id": "captainmarvel_classic", "name": "CAPTAIN MARVEL CLASSIC", "art": "assets/spr/captainmarvel_classic.png", "rarity": "epic", "price": 1300, "desc": "Vintage Kree-star look." },
     { "id": "antman",        "name": "ANT-MAN",            "art": "assets/spr/antman.png",        "rarity": "rare",      "price": 900,  "desc": "Size not included." },
-    { "id": "antman_unmasked", "name": "ANT-MAN UNMASKED", "art": "assets/spr/antman_unmasked.png", "rarity": "rare",    "price": 900,  "desc": "It's Scott. He's fine." },
-    { "id": "jonesy",        "name": "RECRUIT JONESY",     "art": "assets/spr/jonesy.png",        "rarity": "common",    "price": 0,    "desc": "The default guy. Everybody starts somewhere." },
-    { "id": "ramirez",       "name": "SGT. RAMIREZ",       "art": "assets/spr/ramirez.png",       "rarity": "uncommon",  "price": 500,  "desc": "Camo, ponytail, zero nonsense." },
-    { "id": "ramirez_casual","name": "RAMIREZ CASUAL",     "art": "assets/spr/ramirez_casual.png","rarity": "uncommon",  "price": 500,  "desc": "Off-duty look." },
-    { "id": "nightshade",    "name": "NIGHTSHADE",         "art": "assets/spr/nightshade.png",    "rarity": "rare",      "price": 700,  "desc": "Hood up. Lights out." },
-    { "id": "skullface",     "name": "SKULLFACE",          "art": "assets/spr/skullface.png",     "rarity": "epic",      "price": 1000, "desc": "Spooky season, every season." },
-    { "id": "raven",         "name": "RAVEN",              "art": "assets/spr/raven.png",         "rarity": "epic",      "price": 1100, "desc": "Nevermore." }
+    { "id": "antman_unmasked", "name": "ANT-MAN UNMASKED", "art": "assets/spr/antman_unmasked.png", "rarity": "rare",    "price": 900,  "desc": "It's Scott. He's fine." }
   ],
   "picks": [
-    { "id": "pick_axe",     "name": "RAIDER AXE",    "art": "assets/spr/pick_axe.png",     "rarity": "uncommon",  "price": 0,    "desc": "Standard issue chopper." },
-    { "id": "pick_ice",     "name": "FROSTBITE",     "art": "assets/spr/pick_ice.png",     "rarity": "rare",      "price": 600,  "desc": "Chips blocks and teeth." },
-    { "id": "pick_scythe",  "name": "VOID SCYTHE",   "art": "assets/spr/pick_scythe.png",  "rarity": "epic",      "price": 800,  "desc": "Harvests loot dramatically." },
-    { "id": "pick_hammer",  "name": "STORM HAMMER",  "art": "assets/spr/pick_hammer.png",  "rarity": "legendary", "price": 1200, "desc": "Worthy only." }
+    { "id": "pick_axe",     "name": "S.H.I.E.L.D. BATON", "art": "assets/spr/pick_axe.png",     "rarity": "uncommon",  "price": 0,    "desc": "Standard-issue training baton." },
+    { "id": "pick_ice",     "name": "JOTUN CLEAVER",      "art": "assets/spr/pick_ice.png",     "rarity": "rare",      "price": 600,  "desc": "Frost-giant steel. Chips blocks and teeth." },
+    { "id": "pick_scythe",  "name": "VOID SCYTHE",        "art": "assets/spr/pick_scythe.png",  "rarity": "epic",      "price": 800,  "desc": "Harvests loot dramatically." },
+    { "id": "pick_hammer",  "name": "MJOLNIR ECHO",       "art": "assets/spr/pick_hammer.png",  "rarity": "legendary", "price": 1200, "desc": "A worthy echo of the original." }
   ],
   "gliders": [
-    { "id": "glider_shield", "name": "STAR SHIELD",   "art": "assets/spr/glider_shield.png", "rarity": "epic",      "price": 1000, "desc": "Round. Iconic. Indestructible-ish." },
-    { "id": "glider_wings",  "name": "ANGEL WINGS",   "art": "assets/spr/glider_wings.png",  "rarity": "legendary", "price": 1200, "desc": "Feathered descent." },
-    { "id": "glider_cosmic", "name": "COSMIC CAPE",   "art": "assets/spr/glider_cosmic.png", "rarity": "epic",      "price": 900,  "desc": "Wear the night sky." },
-    { "id": "glider_claws",  "name": "PANTHER BANNER","art": "assets/spr/glider_claws.png",  "rarity": "rare",      "price": 700,  "desc": "Claw-marked war flag." }
+    { "id": "glider_shield", "name": "STAR SHIELD",    "art": "assets/spr/glider_shield.png", "rarity": "epic",      "price": 1000, "desc": "Round. Iconic. Indestructible-ish." },
+    { "id": "glider_wings",  "name": "ANGEL WINGS",    "art": "assets/spr/glider_wings.png",  "rarity": "legendary", "price": 1200, "desc": "Feathered descent." },
+    { "id": "glider_cosmic", "name": "COSMIC CAPE",    "art": "assets/spr/glider_cosmic.png", "rarity": "epic",      "price": 900,  "desc": "Wear the night sky." },
+    { "id": "glider_claws",  "name": "PANTHER BANNER", "art": "assets/spr/glider_claws.png",  "rarity": "rare",      "price": 700,  "desc": "Claw-marked war flag." }
   ],
   "emotes": [
-    { "id": "emote_salute", "name": "SALUTE",     "art": "assets/spr/emote_salute.png", "rarity": "common",   "price": 0,   "desc": "Respect." },
-    { "id": "emote_dance",  "name": "PIXEL GROOVE","art": "assets/spr/emote_dance.png", "rarity": "rare",     "price": 300, "desc": "Certified lobby moves." },
-    { "id": "emote_flex",   "name": "MEGA FLEX",  "art": "assets/spr/emote_flex.png",    "rarity": "uncommon", "price": 400, "desc": "Show those gains." },
-    { "id": "emote_heart",  "name": "HEART SIGN", "art": "assets/spr/emote_heart.png",   "rarity": "rare",     "price": 300, "desc": "For the fans." }
+    { "id": "emote_salute", "name": "SALUTE",      "art": "assets/spr/emote_salute.png", "rarity": "common",   "price": 0,   "desc": "Respect." },
+    { "id": "emote_dance",  "name": "PIXEL GROOVE","art": "assets/spr/emote_dance.png",  "rarity": "rare",     "price": 300, "desc": "Certified lobby moves." },
+    { "id": "emote_flex",   "name": "MEGA FLEX",   "art": "assets/spr/emote_flex.png",   "rarity": "uncommon", "price": 400, "desc": "Show those gains." },
+    { "id": "emote_heart",  "name": "HEART SIGN",  "art": "assets/spr/emote_heart.png",  "rarity": "rare",     "price": 300, "desc": "For the fans." }
   ],
   "modes": [
-    { "id": "solo",    "name": "SOLO",         "tile": "assets/spr/mode_br.png",       "players": 100, "mult": 1.0, "desc": "100 drop in. One walks out. Classic Battle Royale." },
-    { "id": "duos",    "name": "DUOS",         "tile": "assets/spr/mode_br.png",       "players": 100, "mult": 1.1, "desc": "Squad of two. Share loot, share blame." },
-    { "id": "squads",  "name": "SQUADS",       "tile": "assets/spr/mode_br.png",       "players": 100, "mult": 1.2, "desc": "Four-player teams. Chaos guaranteed." },
-    { "id": "rumble",  "name": "TEAM RUMBLE",  "tile": "assets/spr/mode_rumble.png",   "players": 32,  "mult": 0.8, "desc": "16v16 respawn brawl. First to 100 eliminations." },
-    { "id": "stw",     "name": "SAVE THE WORLD","tile": "assets/spr/mode_stw.png",     "players": 4,   "mult": 1.3, "desc": "Co-op vs pixel husks. Build. Defend. Survive." },
-    { "id": "creative","name": "CREATIVE",     "tile": "assets/spr/mode_creative.png", "players": 16,  "mult": 0.5, "desc": "Your island, your rules. Infinite blocks." }
+    { "id": "hero_rush",     "name": "HERO RUSH",     "tile": "assets/spr/mode_br.png",       "players": 100, "mult": 1.0, "desc": "100 heroes drop in. Last one standing takes the crown." },
+    { "id": "squad_siege",   "name": "SQUAD SIEGE",   "tile": "assets/spr/mode_rumble.png",   "players": 32,  "mult": 1.2, "desc": "Squad war over the map's power cores." },
+    { "id": "symbiote_siege","name": "SYMBIOTE SIEGE","tile": "assets/spr/mode_survival.png", "players": 4,   "mult": 1.3, "desc": "Co-op survival vs endless symbiote waves." },
+    { "id": "infinity_hunt", "name": "INFINITY HUNT", "tile": "assets/spr/mode_creative.png", "players": 24,  "mult": 1.1, "desc": "Six stones hidden on the map. Collect and hold them." },
+    { "id": "kree_arena",    "name": "KREE ARENA",    "tile": "assets/spr/mode_stw.png",      "players": 8,   "mult": 0.9, "desc": "1v1 duels in the Accuser's pit. Winner stays." }
   ],
   "maps": [
-    { "id": "pixel_island", "name": "PIXEL ISLAND", "palette": ["#0e2a4f", "#1c5d8a", "#35c06b"] },
-    { "id": "neo_kunai",    "name": "NEO KUNAI CITY", "palette": ["#1a0b33", "#5b1e6e", "#ff4fa0"] },
-    { "id": "battle_nexus", "name": "BATTLE NEXUS", "palette": ["#33110b", "#8a3a1c", "#ffb02e"] }
+    { "id": "brooklyn", "name": "BROOKLYN ROOFTOPS",     "art": "assets/maps/map_brooklyn.png" },
+    { "id": "wakanda",  "name": "WAKANDA GROVE",         "art": "assets/maps/map_wakanda.png" },
+    { "id": "asgard",   "name": "BIFROST BRIDGE",        "art": "assets/maps/map_asgard.png" },
+    { "id": "kitchen",  "name": "HELL'S KITCHEN",        "art": "assets/maps/map_kitchen.png" },
+    { "id": "carrier",  "name": "S.H.I.E.L.D. HELICARRIER", "art": "assets/maps/map_carrier.png" }
   ],
   "styles": [
     { "id": "default", "name": "DEFAULT", "filter": "none" },

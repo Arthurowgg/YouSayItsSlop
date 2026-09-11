@@ -1,4 +1,4 @@
-// Simulated match flow: deploy countdown -> fake match log -> results & rewards.
+// Simulated match: random map at start -> countdown -> match log -> results & rewards.
 import { el, rnd, pick, fmt } from './util.js';
 import { store } from './store.js';
 import { sfx, confetti } from './fx.js';
@@ -6,39 +6,42 @@ import { toast } from './screens.js';
 import { bus } from './bus.js';
 
 const LINES = [
-  'Dropping onto the island…',
-  'Looting pixel chests…',
-  'Storm circle closing…',
+  'Dropping onto the map…',
+  'Looting pixel caches…',
+  'Objective contesting…',
   'Third-partying a fight…',
   'Clutching the 1v3…',
-  'Building stairs for no reason…',
+  'Final circle…',
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export async function deployMatch(mode, map) {
+export async function deployMatch(mode) {
+  const map = pick(store.catalog.maps); // random map at start
+  store.data.lastMap = map.id;
+
   const ov = el('div', { id: 'deploy' });
   const count = el('div', { class: 'count' }, '3');
   const line = el('div', { class: 'line' }, `DEPLOYING → ${map.name} · ${mode.name}`);
+  const prev = el('img', { class: 'mapPrev', src: map.art, alt: map.name });
   const bar = el('div', { class: 'bar' }, el('i'));
-  ov.append(count, line, bar);
+  ov.append(count, line, prev, bar);
   document.body.append(ov);
 
   for (const n of ['3', '2', '1', 'GO!']) {
     count.textContent = n;
     count.style.animation = 'none'; void count.offsetWidth; count.style.animation = '';
     sfx.tick();
-    await sleep(n === 'GO!' ? 400 : 700);
+    await sleep(n === 'GO!' ? 400 : 650);
   }
 
   for (let i = 0; i < LINES.length; i++) {
     line.textContent = LINES[i];
     bar.firstChild.style.width = `${((i + 1) / LINES.length) * 100}%`;
     sfx.hover();
-    await sleep(450);
+    await sleep(420);
   }
 
-  // results
   const players = mode.players;
   const win = Math.random() < 0.22;
   const place = win ? 1 : rnd(2, players);
@@ -53,19 +56,19 @@ export async function deployMatch(mode, map) {
 
   ov.innerHTML = '';
   ov.append(
-    el('div', { class: 'count', style: { fontSize: '26px', color: win ? 'var(--gold)' : 'var(--cyan)' } },
-      win ? '#1 VICTORY ROYALE!' : `#${place} PLACE`),
+    el('div', { class: 'count', style: { fontSize: '24px', color: win ? 'var(--gold)' : 'var(--cyan)' } },
+      win ? '#1 VICTORY!' : `#${place} PLACE`),
     el('div', { class: 'line' }, `${mode.name} · ${map.name}`),
+    el('img', { class: 'mapPrev', src: map.art, alt: map.name }),
     el('div', { class: 'line', style: { color: 'var(--ink)' } }, `ELIMINATIONS: ${kills}`),
     el('div', { class: 'line', style: { color: 'var(--gold)' } }, `+${fmt(coins)} COINS`),
     el('div', { class: 'line', style: { color: 'var(--cyan)' } }, `+${fmt(xp)} XP`),
     el('button', {
-      class: 'btn big', style: { marginTop: '10px' },
+      class: 'btn big', style: { marginTop: '8px' },
       onclick: () => { ov.remove(); bus.refresh(); }
-    }, 'RETURN TO LOBBY')
+    }, el('span', {}, 'RETURN TO LOBBY'))
   );
-  if (win) { confetti(120); sfx.buy(); }
-  else sfx.click();
+  if (win) { confetti(120); sfx.buy(); } else sfx.click();
   if (ups) { sfx.levelup(); confetti(80); toast(`LEVEL UP! NOW LV ${store.data.level}`, 'gold'); }
   bus.refresh();
 }

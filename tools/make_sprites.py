@@ -49,7 +49,10 @@ def save(name, cv):
     for y in range(cv.h):
         for x in range(cv.w):
             c = cv.px.get((x, y))
-            if c: txt += f"{x},{y} ({c[0]},{c[1]},{c[2]},255) #{c[0]:02X}{c[1]:02X}{c[2]:02X}FF srgba({c[0]},{c[1]},{c[2]},255)\n"
+            if c:
+                txt += f"{x},{y}: ({c[0]},{c[1]},{c[2]},255) #{c[0]:02X}{c[1]:02X}{c[2]:02X}FF srgba({c[0]},{c[1]},{c[2]},1)\n"
+            else:
+                txt += f"{x},{y}: (0,0,0,0) #00000000 srgba(0,0,0,0)\n"
     p = os.path.join(OUT, f".{name}.txt")
     with open(p, "w") as f: f.write(txt)
     subprocess.run(["convert", "-size", f"{cv.w}x{cv.h}", f"txt:{p}",

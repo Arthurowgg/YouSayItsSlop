@@ -1,23 +1,21 @@
-// Boot: tabs, HUD, routing.
+// Boot: name-only top tabs, HUD, settings modal, routing.
 import { el, fmt, coinDataURL } from './util.js';
 import { store } from './store.js';
-import { startParticles, sfx, toggleMute } from './fx.js';
-import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast } from './screens.js';
+import { startParticles, setParticlesEnabled, sfx, toggleMute, isMuted } from './fx.js';
+import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast, modal } from './screens.js';
 import { bus } from './bus.js';
 
 const TABS = [
-  ['play', '▶ PLAY'],
-  ['shop', '◆ SHOP'],
-  ['locker', '▣ LOCKER'],
-  ['tasks', '✔ TASKS'],
-  ['dev', '⚙ DEV'],
+  ['play', 'PLAY'],
+  ['shop', 'SHOP'],
+  ['locker', 'LOCKER'],
+  ['tasks', 'TASKS'],
+  ['dev', 'DEV'],
 ];
 let current = 'play';
 
 function updateHUD() {
   document.getElementById('coinCount').textContent = fmt(store.data.coins);
-  document.getElementById('lvlNum').textContent = store.data.level;
-  document.getElementById('xpFill').style.width = `${Math.min(100, (store.data.xp / store.xpNeed()) * 100)}%`;
 }
 
 function renderCurrent() {
@@ -36,37 +34,65 @@ function buildTabs() {
   const nav = document.getElementById('tabs');
   nav.innerHTML = '';
   TABS.forEach(([id, label]) => {
-    const b = el('button', {
+    nav.append(el('button', {
       class: `tab ${id === current ? 'active' : ''}`,
       onclick: () => { current = id; sfx.tab(); buildTabs(); renderCurrent(); },
       onmouseenter: () => sfx.hover(),
-    }, el('span', {}, label));
-    nav.append(b);
+    }, el('span', {}, label)));
   });
+}
+
+function applySettings() {
+  const s = store.data.settings;
+  setParticlesEnabled(!!s.particles);
+  document.getElementById('scanlines').style.display = s.scanlines ? '' : 'none';
+  if (isMuted() === !!s.sound) toggleMute(); // muted should equal !sound
+}
+
+function openSettings() {
+  const s = store.data.settings;
+  function row(label, key, extra) {
+    const btn = el('button', { class: `btn ${s[key] ? 'blue' : 'ghost'}`, style: { minWidth: '70px' } }, s[key] ? 'ON' : 'OFF');
+    btn.onclick = () => {
+      s[key] = !s[key];
+      store.emit('settings');
+      sfx.click();
+      applySettings();
+      m.close(); openSettings();
+      if (extra) extra();
+    };
+    return el('div', { class: 'row' }, el('span', {}, label), btn);
+  }
+  const m = modal(el('div', {},
+    el('h2', {}, 'SETTINGS'),
+    row('SOUND', 'sound'),
+    row('LOBBY PARTICLES', 'particles'),
+    row('SCANLINES', 'scanlines'),
+    el('div', { class: 'row', style: { border: 'none', justifyContent: 'flex-end', marginTop: '10px' } },
+      el('button', { class: 'btn ghost', onclick: () => m.close() }, 'CLOSE'))
+  ));
 }
 
 async function boot() {
   await store.load();
 
-  // coin icon fallback if the generated sprite is missing
   const ci = document.getElementById('coinIcon');
-  ci.addEventListener('error', () => { ci.src = coinDataURL(20); }, { once: true });
+  ci.addEventListener('error', () => { ci.src = coinDataURL(18); }, { once: true });
 
-  document.getElementById('muteBtn').addEventListener('click', (e) => {
-    const m = toggleMute();
-    e.currentTarget.classList.toggle('off', m);
-    if (!m) sfx.click();
-  });
+  document.getElementById('settingsBtn').addEventListener('click', () => { sfx.click(); openSettings(); });
 
   addEventListener('keydown', (e) => {
     const i = Number(e.key) - 1;
     if (i >= 0 && i < TABS.length) { current = TABS[i][0]; sfx.tab(); buildTabs(); renderCurrent(); }
   });
 
-  store.onChange(() => { updateHUD(); renderCurrent(); });
+  // NOTE: no full re-render on store changes (perf). Screens call bus.refresh() when needed.
+  store.onChange(updateHUD);
   bus.refresh = renderCurrent;
+  bus.gotoTab = (id) => { current = id; sfx.tab(); buildTabs(); renderCurrent(); };
 
   startParticles();
+  applySettings();
   buildTabs();
   renderCurrent();
   toast('WELCOME TO THE PIXEL LOBBY', 'green');
