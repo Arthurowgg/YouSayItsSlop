@@ -1,3 +1,5 @@
 node_modules/
 art_raw/
 data/save.json
+tools/__pycache__/
+*.pyc

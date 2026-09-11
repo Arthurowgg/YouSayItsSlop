@@ -1,2 +1,0 @@
-# ImageMagick pixel enumeration: 16,16,255,srgba
-0,0 (255,0,0,255) #FF0000FF srgba(255,0,0,255)
