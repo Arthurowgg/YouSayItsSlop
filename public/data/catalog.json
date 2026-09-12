@@ -458,6 +458,46 @@
       "rarity": "epic",
       "price": 800,
       "art": "assets/spr/pick_h_wanda_azure.png"
+    },
+    {
+      "id": "pick_h_panther",
+      "name": "PICARETA DE VIBRANIUM",
+      "desc": "Absorve o impacto.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/pick_h_panther.png"
+    },
+    {
+      "id": "pick_h_marvel",
+      "name": "PICARETA FÓTON",
+      "desc": "Brilha no escuro cósmico.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/pick_h_marvel.png"
+    },
+    {
+      "id": "pick_h_marvel_classic",
+      "name": "PICARETA ESTELAR CLÁSSICA",
+      "desc": "Vintage e binária.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_marvel_classic.png"
+    },
+    {
+      "id": "pick_h_antman",
+      "name": "PICARETA PIM",
+      "desc": "Tamanho ajustável.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_antman.png"
+    },
+    {
+      "id": "pick_h_antman_unmasked",
+      "name": "PICARETA DO SCOTT",
+      "desc": "Improvisada, mas funciona.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_antman_unmasked.png"
     }
   ],
   "gliders": [
@@ -540,6 +580,166 @@
       "rarity": "rare",
       "price": 500,
       "art": "assets/spr/glider_valkyrie.png"
+    },
+    {
+      "id": "glider_h_spider",
+      "name": "PLANADOR DE TEIA",
+      "desc": "Paraquedas que balança em teia.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/glider_h_spider.png"
+    },
+    {
+      "id": "glider_h_classic",
+      "name": "TEIA CLÁSSICA",
+      "desc": "Descida vintage.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/glider_h_classic.png"
+    },
+    {
+      "id": "glider_h_miles",
+      "name": "MANTO VENENO",
+      "desc": "Capa elétrica.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_miles.png"
+    },
+    {
+      "id": "glider_h_gwen",
+      "name": "CAPUZ DIMENSIONAL",
+      "desc": "Desliza entre mundos.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_gwen.png"
+    },
+    {
+      "id": "glider_h_venom",
+      "name": "MANTO SIMBIONTE",
+      "desc": "Tentáculos seguram você.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/glider_h_venom.png"
+    },
+    {
+      "id": "glider_h_iron",
+      "name": "PROPULSORES MARK VII",
+      "desc": "Pouso com repulsores.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_iron.png"
+    },
+    {
+      "id": "glider_h_cap",
+      "name": "PARAQUEDAS ESTRELADO",
+      "desc": "Listras e estrelas.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_cap.png"
+    },
+    {
+      "id": "glider_h_thor",
+      "name": "ARCO DE BIFROST",
+      "desc": "Desce no arco-íris.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/glider_h_thor.png"
+    },
+    {
+      "id": "glider_h_hulk",
+      "name": "NUVEM GAMA",
+      "desc": "Queda sísmica.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_hulk.png"
+    },
+    {
+      "id": "glider_h_wolverine",
+      "name": "ASAS DE GARRA",
+      "desc": "Lâminas que planam.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_wolverine.png"
+    },
+    {
+      "id": "glider_h_widow",
+      "name": "MANTO DA ESPIÃ",
+      "desc": "Queda silenciosa.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/glider_h_widow.png"
+    },
+    {
+      "id": "glider_h_hawkeye",
+      "name": "ASAS DE FLECHA",
+      "desc": "Penas de flecha.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/glider_h_hawkeye.png"
+    },
+    {
+      "id": "glider_h_strange",
+      "name": "MANTO DE LEVITAÇÃO",
+      "desc": "Ele escolhe o caminho.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/glider_h_strange.png"
+    },
+    {
+      "id": "glider_h_wanda",
+      "name": "AURORA DE CAOS",
+      "desc": "Brilho escarlate.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/glider_h_wanda.png"
+    },
+    {
+      "id": "glider_h_wanda_azure",
+      "name": "AURORA AZURE",
+      "desc": "Brilho frio.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_wanda_azure.png"
+    },
+    {
+      "id": "glider_h_panther",
+      "name": "JATO DE WAKANDA",
+      "desc": "Tecnologia de vibranium.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/glider_h_panther.png"
+    },
+    {
+      "id": "glider_h_marvel",
+      "name": "RASTRO FÓTON",
+      "desc": "Deixa luz dourada.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/glider_h_marvel.png"
+    },
+    {
+      "id": "glider_h_marvel_classic",
+      "name": "RASTRO ESTELAR",
+      "desc": "Clássico cósmico.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_marvel_classic.png"
+    },
+    {
+      "id": "glider_h_antman",
+      "name": "ASAS DE FORMIGA",
+      "desc": "Voo em escala.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_h_antman.png"
+    },
+    {
+      "id": "glider_h_antman_unmasked",
+      "name": "HELICÓPTERO MINI",
+      "desc": "Hélices pequenas.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/glider_h_antman_unmasked.png"
     }
   ],
   "emotes": [
