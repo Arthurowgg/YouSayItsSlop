@@ -21,54 +21,9 @@ cell() {
   echo "  -> $name.png"
 }
 
-echo "[slice] marvel sheet A (2x2)"
-cell test_sheet.png 2 2 0 0 ironman
-cell test_sheet.png 2 2 1 0 capamerica
-cell test_sheet.png 2 2 0 1 wolverine
-cell test_sheet.png 2 2 1 1 hulk
-
-echo "[slice] spider-verse sheet (4x2)"
-cell sheet_spider.png 4 2 0 0 spiderman
-cell sheet_spider.png 4 2 1 0 miles
-cell sheet_spider.png 4 2 0 1 venom
-cell sheet_spider.png 4 2 1 1 gwen
-
-echo "[slice] mystic sheet (4x2)"
-cell sheet_mystic.png 4 2 0 0 thor
-cell sheet_mystic.png 4 2 1 0 blackwidow
-cell sheet_mystic.png 4 2 0 1 drstrange
-cell sheet_mystic.png 4 2 1 1 scarletwitch
-cell sheet_mystic.png 4 2 3 0 captainmarvel_classic
-cell sheet_mystic.png 4 2 2 1 scarletwitch_azure
-
-echo "[slice] tech sheet (4x2)"
-cell sheet_tech.png 4 2 0 0 blackpanther
-cell sheet_tech.png 4 2 1 0 hawkeye
-cell sheet_tech.png 4 2 3 0 antman
-cell sheet_tech.png 4 2 0 1 captainmarvel
-cell sheet_tech.png 4 2 1 1 antman_unmasked
-
-echo "[slice] originals sheet (4x2)"
-cell sheet_originals.png 4 2 0 0 jonesy
-cell sheet_originals.png 4 2 1 0 ramirez
-cell sheet_originals.png 4 2 3 0 nightshade
-cell sheet_originals.png 4 2 0 1 skullface
-cell sheet_originals.png 4 2 1 1 raven
-cell sheet_originals.png 4 2 2 1 ramirez_casual
-
-echo "[solo] spidey alt + coin"
-if [ -f "$RAW/test_spidey.png" ]; then
-  convert "$RAW/test_spidey.png" -fuzz 24% -transparent "rgb(255,0,255)" \
-    -trim +repage -filter point -resize 120x120 \
-    -gravity center -background none -extent 128x128 "$OUT/spiderman_classic.png"
-  echo "  -> spiderman_classic.png"
-fi
-if [ -f "$RAW/coin.png" ]; then
-  convert "$RAW/coin.png" -fuzz 24% -transparent "rgb(255,0,255)" \
-    -trim +repage -filter point -resize 120x120 \
-    -gravity center -background none -extent 128x128 "$OUT/coin.png"
-  echo "  -> coin.png"
-fi
+# Hero/emote icons are NO LONGER sliced from RAW sheets here:
+# fuzz-magenta keying left semi-transparent halos. All isolated icons are
+# now baked deterministically by tools/make_heroes.py (96px, true alpha).
 
 echo "[bg] skyline"
 if [ -f "$RAW/skyline.png" ]; then

@@ -230,7 +230,7 @@ def HEADS(hid):
             cv.rect(hx + 2, hy + 4, 4, 4, SILV); cv.rect(hx + hw - 6, hy + 4, 4, 4, SILV)
             cv.set(hx + 3, hy + 5, RED); cv.set(hx + 4, hy + 6, RED)
             cv.set(hx + hw - 4, hy + 5, RED); cv.set(hx + hw - 5, hy + 6, RED)
-        elif hid == "antman_unmasked":
+        elif hid in ("antman_unmasked", "dancer"):
             cv.rect(hx, hy, hw, 13, skin)
             cv.rect(hx, hy, hw, 3, hr)
             cv.set(hx, hy + 3, hr); cv.set(hx + hw - 1, hy + 3, hr)
@@ -320,7 +320,7 @@ def EMBLEMS(hid):
         elif hid in ("captainmarvel", "captainmarvel_classic"):
             cv.set(cx, ty + 4, GOLD)
             for d in ((0, -2), (0, 2), (-2, 0), (2, 0), (-1, -1), (1, -1), (-1, 1), (1, 1)): cv.set(cx + d[0], ty + 4 + d[1], GOLD)
-        elif hid == "antman" or hid == "antman_unmasked":
+        elif hid in ("antman", "antman_unmasked", "dancer"):
             cv.set(cx, ty + 3, SILV); cv.set(cx, ty + 4, SILV); cv.set(cx, ty + 5, SILV)
         elif hid == "venom":
             cv.set(cx, ty + 5, WHITE)
@@ -748,7 +748,46 @@ def main():
             for (x, yy), c in fr.px.items():
                 strip.px[(f * FR + x, yy)] = c
         save(hid, strip, folder=ANIM)
-    print("hero strips v4 done.")
+        # deterministic 96x96 icon (idle pose, x2 nearest) — replaces legacy RAW slices.
+        # uniform +2px y offset keeps tall rigs (ears/spikes at y0) inside the
+        # canvas and gives every icon the same ground line.
+        ic = HC()
+        draw_frame(ic, cfg, "idle", 0)
+        big = HC(FR * 2, FR * 2)
+        for (x, y), c in ic.px.items():
+            for j in range(2):
+                for i in range(2):
+                    big.px[(x * 2 + i, (y + 1) * 2 + j)] = c
+        save(hid, big, folder=SPR)
+    print("hero strips v4 + baked 96px icons done.")
+
+    # ---- neutral "dancer" rig: bakes emote ICONS from real emote frames ----
+    dancer = dict(boot=(90, 60, 40), suit=(214, 60, 60), suit2=(58, 108, 168),
+                  accent=(214, 60, 60), skin=(240, 190, 140), hair=(122, 82, 42), id="dancer")
+    HEAD_FN["dancer"] = HEADS("dancer")
+    EMB_FN["dancer"] = EMBLEMS("dancer")
+    dseq = [(em, i) for em in EMOTES for i in range(6)]
+    dstrip = HC(FR * len(dseq), FR)
+    for f, (an, fi) in enumerate(dseq):
+        fr = HC()
+        cfg2 = dict(dancer); cfg2["em"] = an
+        draw_frame(fr, cfg2, "emote", fi)
+        for (x, yy), cc in fr.px.items():
+            dstrip.px[(f * FR + x, yy)] = cc
+    pick_frame = {"gangnam": 1, "floss": 2, "dab": 3, "moonwalk": 1, "robot": 2,
+                  "runningman": 1, "macarena": 4, "hype": 2, "heart": 2, "groove": 1}
+    for em in EMOTES:
+        sx = (EMOTES.index(em) * 6 + pick_frame[em]) * FR
+        icon = HC(96, 96)
+        for y in range(FR):
+            for x in range(FR):
+                cc = dstrip.px.get((sx + x, y))
+                if cc:
+                    for j in range(2):
+                        for i in range(2):
+                            icon.set(x * 2 + i, (y + 1) * 2 + j, cc)  # same +1 ground offset as hero icons
+        save("emote_%s" % em, icon, folder=SPR)
+    print("emote icons baked from dancer strip.")
 
     # ---- backblings 48px ----
     def wings():
@@ -794,14 +833,7 @@ def main():
     single("glider_cosmic", f_cosmic)
     single("glider_claws", f_claws)
 
-    # ---- kree arena icon ----
-    cv = HC(32, 32)
-    cv.disc(16, 16, 13, (40, 46, 70)); cv.disc(16, 16, 11, (60, 70, 105))
-    cv.vline(8, 8, 24, (150, 160, 190)); cv.vline(23, 8, 24, (150, 160, 190))
-    cv.hline(8, 23, 8, (150, 160, 190))
-    cv.line(12, 20, 20, 12, (255, 90, 100), 2); cv.line(12, 12, 20, 20, (130, 240, 255), 2)
-    save("mode_kree_arena", cv, folder=SPR)
-    print("backblings + arena icon done.")
+    print("backblings done.")  # mode icons live in tools/make_mode_icons.py (PLAY v2)
 
 if __name__ == "__main__":
     main()

@@ -23,7 +23,7 @@ const MIME = {
 };
 
 function send(res, code, body, type) {
-  res.writeHead(code, { 'Content-Type': type || 'text/plain; charset=utf-8', 'Cache-Control': 'no-cache' });
+  res.writeHead(code, { 'Content-Type': type || 'text/plain; charset=utf-8', 'Cache-Control': 'no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache' });
   res.end(body);
 }
 

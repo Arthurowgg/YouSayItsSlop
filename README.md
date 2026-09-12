@@ -37,8 +37,8 @@ falls back to `localStorage` when the API is unreachable.
 
 | Tab | What it does |
 | --- | --- |
-| **PLAY** | True lobby: your hero shown **in-game** (24x24 animated sprite: IDLE / WALK / ATTACK / POWER / EMOTE previews) standing over the next map. Left panel: 5 original modes (Hero Rush, Squad Siege, Symbiote Siege, Infinity Hunt, Kree Arena), NEXT MAP card with reroll (map is random at match start), big skewed yellow PLAY. |
-| **SHOP** | Spotlight layout: animated hero preview + buy/equip on the left with a hero rail; featured heroes and relics/back-bling/emotes grids on the right. Rarity frames, shine sweeps, deny-shake, confetti. |
+| **PLAY** | Cinematic mode-select (PLAY v2): layered night-city scene (sky gradient, twinkling stars, drifting pixel skyline, fog banks, rising embers, mode-tinted glow) with a floating mode emblem as focal point; mode-card stack with exactly two modes — **1V1** (available, selected emphasis, pixel preview + description + meta) and **DOMINATION** (selectable for preview but `EM BREVE`, PLAY stays disabled); NEXT-MAP chip with reroll for 1v1; huge skewed yellow PLAY with hover/pressed/disabled states. |
+| **SHOP** | Pixel storefront: night-city backdrop (skyline, stars, rarity glows), featured bundle/hero strip, type-specific cards (animated hero cells, emote ring stages, gear pedestals), dedicated bundle cards with per-item icons, and a showcase page per item (rarity aura, platform, ground shadow, animations). |
 | **LOCKER** | Animated preview + styles (CSS filter recolors); select hero, relic, back bling, emote. Locked items point to the shop. |
 | **TASKS** | Stored **LEVEL + XP bar** up top, daily/weekly tasks with progress bars and claimable coin rewards (no cooldown in test mode). |
 | **DEV** | Test-only currency lab: base **500** coins, +100/+500/+5000, SET BASE 500, x2, NO-COOLDOWN / UNLOCK-ALL flags, task re-arm, save wipe, raw save viewer. |
@@ -62,8 +62,9 @@ public/
   style.css          pixel design system + all animations
   js/main.js         boot, name-only tab router, HUD, settings modal
   js/store.js        save-state store (server-backed, localStorage fallback), economy, tasks, inventory
-  js/screens.js      renderers: lobby / shop spotlight / locker / tasks(level) / dev
-  js/anim.js         24x24 sprite-strip animator (idle/walk/attack/power)
+  js/screens.js      renderers: play mode-select / shop spotlight / locker / tasks(level) / dev
+  js/anim.js         48px sprite-strip animator, 100% frame-based (no runtime
+                     transforms): idle/walk/attack/power + data-driven emotes
   js/match.js        simulated match: RANDOM map at start -> results -> rewards
   js/fx.js           lightweight particle canvas + WebAudio 8-bit sfx + confetti
   js/util.js         DOM/helpers + procedural coin fallback
@@ -72,8 +73,14 @@ public/
   assets/maps/*.png  five 192x108 side-view 2D battle maps
 tools/
   build_assets.sh    slices magenta-bg AI sheets into transparent bust sprites
+  make_shop_icons.py re-slices emote/pick/glider sheets into clean transparent
+                     96x96 icons (bg flood-key, nearest-neighbor downscale)
   make_sprites.py    deterministic hand-painted 16x16 item icons
-  make_heroes.py     parametric hero animation strips (edit configs to restyle)
+  make_heroes.py     parametric hero strips (idle/walk/attack/power + 10 emote
+                     sequences per hero) and bakes emote icons from a neutral
+                     "dancer" rig so icons == in-game animation
+  validate_assets.py audits every cosmetic icon + strip (transparency, crops,
+                     ground-line stability, emote metadata); exits 1 on problems
   make_maps.py       paints the five 2D maps + survival mode icon
   smoke_test.js      jsdom end-to-end click-through (npm run smoke)
 ```

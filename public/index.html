@@ -32,6 +32,28 @@
 <div id="toasts"></div>
 <div id="modalRoot"></div>
 
+<script>
+  // Inline (non-module) diagnostics: if the ES module graph or boot ever fails,
+  // show the error on-screen instead of a silently empty page.
+  (function () {
+    function show(msg) {
+      var d = document.getElementById('bootErr');
+      if (!d) {
+        d = document.createElement('pre');
+        d.id = 'bootErr';
+        d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;margin:0;padding:8px 12px;background:#31060a;color:#ffb4b4;z-index:999;font:12px/1.4 monospace;white-space:pre-wrap;border-top:1px solid #f66';
+        document.body.appendChild(d);
+      }
+      d.textContent = msg;
+    }
+    window.addEventListener('error', function (e) {
+      show('BOOT ERROR: ' + (e.message || 'unknown') + (e.filename ? ' @ ' + e.filename.split('/').pop() + ':' + e.lineno : ''));
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      show('ASYNC ERROR: ' + ((e.reason && e.reason.message) || e.reason || 'unknown'));
+    });
+  })();
+</script>
 <script type="module" src="js/main.js"></script>
 </body>
 </html>
