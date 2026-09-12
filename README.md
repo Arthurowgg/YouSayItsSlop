@@ -38,7 +38,7 @@ falls back to `localStorage` when the API is unreachable.
 | Tab | What it does |
 | --- | --- |
 | **PLAY** | True lobby: your hero shown **in-game** (24x24 animated sprite: IDLE / WALK / ATTACK / POWER / EMOTE previews) standing over the next map. Left panel: 5 original modes (Hero Rush, Squad Siege, Symbiote Siege, Infinity Hunt, Kree Arena), NEXT MAP card with reroll (map is random at match start), big skewed yellow PLAY. |
-| **SHOP** | Spotlight layout: animated hero preview + buy/equip on the left with a hero rail; featured heroes and relics/back-bling/emotes grids on the right. Rarity frames, shine sweeps, deny-shake, confetti. |
+| **SHOP** | Pixel storefront: night-city backdrop (skyline, stars, rarity glows), featured bundle/hero strip, type-specific cards (animated hero cells, emote ring stages, gear pedestals), dedicated bundle cards with per-item icons, and a showcase page per item (rarity aura, platform, ground shadow, animations). |
 | **LOCKER** | Animated preview + styles (CSS filter recolors); select hero, relic, back bling, emote. Locked items point to the shop. |
 | **TASKS** | Stored **LEVEL + XP bar** up top, daily/weekly tasks with progress bars and claimable coin rewards (no cooldown in test mode). |
 | **DEV** | Test-only currency lab: base **500** coins, +100/+500/+5000, SET BASE 500, x2, NO-COOLDOWN / UNLOCK-ALL flags, task re-arm, save wipe, raw save viewer. |
@@ -72,6 +72,8 @@ public/
   assets/maps/*.png  five 192x108 side-view 2D battle maps
 tools/
   build_assets.sh    slices magenta-bg AI sheets into transparent bust sprites
+  make_shop_icons.py re-slices emote/pick/glider sheets into clean transparent
+                     96x96 icons (bg flood-key, nearest-neighbor downscale)
   make_sprites.py    deterministic hand-painted 16x16 item icons
   make_heroes.py     parametric hero animation strips (edit configs to restyle)
   make_maps.py       paints the five 2D maps + survival mode icon

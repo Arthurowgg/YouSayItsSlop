@@ -89,9 +89,28 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok(['PACOTES', 'TRAJES', 'EMOTES'].every((s) => $('#screen').textContent.includes(s)) && !$('#screen').textContent.includes('DAILY'), 'shop sections (no daily)');
   ok($$('#screen .secTitle').filter((t) => t.textContent === 'EMOTES')[0].nextElementSibling.querySelectorAll('.fcard2').length === 10, 'shop EMOTES section lists 10 emotes');
   ok($$('.fcard2.bundle').length === 4, 'shop shows 4 bundles');
+
+  // shop v2 storefront presentation
+  ok(!!$('.shop2bg .s2skyline') && !!$('.shop2bg .s2stars'), 'shop has layered pixel backdrop');
+  ok(!!$('.featBundle') && !!$('.featHero'), 'featured bundle + featured hero strip');
+  ok($$('.featBundle .miniIco').length === 3, 'featured bundle shows included item icons');
+  ok($$('.bcard2').length === 4 && $$('.bcard2').every((b) => b.querySelectorAll('.miniIco').length === 3), 'bundle cards show individual item icons');
+  ok($$('.ecard .eRing').length === 20, 'emote cards use dedicated ring stages');
+  ok($$('.gcard .gBase').length === 60, 'gear cards use pedestal presentation');
+  ok($$('.hcard canvas').length === 20, 'hero cards animate in-grid');
+
   $$('.fcard2.bundle')[0].click(); await sleep(30);
   ok($('#screen').textContent.includes('INCLUÍDO'), 'bundle page lists included items');
   ok($$('.inclRow').length === 3, 'bundle page shows 3 included rows');
+  ok(!!$('.show2 .shPlatform'), 'bundle showcase has platform');
+  $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
+
+  // included items open their own showcase from the bundle page
+  $$('.fcard2.bundle')[0].click(); await sleep(30);
+  const inclName = $$('.inclRow .irNm')[0].textContent;
+  $$('.inclRow')[0].click(); await sleep(30);
+  ok(!!$('.itemName') && $('.itemName').textContent === inclName, 'included item opens its own showcase');
+  ok(!!$('.show2'), 'item showcase present');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
   $$('#screen .fcard2').find((c) => c.textContent.includes('HOMEM DE FERRO')).click(); await sleep(30);
   ok($('.itemName') && $('.itemName').textContent === 'HOMEM DE FERRO', 'item page opens for IRON MAN');
@@ -111,6 +130,16 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($('#coinCount').textContent.replace(/\D/g, '') === String(5500 - 1600), 'coins deducted (3,900)');
   $$('.actions .btn').find((b) => b.textContent.includes('ESCOLHER HERÓI')).click(); await sleep(30);
   ok(!!$('.ownedTag'), 'item page shows equipped after select');
+
+  // gear + emote showcases use type-specific presentation
+  await toShopGrid();
+  $$('#screen .gcard').find((c) => c.textContent.includes('BASTÃO')).click(); await sleep(30);
+  ok(!!$('.show2 .shItem'), 'gear showcase shows large inspectable icon');
+  ok(!!$('.show2 .shPlatform'), 'gear showcase has platform');
+  $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
+  $$('#screen .ecard')[0].click(); await sleep(30);
+  ok(!!$('.show2 .emotePlay'), 'emote showcase plays the emote animation');
+  $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
 
   // bundle buy
   await toShopGrid();
