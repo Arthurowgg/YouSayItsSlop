@@ -6,12 +6,12 @@ import { toast } from './screens.js';
 import { bus } from './bus.js';
 
 const LINES = [
-  'Dropping onto the map…',
-  'Looting pixel caches…',
-  'Objective contesting…',
-  'Third-partying a fight…',
-  'Clutching the 1v3…',
-  'Final circle…',
+  'Indo para o mapa…',
+  'Saqueando caches de pixels…',
+  'Disputando o objetivo…',
+  'Entrando na briga alheia…',
+  'Fechando o 1v3…',
+  'Círculo final…',
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -28,11 +28,11 @@ export async function deployMatch(mode) {
   ov.append(count, line, prev, bar);
   document.body.append(ov);
 
-  for (const n of ['3', '2', '1', 'GO!']) {
+  for (const n of ['3', '2', '1', 'VAI!']) {
     count.textContent = n;
     count.style.animation = 'none'; void count.offsetWidth; count.style.animation = '';
     sfx.tick();
-    await sleep(n === 'GO!' ? 400 : 650);
+    await sleep(n === 'VAI!' ? 400 : 650);
   }
 
   for (let i = 0; i < LINES.length; i++) {
@@ -57,18 +57,18 @@ export async function deployMatch(mode) {
   ov.innerHTML = '';
   ov.append(
     el('div', { class: 'count', style: { fontSize: '24px', color: win ? 'var(--gold)' : 'var(--cyan)' } },
-      win ? '#1 VICTORY!' : `#${place} PLACE`),
+      win ? '#1 VITÓRIA!' : `#${place} LUGAR`),
     el('div', { class: 'line' }, `${mode.name} · ${map.name}`),
     el('img', { class: 'mapPrev', src: map.art, alt: map.name }),
-    el('div', { class: 'line', style: { color: 'var(--ink)' } }, `ELIMINATIONS: ${kills}`),
-    el('div', { class: 'line', style: { color: 'var(--gold)' } }, `+${fmt(coins)} COINS`),
+    el('div', { class: 'line', style: { color: 'var(--ink)' } }, `ELIMINAÇÕES: ${kills}`),
+    el('div', { class: 'line', style: { color: 'var(--gold)' } }, `+${fmt(coins)} MOEDAS`),
     el('div', { class: 'line', style: { color: 'var(--cyan)' } }, `+${fmt(xp)} XP`),
     el('button', {
       class: 'btn big', style: { marginTop: '8px' },
       onclick: () => { ov.remove(); bus.refresh(); }
-    }, el('span', {}, 'RETURN TO LOBBY'))
+    }, el('span', {}, 'VOLTAR AO LOBBY'))
   );
   if (win) { confetti(120); sfx.buy(); } else sfx.click();
-  if (ups) { sfx.levelup(); confetti(80); toast(`LEVEL UP! NOW LV ${store.data.level}`, 'gold'); }
+  if (ups) { sfx.levelup(); confetti(80); toast(`SUBIU DE NÍVEL! AGORA LV ${store.data.level}`, 'gold'); }
   bus.refresh();
 }

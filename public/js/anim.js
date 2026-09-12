@@ -8,6 +8,8 @@ export const ANIMS = {
 };
 export const EMOTES = ['gangnam', 'floss', 'dab', 'moonwalk', 'robot', 'runningman', 'macarena', 'hype', 'heart', 'groove'];
 EMOTES.forEach((e, i) => { ANIMS['e_' + e] = { start: 18 + i * 6, count: 6, fps: 10 }; });
+let FPS_CAP = 60;
+export function setFpsCap(n) { FPS_CAP = Math.max(10, n | 0) || 60; }
 const GLIDER_OFF = {
   glider_wings:  { dx: 0,   dy: -2 },
   glider_shield: { dx: -11, dy: 0 },
@@ -55,7 +57,8 @@ export class Animator {
     this.raf = requestAnimationFrame((x) => this.loop(x));
     if (!this.img) return;
     const A = ANIMS[this.anim];
-    if (t - this.last < 1000 / A.fps) return;
+    const minMs = Math.max(1000 / A.fps, 1000 / FPS_CAP);
+    if (t - this.last < minMs) return;
     this.last = t;
     this.frame = (this.frame + 1) % A.count;
     const c = this.ctx, S = this.scale;

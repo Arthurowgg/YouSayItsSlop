@@ -2,10 +2,14 @@
 let ctx = null;
 let muted = false;
 let particlesOn = true;
+let volMul = 1;
+let hoverOn = true;
 
 export function toggleMute() { muted = !muted; return muted; }
 export function isMuted() { return muted; }
 export function setParticlesEnabled(on) { particlesOn = !!on; }
+export function setVolume(v) { volMul = Math.max(0, Math.min(1, v)); }
+export function setHoverEnabled(v) { hoverOn = !!v; }
 
 function ac() {
   if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -14,7 +18,8 @@ function ac() {
 }
 
 function blip(freq, dur = 0.07, type = 'square', vol = 0.04, when = 0) {
-  if (muted) return;
+  if (muted || volMul <= 0) return;
+  vol *= volMul;
   try {
     const a = ac();
     const o = a.createOscillator();
@@ -30,7 +35,7 @@ function blip(freq, dur = 0.07, type = 'square', vol = 0.04, when = 0) {
 }
 
 export const sfx = {
-  hover: () => blip(720, 0.03, 'square', 0.015),
+  hover: () => { if (hoverOn) blip(720, 0.03, 'square', 0.015); },
   click: () => { blip(520, 0.05); blip(780, 0.06, 'square', 0.03, 0.05); },
   tab: () => { blip(400, 0.05); blip(600, 0.05, 'square', 0.03, 0.06); blip(900, 0.07, 'square', 0.03, 0.12); },
   buy: () => [523, 659, 784, 1046].forEach((f, i) => blip(f, 0.09, 'square', 0.04, i * 0.07)),

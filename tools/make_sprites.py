@@ -37,6 +37,8 @@ class C:
                 d = math.hypot(x - cx, y - cy)
                 if fill and d <= r + 0.5: self.set(x, y, c)
                 elif not fill and abs(d - r) < 0.6: self.set(x, y, c)
+    def disc(self, cx, cy, r, c):
+        self.circle(cx, cy, r, c, fill=True)
     def star(self, cx, cy, r, c):
         pts = [(cx, cy - r), (cx + r * .3, cy - r * .3), (cx + r, cy - r * .2), (cx + r * .45, cy + r * .25),
                (cx + r * .6, cy + r), (cx, cy + r * .45), (cx - r * .6, cy + r), (cx - r * .45, cy + r * .25),
@@ -208,6 +210,34 @@ def emote24(kind):
         A(14, 8, 19, 3); cv.set(19, 3, SKIN); cv.set(20, 2, GOLD); A(9, 9, 10, 12)
     return cv
 
+def seticon(kind):
+    cv = C(24, 24)
+    if kind == "video":
+        cv.rect(4, 5, 16, 11, (40, 60, 110)); cv.rect(5, 6, 14, 9, (90, 140, 220))
+        cv.hline(6, 17, 8, WHT); cv.hline(6, 13, 11, WHT)
+        cv.vline(12, 16, 18, WHT); cv.hline(9, 15, 19, WHT)
+    elif kind == "audio":
+        cv.rect(5, 9, 4, 6, WHT)
+        cv.line(9, 9, 13, 5, WHT); cv.vline(13, 5, 19, WHT); cv.line(13, 19, 9, 15, WHT)
+        cv.line(16, 9, 18, 7, WHT); cv.line(16, 15, 18, 17, WHT); cv.vline(18, 8, 16, WHT)
+    elif kind == "game":
+        cv.rect(4, 8, 16, 9, WHT)
+        cv.vline(8, 10, 14, (20, 20, 30)); cv.hline(6, 10, 12, (20, 20, 30))
+        cv.set(15, 11, (255, 61, 90)); cv.set(17, 13, (53, 224, 255))
+    elif kind == "ui":
+        for i, x in enumerate((7, 12, 17)):
+            cv.vline(x, 5, 19, (90, 140, 220))
+            cv.rect(x - 2, (9, 14, 7)[i], 5, 3, WHT)
+    elif kind == "access":
+        cv.disc(12, 7, 3, WHT)
+        cv.hline(6, 18, 12, WHT); cv.vline(12, 12, 16, WHT)
+        cv.line(12, 16, 9, 20, WHT); cv.line(12, 16, 15, 20, WHT)
+    elif kind == "data":
+        cv.rect(5, 5, 14, 14, WHT)
+        cv.rect(9, 5, 6, 5, (20, 20, 30)); cv.set(13, 6, (90, 140, 220))
+        cv.rect(8, 13, 8, 6, (90, 140, 220))
+    return cv
+
 def main():
     print("[paint] hand-drawn sprites")
     save("coin", coin())
@@ -221,6 +251,45 @@ def main():
     save("glider_claws", glider("claws"))
     for k in ["gangnam", "floss", "dab", "moonwalk", "robot", "runningman", "macarena", "hype", "heart", "groove"]:
         save(f"emote_{k}", emote24(k))
+
+    def set_video():
+        cv = C(24, 24)
+        cv.rect(4, 5, 16, 11, (120, 160, 255)); cv.rect(5, 6, 14, 9, (20, 40, 90))
+        cv.line(7, 12, 10, 9, CYAN); cv.line(10, 9, 13, 13, CYAN); cv.line(13, 13, 17, 8, CYAN)
+        cv.vline(12, 16, 18, (120, 160, 255)); cv.hline(8, 16, 18, (120, 160, 255))
+        return cv
+    def set_audio():
+        cv = C(24, 24)
+        cv.rect(5, 10, 3, 4, WHT); cv.line(8, 10, 11, 7, WHT); cv.line(8, 14, 11, 17, WHT); cv.vline(11, 7, 17, WHT)
+        cv.set(14, 9, CYAN); cv.set(15, 12, CYAN); cv.set(14, 15, CYAN)
+        cv.set(17, 7, CYAN); cv.set(18, 12, CYAN); cv.set(17, 17, CYAN)
+        return cv
+    def set_game():
+        cv = C(24, 24)
+        cv.rect(4, 8, 16, 9, (70, 90, 150)); cv.rect(5, 7, 14, 1, (70, 90, 150)); cv.rect(5, 17, 14, 1, (70, 90, 150))
+        cv.vline(8, 10, 14, WHT); cv.hline(6, 10, 12, WHT)
+        cv.set(15, 11, RED); cv.set(17, 13, GOLD)
+        return cv
+    def set_ui():
+        cv = C(24, 24)
+        cv.hline(5, 19, 7, (90, 110, 170)); cv.hline(5, 19, 12, (90, 110, 170)); cv.hline(5, 19, 17, (90, 110, 170))
+        cv.rect(8, 5, 3, 4, GOLD); cv.rect(14, 10, 3, 4, CYAN); cv.rect(6, 15, 3, 4, PINK)
+        return cv
+    def set_access():
+        cv = C(24, 24)
+        cv.rect(9, 4, 6, 6, WHT)
+        cv.rect(7, 12, 10, 6, WHT); cv.rect(6, 13, 1, 4, WHT); cv.rect(17, 13, 1, 4, WHT)
+        cv.vline(12, 12, 17, (20, 40, 90))
+        return cv
+    def set_data():
+        cv = C(24, 24)
+        cv.rect(5, 5, 14, 14, (70, 110, 200))
+        cv.rect(9, 5, 6, 4, (30, 50, 110)); cv.set(13, 6, WHT)
+        cv.rect(8, 12, 8, 7, WHT); cv.hline(9, 14, 14, (70, 110, 200)); cv.hline(9, 14, 16, (70, 110, 200))
+        cv.set(18, 5, BLK)
+        return cv
+    for k in ["video", "audio", "game", "ui", "access", "data"]:
+        save(f"set_{k}", seticon(k))
     save("mode_br", mode("br"))
     save("mode_rumble", mode("rumble"))
     save("mode_stw", mode("stw"))

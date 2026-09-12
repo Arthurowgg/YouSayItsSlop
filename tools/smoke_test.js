@@ -43,7 +43,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   const $$ = (s) => [...w.document.querySelectorAll(s)];
   const tabBtns = () => $$('#tabs .tab');
 
-  ok(tabBtns().length === 5 && tabBtns().every((t) => /^[A-Z]+$/.test(t.textContent.trim())), '5 name-only tabs');
+  ok(tabBtns().length === 5 && tabBtns().every((t) => /^[A-ZÀ-Ú]+$/.test(t.textContent.trim())), '5 name-only tabs');
   const nav = $('#tabs');
   ok(nav.scrollWidth <= nav.clientWidth + 1, 'top bar not scrollable');
   ok(!$('#lvl') && !!$('#settingsBtn') && !$('#scanlines'), 'no level in bar, settings yes, scanlines gone');
@@ -67,47 +67,52 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // settings
   $('#settingsBtn').click(); await sleep(30);
-  ok($('.modal') && $('.modal').textContent.includes('SOUND') && !$('.modal').textContent.includes('SCANLINES'), 'settings modal (sound+particles only)');
-  $$('.modal .btn').find((b) => b.textContent === 'CLOSE').click(); await sleep(20);
+  ok(!!$('.settingsFS'), 'settings open fullscreen');
+  ok($$('.setTab').length === 6, '6 settings tabs');
+  ok($$('.setTab').every((t) => t.querySelector('img') && !t.querySelector('span')), 'settings tabs are icon-only');
+  $$('.setTab')[1].click(); await sleep(20);
+  ok($('.settingsFS').textContent.includes('SOM') && $('.settingsFS').textContent.includes('VOLUME DE EFEITOS'), 'audio tab shows SOM settings');
+  $$('.setFoot .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(40);
+  ok(!$('.settingsFS'), 'settings close');
 
   async function toShopGrid() {
     tabBtns()[1].click(); await sleep(30);
-    const bk = $$('.pageHead .btn').find((b) => b.textContent.includes('BACK'));
+    const bk = $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR'));
     if (bk) { bk.click(); await sleep(30); }
   }
 
   // shop: bundles + item pages
   await toShopGrid();
-  ok(['BUNDLES', 'OUTFITS', 'EMOTES'].every((s) => $('#screen').textContent.includes(s)) && !$('#screen').textContent.includes('DAILY'), 'shop sections (no daily)');
+  ok(['PACOTES', 'TRAJES', 'EMOTES'].every((s) => $('#screen').textContent.includes(s)) && !$('#screen').textContent.includes('DAILY'), 'shop sections (no daily)');
   ok($$('#screen .secTitle').filter((t) => t.textContent === 'EMOTES')[0].nextElementSibling.querySelectorAll('.fcard2').length === 10, 'shop EMOTES section lists 10 emotes');
   ok($$('.fcard2.bundle').length === 4, 'shop shows 4 bundles');
   $$('.fcard2.bundle')[0].click(); await sleep(30);
-  ok($('#screen').textContent.includes('INCLUDED'), 'bundle page lists included items');
+  ok($('#screen').textContent.includes('INCLUÍDO'), 'bundle page lists included items');
   ok($$('.inclRow').length === 3, 'bundle page shows 3 included rows');
-  $$('.pageHead .btn').find((b) => b.textContent.includes('BACK')).click(); await sleep(30);
-  $$('#screen .fcard2').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
-  ok($('.itemName') && $('.itemName').textContent === 'IRON MAN', 'item page opens for IRON MAN');
+  $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
+  $$('#screen .fcard2').find((c) => c.textContent.includes('HOMEM DE FERRO')).click(); await sleep(30);
+  ok($('.itemName') && $('.itemName').textContent === 'HOMEM DE FERRO', 'item page opens for IRON MAN');
   ok(!!$('.statbars'), 'item page shows stat bars');
   ok(!!$('.itemQuote') && $('.itemQuote').textContent.length > 4, 'item page shows hero quote');
-  $$('.actions .btn').find((b) => b.textContent.includes('BUY')).click(); await sleep(30);
-  ok($('#toasts').textContent.includes('NOT ENOUGH COINS'), 'buy denied at 500');
+  $$('.actions .btn').find((b) => b.textContent.includes('COMPRAR')).click(); await sleep(30);
+  ok($('#toasts').textContent.includes('MOEDAS INSUFICIENTES'), 'buy denied at 500');
 
   // dev coins then buy + equip
   tabBtns()[4].click(); await sleep(30);
   $$('#screen .btn').find((b) => b.textContent.includes('+5000')).click(); await sleep(30);
   ok($('#coinCount').textContent.replace(/\D/g, '') === '5500', 'dev +5000');
   await toShopGrid();
-  $$('#screen .fcard2').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
-  $$('.actions .btn').find((b) => b.textContent.includes('BUY')).click(); await sleep(30);
+  $$('#screen .fcard2').find((c) => c.textContent.includes('HOMEM DE FERRO')).click(); await sleep(30);
+  $$('.actions .btn').find((b) => b.textContent.includes('COMPRAR')).click(); await sleep(30);
   ok($('#coinCount').textContent.replace(/\D/g, '') === String(5500 - 1600), 'coins deducted (3,900)');
-  $$('.actions .btn').find((b) => b.textContent.includes('SELECT HERO')).click(); await sleep(30);
+  $$('.actions .btn').find((b) => b.textContent.includes('ESCOLHER HERÓI')).click(); await sleep(30);
   ok(!!$('.ownedTag'), 'item page shows equipped after select');
 
   // bundle buy
   await toShopGrid();
   $$('.fcard2.bundle')[1].click(); await sleep(30);
-  $$('.actions .btn').find((b) => b.textContent.includes('BUY BUNDLE')).click(); await sleep(30);
-  ok($('#toasts').textContent.includes('BUNDLE UNLOCKED'), 'bundle purchase works');
+  $$('.actions .btn').find((b) => b.textContent.includes('COMPRAR PACOTE')).click(); await sleep(30);
+  ok($('#toasts').textContent.includes('PACOTE DESBLOQUEADO'), 'bundle purchase works');
 
   // locker with combined backbling
   tabBtns()[2].click(); await sleep(30);
@@ -116,14 +121,14 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($('.lkLoadout') && $$('.lkSlot').length === 3, 'loadout row shows equipped cosmetics');
   const catBling = $$('.lkCat').find((c) => c.textContent === 'BACK BLING');
   catBling.click(); await sleep(30);
-  $$('.lockerGrid .fcard2').find((c) => c.textContent.includes('ANGEL WINGS')).click(); await sleep(30);
-  ok($('#toasts').textContent.includes('EQUIPPED'), 'glider equipped (combines on hero)');
-  ok($('.lkLoadout').textContent.includes('ANGEL WINGS'), 'loadout shows equipped back bling');
+  $$('.lockerGrid .fcard2').find((c) => c.textContent.includes('ASAS DE ANJO')).click(); await sleep(30);
+  ok($('#toasts').textContent.includes('EQUIPADO'), 'glider equipped (combines on hero)');
+  ok($('.lkLoadout').textContent.includes('ASAS DE ANJO'), 'loadout shows equipped back bling');
 
   // tasks categories + level
   tabBtns()[3].click(); await sleep(30);
   ok($('.levelPanel') && $('.levelPanel').textContent.includes('LV'), 'tasks shows stored level');
-  ok(['COMBAT', 'ECONOMY', 'STYLE'].every((c) => $('#screen').textContent.includes(c)), 'task categories shown');
+  ok(['COMBATE', 'ECONOMIA', 'ESTILO'].every((c) => $('#screen').textContent.includes(c)), 'task categories shown');
   tabBtns()[0].click(); await sleep(30);
   $$('#screen .animChips .chip').find((c) => c.textContent === 'EMOTE ▾').click(); await sleep(30);
   const pk = $$('.animChips.picker .chip');
@@ -131,20 +136,20 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   pk[1].click(); await sleep(30);
   tabBtns()[3].click(); await sleep(30);
   ok($('#screen').textContent.includes('1/1'), 'emote task 1/1');
-  const claim = $$('#screen .btn').find((b) => b.textContent === 'CLAIM' && !b.disabled);
+  const claim = $$('#screen .btn').find((b) => b.textContent === 'RESGATAR' && !b.disabled);
   ok(!!claim, 'claim enabled');
-  if (claim) { claim.click(); await sleep(30); ok($('#toasts').textContent.includes('TASK COMPLETE'), 'task claimed'); }
+  if (claim) { claim.click(); await sleep(30); ok($('#toasts').textContent.includes('TAREFA CONCLUÍDA'), 'task claimed'); }
 
   // match
   tabBtns()[0].click(); await sleep(30);
-  $$('#screen .btn').find((b) => b.textContent.trim() === 'PLAY').click();
+  $$('#screen .btn').find((b) => b.textContent.trim() === 'JOGAR').click();
   await sleep(6000);
   ok(!!$('#deploy'), 'deploy overlay');
   ok(catalog.maps.some((m) => $('#deploy').textContent.includes(m.name)), 'random map picked');
-  const back = $$('#deploy .btn').find((b) => b.textContent.includes('RETURN'));
+  const back = $$('#deploy .btn').find((b) => b.textContent.includes('VOLTAR AO LOBBY'));
   ok(!!back, 'results shown');
   if (back) { back.click(); await sleep(30); }
-  ok($('#screen').textContent.includes('MATCHES 1'), 'match stat in lobby');
+  ok($('#screen').textContent.includes('PARTIDAS 1'), 'match stat in lobby');
 
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);

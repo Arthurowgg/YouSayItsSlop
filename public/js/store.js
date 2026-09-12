@@ -16,7 +16,13 @@ export function defaultSave() {
     stats: { matches: 0, wins: 0, purchases: 0, equips: 0, emotes: 0 },
     tasks: {},
     dev: { noCooldown: true, unlockAll: false },
-    settings: { sound: true, particles: true, scanlines: true },
+    settings: {
+      sound: true, sfxVol: 80, hoverSounds: true, particles: true, fpsCap: 60, fullscreen: false,
+      brightness: 100, contrast: 100, saturation: 100, smoothing: false, bgGlow: true, screenShake: true,
+      uiScale: 100, largeText: false, showQuotes: true, rarTags: false, fpsMeter: false, heroSize: 'M',
+      reduceMotion: false, highContrast: false, colorblind: false,
+      confirmBuys: false, emoteNotes: true,
+    },
     day: todayKey(),
     week: weekKey(),
   };
@@ -57,6 +63,7 @@ export class Store {
     this.rollCalendars();
     this.ensureTasks();
     this.fixEmotes();
+    this.data.settings = { ...defaultSave().settings, ...this.data.settings };
   }
 
   fixEmotes() {

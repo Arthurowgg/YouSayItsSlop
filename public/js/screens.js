@@ -7,7 +7,11 @@ import { Animator } from './anim.js';
 import { bus } from './bus.js';
 
 const C = () => store.catalog;
-const rar = (r) => C().rarities[r] || { label: r, color: '#fff' };
+const CB = { common: '#9aa7b8', uncommon: '#0f8ff5', rare: '#00c8e0', epic: '#b060ff', legendary: '#ff9a00', marvel: '#ff5fa2' };
+const rar = (r) => {
+  const base = C().rarities[r] || { label: r, color: '#fff' };
+  return store.data.settings.colorblind ? { label: base.label, color: CB[r] || base.color } : base;
+};
 
 let anim = null;
 function killAnim() { if (anim) { anim.destroy(); anim = null; } }
@@ -78,6 +82,7 @@ function animChips(stageEl, emoteOnly) {
             if (anim) anim.setAnim('e_' + e.id.replace('emote_', ''));
             store.bump('emotes');
             picker.style.display = 'none';
+            if (!store.data.settings.emoteNotes) return;
             for (let i = 0; i < 4; i++) setTimeout(() => {
               const n = el('span', { class: 'note' }, ['♪', '♫', ''][i % 3]);
               n.style.left = 42 + Math.random() * 16 + '%';
@@ -109,13 +114,13 @@ export function renderPlay() {
 
   const bg = el('div', { class: 'bgmap', style: { backgroundImage: `url('${map.art}')` } });
 
-  const playBtn = el('button', { class: 'btn playBig', onclick: () => { sfx.launch(); deployMatch(mode); } }, 'PLAY');
+  const playBtn = el('button', { class: 'btn playBig', onclick: () => { sfx.launch(); deployMatch(mode); } }, 'JOGAR');
 
   const modeIcon = el('img', { class: 'pixel', src: mode.tile, alt: '' });
   const modeName = el('div', { class: 'rn' }, mode.name);
-  const modeSub = el('div', { class: 'rs' }, `${mode.players} PLAYERS · x${mode.mult} COINS`);
+  const modeSub = el('div', { class: 'rs' }, `${mode.players} JOGADORES · x${mode.mult} MOEDAS`);
   const modeRect = el('button', { class: 'hudRect', onclick: () => openModePrompt() },
-    modeIcon, el('div', { class: 'rt' }, el('div', { class: 'rl' }, 'GAME MODE'), modeName, modeSub));
+    modeIcon, el('div', { class: 'rt' }, el('div', { class: 'rl' }, 'MODO DE JOGO'), modeName, modeSub));
 
   const mapThumb = el('img', { class: 'pixel mapTh', src: map.art, alt: '' });
   const mapName = el('div', { class: 'rn' }, map.name);
@@ -126,7 +131,7 @@ export function renderPlay() {
       mapThumb.src = map.art; mapName.textContent = map.name;
       bg.style.backgroundImage = `url('${map.art}')`; store.persist();
     }
-  }, mapThumb, el('div', { class: 'rt' }, el('div', { class: 'rl' }, 'NEXT MAP · TAP TO REROLL'), mapName));
+  }, mapThumb, el('div', { class: 'rt' }, el('div', { class: 'rl' }, 'PRÓXIMO MAPA · TOQUE P/ TROCAR'), mapName));
 
   function openModePrompt() {
     sfx.tab();
@@ -137,19 +142,19 @@ export function renderPlay() {
       grid.innerHTML = '';
       modes.forEach((m) => grid.append(el('button', {
         class: `mpCard ${m.id === mode.id ? 'sel' : ''}`,
-        onclick: () => { sfx.equip(); mode = m; lastModeId = m.id; modeIcon.src = m.tile; modeName.textContent = m.name; modeSub.textContent = `${m.players} PLAYERS · x${m.mult} COINS`; draw(); setTimeout(close, 120); }
+        onclick: () => { sfx.equip(); mode = m; lastModeId = m.id; modeIcon.src = m.tile; modeName.textContent = m.name; modeSub.textContent = `${m.players} JOGADORES · x${m.mult} MOEDAS`; draw(); setTimeout(close, 120); }
       },
         el('img', { class: 'pixel', src: m.tile, alt: '' }),
         el('h3', {}, m.name),
         el('p', {}, m.desc || ''),
-        el('span', { class: 'mpMeta' }, `${m.players} PLAYERS · x${m.mult} COINS`),
-        m.id === mode.id ? el('span', { class: 'mpSel' }, 'SELECTED') : null)));
+        el('span', { class: 'mpMeta' }, `${m.players} JOGADORES · x${m.mult} MOEDAS`),
+        m.id === mode.id ? el('span', { class: 'mpSel' }, 'SELECIONADO') : null)));
     }
     draw();
     root.append(
       el('div', { class: 'mpHead' },
-        el('div', { class: 'panelTitle' }, 'SELECT GAME MODE'),
-        el('button', { class: 'btn ghost', onclick: () => { sfx.click(); close(); } }, '✕ CLOSE')),
+        el('div', { class: 'panelTitle' }, 'SELECIONAR MODO'),
+        el('button', { class: 'btn ghost', onclick: () => { sfx.click(); close(); } }, '✕ FECHAR')),
       grid);
     document.getElementById('modalRoot').append(root);
   }
@@ -162,9 +167,9 @@ export function renderPlay() {
     bg,
     el('div', { class: 'shade soft' }),
     el('div', { class: 'stageStats' },
-      el('span', { class: 'chip' }, `MATCHES ${store.data.stats.matches}`),
-      el('span', { class: 'chip' }, `WINS ${store.data.stats.wins}`),
-      el('span', { class: 'chip link', onclick: () => bus.gotoTab && bus.gotoTab('locker') }, 'LOCKER ▸')),
+      el('span', { class: 'chip' }, `PARTIDAS ${store.data.stats.matches}`),
+      el('span', { class: 'chip' }, `VITÓRIAS ${store.data.stats.wins}`),
+      el('span', { class: 'chip link', onclick: () => bus.gotoTab && bus.gotoTab('locker') }, 'ARMÁRIO ▸')),
     el('div', { class: 'heroWrap' }, canvas, el('div', { class: 'floorGlow', style: { '--rc': R.color } })),
     el('div', { class: 'heroPlate' },
       el('div', { class: 'pn' }, `${hero.name} · ${styleOf().name}`),
@@ -174,7 +179,8 @@ export function renderPlay() {
       emoteChips,
       el('div', { class: 'hudR' }, modeRect, mapRect))
   );
-  anim = new Animator(canvas, 8);
+  const heroScale = { S: 6, M: 8, L: 10 }[store.data.settings.heroSize] || 8;
+  anim = new Animator(canvas, heroScale);
   if (styleOf().filter !== 'none') canvas.style.filter = styleOf().filter;
   anim.load(hero.id, gliderOf());
 
@@ -205,8 +211,9 @@ function shopGrid() {
       onclick: () => { sfx.click(); shopSel = { kind: 'item', type: t, id: it.id }; bus.refresh(); }
     },
       el('div', { class: 'f2art' }, art,
+        el('span', { class: 'rarlbl' }, Rr.label),
         el('span', { class: 'f2plus' }, '+'),
-        owned ? el('span', { class: 'ownTag' }, 'OWNED') : null),
+        owned ? el('span', { class: 'ownTag' }, 'OBTIDO') : null),
       el('div', { class: 'f2bar' },
         el('span', { class: 'f2nm' }, it.name),
         el('span', { class: 'f2pr' }, priceTag(it.price))));
@@ -225,13 +232,14 @@ function shopGrid() {
         heroId ? el('img', { class: 'pixel f2img big', src: portraitOf(heroId.item.id), alt: '' }) : null,
         el('div', { class: 'f2stack' }, others.map((id) => {
           const f = store.findItem(id);
-          return f ? el('img', { class: 'pixel f2mini', src: f.type === 'hero' ? portraitOf(f.item.id) : f.item.art, alt: '' }) : null;
+          return f ? el('img', { class: 'pixel f2mini', src: f.item.art, alt: '' }) : null;
         })),
+        el('span', { class: 'rarlbl' }, Rr.label),
         el('span', { class: 'f2plus' }, '+')),
       el('div', { class: 'f2bar' },
         el('span', { class: 'f2nm' }, b.name),
         el('span', { class: 'f2pr' }, priceTag(b.price))),
-      el('span', { class: 'ribbon' }, `${b.items.length} ITEMS · SAVE ${fmt(value - b.price)}`));
+      el('span', { class: 'ribbon' }, `${b.items.length} ITENS · ECONOMIZE ${fmt(value - b.price)}`));
   }
 
   const bundles = el('div', { class: 'f2grid bundles' });
@@ -247,13 +255,13 @@ function shopGrid() {
   const mins = Math.max(0, Math.round((end - now) / 60000));
   return el('div', { class: 'col scroll screen-anim shopBg', style: { height: '100%' } },
     el('div', { class: 'shopHead' },
-      el('div', { class: 'shopTitle' }, 'ITEM SHOP'),
+      el('div', { class: 'shopTitle' }, 'LOJA DE ITENS'),
       el('span', { class: 'shopTimer' },
-        store.data.dev.noCooldown ? 'TEST MODE — ALL STOCK AVAILABLE' : `NEW STOCK IN ${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`)),
-    el('div', { class: 'secTitle' }, 'BUNDLES'), bundles,
-    el('div', { class: 'secTitle' }, 'OUTFITS'), outfits,
+        store.data.dev.noCooldown ? 'MODO TESTE — ESTOQUE LIBERADO' : `NOVO ESTOQUE EM ${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`)),
+    el('div', { class: 'secTitle' }, 'PACOTES'), bundles,
+    el('div', { class: 'secTitle' }, 'TRAJES'), outfits,
     el('div', { class: 'secTitle' }, 'EMOTES'), emotes,
-    el('div', { class: 'secTitle' }, 'RELICS & BACK BLING'), gear);
+    el('div', { class: 'secTitle' }, 'RELÍQUIAS & BACK BLING'), gear);
 }
 
 function buyButton(type, id, price, after) {
@@ -262,16 +270,27 @@ function buyButton(type, id, price, after) {
   if (!owned) return el('button', {
     class: 'btn',
     onclick: () => {
-      if (store.buy(type, id, price)) { sfx.buy(); confetti(40); toast('PURCHASED!', 'gold'); after && after(); bus.refresh(); }
-      else {
-        sfx.deny();
-        const pill = document.getElementById('coinPill');
-        pill.classList.add('deny'); setTimeout(() => pill.classList.remove('deny'), 350);
-        toast('NOT ENOUGH COINS', 'red');
-      }
+      const doBuy = () => {
+        if (store.buy(type, id, price)) { sfx.buy(); confetti(40); toast('COMPRADO!', 'gold'); after && after(); bus.refresh(); }
+        else {
+          sfx.deny();
+          const pill = document.getElementById('coinPill');
+          pill.classList.add('deny'); setTimeout(() => pill.classList.remove('deny'), 350);
+          toast('MOEDAS INSUFICIENTES', 'red');
+        }
+      };
+      if (store.data.settings.confirmBuys) {
+        const nm = (store.findItem(id) || { item: { name: '' } }).item.name;
+        const m = modal(el('div', {},
+          el('h2', {}, 'CONFIRM PURCHASE'),
+          el('p', { style: { fontSize: '16px', margin: '10px 0 14px' } }, `Buy ${nm} for ${fmt(price)} coins?`),
+          el('div', { style: { display: 'flex', gap: '10px', justifyContent: 'flex-end' } },
+            el('button', { class: 'btn ghost', onclick: () => m.close() }, 'CANCEL'),
+            el('button', { class: 'btn', onclick: () => { m.close(); doBuy(); } }, 'BUY'))));
+      } else doBuy();
     }
-  }, 'BUY ', priceTag(price));
-  if (!eq) return el('button', { class: 'btn blue', onclick: () => { sfx.equip(); store.equip(type, id); toast('EQUIPPED', 'green'); bus.refresh(); } }, type === 'hero' ? 'SELECT HERO' : 'EQUIP');
+  }, 'COMPRAR ', priceTag(price));
+  if (!eq) return el('button', { class: 'btn blue', onclick: () => { sfx.equip(); store.equip(type, id); toast('EQUIPADO', 'green'); bus.refresh(); } }, type === 'hero' ? 'ESCOLHER HERÓI' : 'EQUIPAR');
   return el('span', { class: 'ownedTag' }, '★ EQUIPPED');
 }
 
@@ -294,7 +313,7 @@ function itemPage(type, id) {
   const Rr = rar(it.rarity);
   const hero = type === 'hero' ? it : heroOf();
   const glider = type === 'glider' ? id : gliderOf();
-  const bigIcon = type !== 'hero' && type !== 'glider' ? artImg(it, 96) : null;
+  const bigIcon = type === 'glider' ? null : artImg(it, 96);
 
   const details = el('div', { class: 'col', style: { flex: '1', gap: '10px' } },
     el('div', { class: 'spotRar', style: { color: Rr.color } }, Rr.label),
@@ -302,13 +321,13 @@ function itemPage(type, id) {
     el('p', { class: 'itemDesc' }, it.desc),
     type === 'hero' ? el('p', { class: 'itemQuote' }, `“${it.quote || ''}”`) : null,
     type === 'hero' ? statBars(id) : null,
-    el('div', { class: 'priceLine' }, priceTag(it.price), store.owns(type, id) ? el('span', { style: { color: '#7dffb0', fontSize: '16px' } }, ' · OWNED') : null),
+    el('div', { class: 'priceLine' }, priceTag(it.price), store.owns(type, id) ? el('span', { style: { color: '#7dffb0', fontSize: '16px' } }, ' · OBTIDO') : null),
     el('div', { class: 'actions' }, buyButton(type, id, it.price)));
 
   return el('div', { class: 'col screen-anim', style: { height: '100%', gap: '12px' } },
     el('div', { class: 'pageHead' },
-      el('button', { class: 'btn ghost', onclick: () => { sfx.click(); shopSel = null; bus.refresh(); } }, '◂ BACK'),
-      el('div', { class: 'panelTitle' }, 'ITEM SHOP')),
+      el('button', { class: 'btn ghost', onclick: () => { sfx.click(); shopSel = null; bus.refresh(); } }, '◂ VOLTAR'),
+      el('div', { class: 'panelTitle' }, 'LOJA DE ITENS')),
     el('div', { class: 'cols', style: { flex: '1', minHeight: '0' } },
       previewPanel(hero.id, glider, bigIcon),
       details));
@@ -331,31 +350,31 @@ function bundlePage(id) {
         el('div', { style: { fontSize: '18px' } }, f.item.name),
         el('div', { style: { fontSize: '14px', color: rar(f.item.rarity).color } }, rar(f.item.rarity).label)),
       priceTag(f.item.price),
-      store.owns(f.type, iid) ? el('span', { style: { color: '#7dffb0', fontSize: '14px' } }, 'OWNED') : null));
+      store.owns(f.type, iid) ? el('span', { style: { color: '#7dffb0', fontSize: '14px' } }, 'OBTIDO') : null));
   });
 
   const allOwned = b.items.every((i) => { const f = store.findItem(i); return f && store.owns(f.type, i); });
   const buy = el('button', {
     class: 'btn',
     onclick: () => {
-      if (store.buyBundle(b)) { sfx.buy(); confetti(70); toast(`BUNDLE UNLOCKED: ${b.name}`, 'gold'); bus.refresh(); }
-      else { sfx.deny(); toast('NOT ENOUGH COINS', 'red'); }
+      if (store.buyBundle(b)) { sfx.buy(); confetti(70); toast(`PACOTE DESBLOQUEADO: ${b.name}`, 'gold'); bus.refresh(); }
+      else { sfx.deny(); toast('MOEDAS INSUFICIENTES', 'red'); }
     }
-  }, 'BUY BUNDLE ', priceTag(b.price));
+  }, 'COMPRAR PACOTE ', priceTag(b.price));
 
   const details = el('div', { class: 'col', style: { flex: '1', gap: '10px' } },
-    el('div', { class: 'spotRar', style: { color: Rr.color } }, `${Rr.label} BUNDLE`),
+    el('div', { class: 'spotRar', style: { color: Rr.color } }, `${Rr.label} PACOTE`),
     el('h2', { class: 'itemName' }, b.name),
     el('p', { class: 'itemDesc' }, b.desc),
     el('div', { class: 'priceLine' }, priceTag(b.price),
-      el('span', { style: { color: 'var(--dim)', fontSize: '15px' } }, ` · VALUE ${fmt(value)} · SAVE ${fmt(value - b.price)}`)),
-    el('div', { class: 'panelTitle' }, 'INCLUDED'), rows,
-    el('div', { class: 'actions' }, allOwned ? el('span', { class: 'ownedTag' }, 'ALL OWNED') : buy));
+      el('span', { style: { color: 'var(--dim)', fontSize: '15px' } }, ` · VALOR ${fmt(value)} · ECONOMIZE ${fmt(value - b.price)}`)),
+    el('div', { class: 'panelTitle' }, 'INCLUÍDO'), rows,
+    el('div', { class: 'actions' }, allOwned ? el('span', { class: 'ownedTag' }, 'TUDO OBTIDO') : buy));
 
   return el('div', { class: 'col screen-anim', style: { height: '100%', gap: '12px' } },
     el('div', { class: 'pageHead' },
-      el('button', { class: 'btn ghost', onclick: () => { sfx.click(); shopSel = null; bus.refresh(); } }, '◂ BACK'),
-      el('div', { class: 'panelTitle' }, 'BUNDLE')),
+      el('button', { class: 'btn ghost', onclick: () => { sfx.click(); shopSel = null; bus.refresh(); } }, '◂ VOLTAR'),
+      el('div', { class: 'panelTitle' }, 'PACOTE')),
     el('div', { class: 'cols', style: { flex: '1', minHeight: '0' } },
       previewPanel(firstHero ? firstHero.item.id : heroOf().id, glider || gliderOf(), null),
       details));
@@ -365,7 +384,7 @@ function bundlePage(id) {
 export function renderLocker() {
   killAnim();
   let cat = 'hero';
-  const cats = [['hero', 'OUTFITS'], ['glider', 'BACK BLING'], ['pick', 'RELICS'], ['emote', 'EMOTES'], ['style', 'STYLES']];
+  const cats = [['hero', 'TRAJES'], ['glider', 'BACK BLING'], ['pick', 'RELÍQUIAS'], ['emote', 'EMOTES'], ['style', 'ESTILOS']];
 
   const canvas = el('canvas', { class: 'hero pixel' });
   const seriesTag = el('div', { class: 'lkSeries' }, '');
@@ -378,10 +397,10 @@ export function renderLocker() {
     const g = C().gliders.find((x) => x.id === gliderOf());
     const p = C().picks.find((x) => x.id === store.data.equipped.pick);
     const e = C().emotes.find((x) => x.id === store.data.equipped.emote);
-    [[g, 'BACK BLING'], [p, 'RELIC'], [e, 'EMOTE']].forEach(([it, label]) => {
+    [[g, 'BACK BLING'], [p, 'RELÍQUIA'], [e, 'EMOTE']].forEach(([it, label]) => {
       loadoutRow.append(el('div', { class: 'lkSlot', title: label },
         it ? el('img', { class: 'pixel', src: it.art, alt: '' }) : el('span', { class: 'lkEmpty' }, '—'),
-        el('span', {}, it ? it.name : `NO ${label}`)));
+        el('span', {}, it ? it.name : `SEM ${label}`)));
     });
   }
 
@@ -394,7 +413,7 @@ export function renderLocker() {
 
   function syncPreview() {
     const h = heroOf(); const Rr = rar(h.rarity);
-    seriesTag.textContent = `${Rr.label} SERIES — OUTFIT`;
+    seriesTag.textContent = `${Rr.label} SÉRIE — TRAJE`;
     seriesTag.style.color = Rr.color;
     nameTag.textContent = h.name;
     quoteTag.textContent = `“${h.quote || ''}”`;
@@ -426,9 +445,9 @@ export function renderLocker() {
     else if (cat === 'glider') list = C().gliders.filter((x) => store.owns('glider', x.id));
     else list = C().emotes.filter((x) => store.owns('emote', x.id));
     headRow.innerHTML = '';
-    headRow.append(el('span', { class: 'lkAll' }, `ALL (${list.length})`));
+    headRow.append(el('span', { class: 'lkAll' }, `TODOS (${list.length})`));
     if (!list.length) {
-      headRow.append(el('span', { class: 'lkNone' }, ' — NOTHING OWNED YET, VISIT THE SHOP'));
+      headRow.append(el('span', { class: 'lkNone' }, ' — NADA OBTIDO AINDA, VISITE A LOJA'));
       return;
     }
     list.forEach((it, i) => {
@@ -444,10 +463,12 @@ export function renderLocker() {
         style: { '--rc': Rr.color, animationDelay: `${i * 20}ms` },
         onclick: () => {
           sfx.equip(); store.equip(cat === 'hero' ? 'hero' : cat, it.id);
-          drawGrid(); syncPreview(); toast(`EQUIPPED ${it.name}`, 'green');
+          drawGrid(); syncPreview(); toast(`EQUIPADO ${it.name}`, 'green');
         }
       },
-        el('div', { class: 'f2art' }, art, eq ? el('span', { class: 'eqTag' }, 'EQUIPPED') : null),
+        el('div', { class: 'f2art' }, art,
+          el('span', { class: 'rarlbl' }, Rr.label),
+          eq ? el('span', { class: 'eqTag' }, 'EQUIPADO') : null),
         el('div', { class: 'f2bar' }, el('span', { class: 'f2nm' }, it.name))));
     });
   }
@@ -473,22 +494,22 @@ export function renderTasks() {
       const p = store.taskProgress(t);
       box.append(el('div', { class: `task pixelbox ${p.done && !p.claimed ? 'done' : ''} ${p.claimed ? 'claimed' : ''}` },
         el('div', {},
-          el('div', { class: 'd' }, `${t.desc}  ·  ${t.type === 'daily' ? 'DAILY' : 'WEEKLY'}`),
+          el('div', { class: 'd' }, `${t.desc}  ·  ${t.type === 'daily' ? 'DIÁRIO' : 'SEMANAL'}`),
           el('div', { class: 'bar' }, el('i', { style: { width: `${(p.cur / t.count) * 100}%`, background: `linear-gradient(90deg, ${catDef.color}, #fff)` } })),
           el('div', { class: 'meta' },
             el('span', {}, `${p.cur}/${t.count}`),
-            el('span', { class: 'rwd' }, `+${t.coins} COINS`),
+            el('span', { class: 'rwd' }, `+${t.coins} MOEDAS`),
             el('span', { style: { color: 'var(--cyan)' } }, `+${t.xp} XP`))),
         el('button', {
           class: `btn ${p.done && !p.claimed ? '' : 'ghost'}`,
           disabled: !p.done || p.claimed,
-          onclick: () => { if (store.claimTask(t)) { sfx.claim(); confetti(50); toast(`TASK COMPLETE +${t.coins} COINS`, 'gold'); bus.refresh(); } }
-        }, p.claimed ? 'CLAIMED' : 'CLAIM')));
+          onclick: () => { if (store.claimTask(t)) { sfx.claim(); confetti(50); toast(`TAREFA CONCLUÍDA +${t.coins} MOEDAS`, 'gold'); bus.refresh(); } }
+        }, p.claimed ? 'RESGATADO' : 'RESGATAR')));
     });
     wrap.append(box);
   }
   if (store.data.dev.noCooldown)
-    wrap.append(el('p', { style: { fontSize: '14px', color: 'var(--dim)' } }, 'TEST MODE: claimed tasks re-arm instantly — no cooldown.'));
+    wrap.append(el('p', { style: { fontSize: '14px', color: 'var(--dim)' } }, 'MODO TESTE: tarefas resgatadas rearmam na hora — sem cooldown.'));
   return wrap;
 }
 
@@ -498,26 +519,26 @@ export function renderDev() {
   const wrap = el('div', { class: 'col scroll screen-anim', style: { height: '100%', gap: '12px' } });
   wrap.append(
     el('div', { style: { display: 'flex', gap: '12px', alignItems: 'center' } },
-      el('div', { class: 'panelTitle' }, 'DEV / CURRENCY LAB'),
-      el('span', { class: 'devBadge' }, 'TEST PURPOSE ONLY')),
+      el('div', { class: 'panelTitle' }, 'DEV / LAB DE MOEDAS'),
+      el('span', { class: 'devBadge' }, 'SÓ PARA TESTES')),
     el('p', { style: { fontSize: '15px', color: 'var(--dim)' } },
-      'Base test currency is 500 coins. Instant and cooldown-free, for validating the economy before the real game ships.'));
-  wrap.append(el('div', { class: 'panelTitle' }, 'OBTAIN CURRENCY'),
+      'Moeda base de teste: 500 moedas. Instantâneo e sem cooldown, para validar a economia antes do jogo real.'));
+  wrap.append(el('div', { class: 'panelTitle' }, 'OBTER MOEDAS'),
     el('div', { class: 'devRow' },
-      el('button', { class: 'btn', onclick: () => { store.addCoins(100); sfx.claim(); toast('+100 COINS', 'gold'); } }, '+100'),
-      el('button', { class: 'btn', onclick: () => { store.addCoins(500); sfx.claim(); toast('+500 COINS', 'gold'); } }, '+500'),
-      el('button', { class: 'btn', onclick: () => { store.addCoins(5000); sfx.claim(); toast('+5000 COINS', 'gold'); } }, '+5000'),
-      el('button', { class: 'btn blue', onclick: () => { store.setCoins(500); sfx.click(); toast('RESET TO BASE 500', 'green'); } }, 'SET BASE 500'),
-      el('button', { class: 'btn blue', onclick: () => { store.setCoins(store.data.coins * 2); sfx.click(); toast('COINS x2', 'green'); } }, 'x2')));
-  wrap.append(el('div', { class: 'panelTitle' }, 'FLAGS'),
+      el('button', { class: 'btn', onclick: () => { store.addCoins(100); sfx.claim(); toast('+100 MOEDAS', 'gold'); } }, '+100'),
+      el('button', { class: 'btn', onclick: () => { store.addCoins(500); sfx.claim(); toast('+500 MOEDAS', 'gold'); } }, '+500'),
+      el('button', { class: 'btn', onclick: () => { store.addCoins(5000); sfx.claim(); toast('+5000 MOEDAS', 'gold'); } }, '+5000'),
+      el('button', { class: 'btn blue', onclick: () => { store.setCoins(500); sfx.click(); toast('BASE 500 RESTAURADA', 'green'); } }, 'BASE 500'),
+      el('button', { class: 'btn blue', onclick: () => { store.setCoins(store.data.coins * 2); sfx.click(); toast('MOEDAS x2', 'green'); } }, 'x2')));
+  wrap.append(el('div', { class: 'panelTitle' }, 'OPÇÕES'),
     el('div', { class: 'devRow' },
       el('button', { class: `btn ${store.data.dev.noCooldown ? '' : 'ghost'}`, onclick: () => { store.data.dev.noCooldown = !store.data.dev.noCooldown; store.emit('dev'); sfx.click(); bus.refresh(); } },
-        `NO COOLDOWN: ${store.data.dev.noCooldown ? 'ON' : 'OFF'}`),
+        `SEM COOLDOWN: ${store.data.dev.noCooldown ? 'LIG' : 'DESL'}`),
       el('button', { class: `btn ${store.data.dev.unlockAll ? '' : 'ghost'}`, onclick: () => { store.data.dev.unlockAll = !store.data.dev.unlockAll; store.emit('dev'); sfx.click(); bus.refresh(); } },
-        `UNLOCK ALL (TEST): ${store.data.dev.unlockAll ? 'ON' : 'OFF'}`),
-      el('button', { class: 'btn dark', onclick: () => { store.resetTasks(); sfx.click(); toast('TASKS RE-ARMED', 'green'); bus.refresh(); } }, 'RE-ARM TASKS'),
-      el('button', { class: 'btn danger', onclick: () => { store.resetAll(); sfx.deny(); toast('SAVE WIPED', 'red'); } }, 'WIPE SAVE')));
-  wrap.append(el('div', { class: 'panelTitle' }, 'RAW SAVE'),
+        `DESBLOQUEAR TUDO (TESTE): ${store.data.dev.unlockAll ? 'LIG' : 'DESL'}`),
+      el('button', { class: 'btn dark', onclick: () => { store.resetTasks(); sfx.click(); toast('TAREFAS REARMADAS', 'green'); bus.refresh(); } }, 'REARMAR TAREFAS'),
+      el('button', { class: 'btn danger', onclick: () => { store.resetAll(); sfx.deny(); toast('SAVE APAGADO', 'red'); } }, 'APAGAR SAVE')));
+  wrap.append(el('div', { class: 'panelTitle' }, 'SAVE BRUTO'),
     el('pre', { class: 'save' }, JSON.stringify(store.data, null, 2)));
   return wrap;
 }
