@@ -45,7 +45,6 @@ function buildTabs() {
 function applySettings() {
   const s = store.data.settings;
   setParticlesEnabled(!!s.particles);
-  document.getElementById('scanlines').style.display = s.scanlines ? '' : 'none';
   if (isMuted() === !!s.sound) toggleMute(); // muted should equal !sound
 }
 
@@ -67,7 +66,6 @@ function openSettings() {
     el('h2', {}, 'SETTINGS'),
     row('SOUND', 'sound'),
     row('LOBBY PARTICLES', 'particles'),
-    row('SCANLINES', 'scanlines'),
     el('div', { class: 'row', style: { border: 'none', justifyContent: 'flex-end', marginTop: '10px' } },
       el('button', { class: 'btn ghost', onclick: () => m.close() }, 'CLOSE'))
   ));

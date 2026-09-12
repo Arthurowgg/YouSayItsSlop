@@ -156,6 +156,27 @@ export class Store {
     this.emit('buy');
     return true;
   }
+  buyBundle(b) {
+    if (this.data.coins < b.price) return false;
+    this.data.coins -= b.price;
+    for (const id of b.items) {
+      const it = this.findItem(id);
+      if (!it || this.owns(it.type, id)) continue;
+      const bag = it.type === 'hero' ? 'owned' : it.type === 'pick' ? 'picks' : it.type === 'glider' ? 'gliders' : 'emotes';
+      this.data[bag].push(id);
+    }
+    this.bump('purchases');
+    this.emit('buy');
+    return true;
+  }
+  findItem(id) {
+    const c = this.catalog;
+    if (c.heroes.some((h) => h.id === id)) return { type: 'hero', item: c.heroes.find((h) => h.id === id) };
+    if (c.picks.some((h) => h.id === id)) return { type: 'pick', item: c.picks.find((h) => h.id === id) };
+    if (c.gliders.some((h) => h.id === id)) return { type: 'glider', item: c.gliders.find((h) => h.id === id) };
+    if (c.emotes.some((h) => h.id === id)) return { type: 'emote', item: c.emotes.find((h) => h.id === id) };
+    return null;
+  }
   equip(type, id) {
     const key = type === 'hero' ? 'hero' : type === 'pick' ? 'pick' : type === 'glider' ? 'glider' : type === 'emote' ? 'emote' : 'style';
     this.data.equipped[key] = id;

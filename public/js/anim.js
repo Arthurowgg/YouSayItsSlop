@@ -1,26 +1,35 @@
-// Tiny sprite-strip animator for in-game hero sprites (24x24 frames).
+// Sprite-strip animator v2: 48x48 frames, smoother rates, backbling layer.
+export const FRAME = 48;
 export const ANIMS = {
-  idle:   { start: 0, count: 2, fps: 3 },
-  walk:   { start: 2, count: 4, fps: 6 },
-  attack: { start: 6, count: 3, fps: 6 },
-  power:  { start: 9, count: 3, fps: 5 },
+  idle:   { start: 0,  count: 4, fps: 7 },
+  walk:   { start: 4,  count: 6, fps: 11 },
+  attack: { start: 10, count: 4, fps: 12 },
+  power:  { start: 14, count: 4, fps: 9 },
+};
+const GLIDER_OFF = {
+  glider_wings:  { dx: 0,   dy: -2 },
+  glider_shield: { dx: -11, dy: 0 },
+  glider_cosmic: { dx: 0,   dy: -2 },
+  glider_claws:  { dx: 10,  dy: -4 },
 };
 
 export class Animator {
-  constructor(canvas, scale = 7) {
+  constructor(canvas, scale = 5) {
     this.cv = canvas;
     this.scale = scale;
     this.ctx = canvas.getContext('2d');
-    canvas.width = 24 * scale;
-    canvas.height = 24 * scale;
+    canvas.width = FRAME * scale;
+    canvas.height = FRAME * scale;
     this.img = null;
+    this.gimg = null;
+    this.gid = null;
     this.anim = 'idle';
     this.frame = 0;
     this.last = 0;
     this.raf = 0;
     this.dead = false;
   }
-  load(heroId) {
+  load(heroId, gliderId) {
     const Img = (typeof window !== 'undefined' && window.Image) ? window.Image : Image;
     const img = new Img();
     img.onload = () => {
@@ -30,6 +39,11 @@ export class Animator {
       if (!this.raf) this.raf = requestAnimationFrame((t) => this.loop(t));
     };
     img.src = `assets/anim/${heroId}.png`;
+    if (gliderId) {
+      const g = new Img();
+      g.onload = () => { if (!this.dead) { this.gimg = g; this.gid = gliderId; } };
+      g.src = `assets/anim/${gliderId}.png`;
+    } else { this.gimg = null; this.gid = null; }
   }
   setAnim(a) {
     if (this.anim !== a) { this.anim = a; this.frame = 0; this.last = 0; }
@@ -42,10 +56,16 @@ export class Animator {
     if (t - this.last < 1000 / A.fps) return;
     this.last = t;
     this.frame = (this.frame + 1) % A.count;
-    const c = this.ctx;
+    const c = this.ctx, S = this.scale;
     c.imageSmoothingEnabled = false;
     c.clearRect(0, 0, this.cv.width, this.cv.height);
-    c.drawImage(this.img, (A.start + this.frame) * 24, 0, 24, 24, 0, 0, 24 * this.scale, 24 * this.scale);
+    if (this.gimg) {
+      const off = GLIDER_OFF[this.gid] || { dx: 0, dy: 0 };
+      const gw = this.gimg.width / FRAME; // wings strip = 2 frames
+      const gf = gw > 1 ? (Math.floor(this.frame / 2) % 2) : 0;
+      c.drawImage(this.gimg, gf * FRAME, 0, FRAME, FRAME, off.dx * S, off.dy * S, FRAME * S, FRAME * S);
+    }
+    c.drawImage(this.img, (A.start + this.frame) * FRAME, 0, FRAME, FRAME, 0, 0, FRAME * S, FRAME * S);
   }
   destroy() { this.dead = true; if (typeof cancelAnimationFrame !== 'undefined') cancelAnimationFrame(this.raf); this.raf = 0; }
 }
