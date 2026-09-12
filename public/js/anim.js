@@ -40,18 +40,22 @@ export function debugPause() { const a = LIVE[LIVE.length - 1]; if (a) a.paused 
 export function debugStep(d = 1) { const a = LIVE[LIVE.length - 1]; if (a) a.step(d); }
 
 // ---- asset preload + fallback registry ----
-const cache = new Map();
+// Decoded sheets are cached so a re-render (UI update, tab switch, item change)
+// attaches the Image synchronously: no blank canvas frame, no load flicker.
+const cache = new Map(); // id -> { img, ready, p }
 export function preloadHero(id) {
-  if (cache.has(id)) return cache.get(id);
-  const p = new Promise((res) => {
+  const c = cache.get(id);
+  if (c) return c.ready ? Promise.resolve(c.img) : c.p;
+  const entry = { img: null, ready: false, p: null };
+  entry.p = new Promise((res) => {
     const Img = (typeof window !== 'undefined' && window.Image) ? window.Image : Image;
     const img = new Img();
-    img.onload = () => res(img);
-    img.onerror = () => res(null);
+    img.onload = () => { entry.img = img; entry.ready = true; res(img); };
+    img.onerror = () => { entry.ready = true; res(null); }; // clean fallback: stay empty
     img.src = `assets/anim/${id}.png`;
   });
-  cache.set(id, p);
-  return p;
+  cache.set(id, entry);
+  return entry.p;
 }
 
 const GLIDER_OFF = {
@@ -86,18 +90,21 @@ export class Animator {
     this.onEnd = null;
     LIVE.push(this);
   }
+  applyImg(img, heroId) {
+    if (!img) { this.missing = true; return; } // fallback: render nothing, no crash
+    this.img = img;
+    this.hid = heroId;
+    this.res = img.height;
+    this.frames = Math.max(1, Math.round(img.width / img.height));
+    this.frame = 0;
+    this.cv.classList.add('ready');
+    if (!this.raf) this.raf = requestAnimationFrame((t) => this.loop(t));
+  }
   load(heroId, gliderId) {
-    preloadHero(heroId).then((img) => {
-      if (this.dead) return;
-      if (!img) { this.missing = true; return; } // fallback: render nothing, no crash
-      this.img = img;
-      this.hid = heroId;
-      this.res = img.height;
-      this.frames = Math.max(1, Math.round(img.width / img.height));
-      this.frame = 0;
-      this.cv.classList.add('ready');
-      if (!this.raf) this.raf = requestAnimationFrame((t) => this.loop(t));
-    });
+    // synchronous when the sheet is already decoded — re-renders never flash
+    const c = cache.get(heroId);
+    if (c && c.ready) this.applyImg(c.img, heroId);
+    else preloadHero(heroId).then((img) => { if (!this.dead) this.applyImg(img, heroId); });
     if (gliderId) {
       const Img = (typeof window !== 'undefined' && window.Image) ? window.Image : Image;
       const g = new Img();

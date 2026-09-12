@@ -89,12 +89,12 @@ def swords():
 
 def flag():
     cv = C()
-    # hill
-    for i, w in enumerate((16, 20, 22)):
-        y = 19 + i
+    # hill (kept 2px inside the canvas so the outline never touches edges)
+    for i, w in enumerate((14, 18, 20)):
+        y = 18 + i
         cv.rect(12 - w // 2, y, w, 1, GRASS if i == 0 else GRASS_D)
-    cv.line(6, 19, 9, 18, GRASS)
-    cv.line(17, 18, 20, 19, GRASS)
+    cv.line(7, 18, 9, 17, GRASS)
+    cv.line(16, 17, 18, 18, GRASS)
     # pole
     cv.line(11, 4, 11, 19, BARK, 1)
     cv.set(11, 3, GOLD)

@@ -58,6 +58,9 @@ def audit_icon(path, kind, max_frags=3):
         im = conv
     a = alpha(im)
     h, w = a.shape
+    semi = int(((a > 0) & (a < 255)).sum())
+    if semi:
+        bad(f'{kind} {os.path.basename(path)}: {semi} semi-transparent pixels (halo / keying fringe)')
     m = a > 24
     if m.sum() < 16:
         bad(f'{kind} {os.path.basename(path)}: empty sprite')

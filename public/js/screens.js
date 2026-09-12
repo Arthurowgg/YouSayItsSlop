@@ -283,7 +283,7 @@ function bundleCard(b, i) {
   },
     el('div', { class: 'f2art bArt2' },
       el('div', { class: 'bMinis' }, b.items.map((id) => miniIcon(id))),
-      heroF ? el('img', { class: 'pixel bHero', src: portraitOf(heroF.item.id), alt: '', width: 128, height: 128 }) : null,
+      heroF ? el('img', { class: 'pixel bHero', src: portraitOf(heroF.item.id), alt: '', width: 96, height: 96 }) : null,
       el('span', { class: 'savePill' }, `ECONOMIZE ${fmt(value - b.price)}`),
       el('span', { class: 'bCount' }, `${b.items.length} ITENS`)),
     el('div', { class: 'f2bar bBar' },

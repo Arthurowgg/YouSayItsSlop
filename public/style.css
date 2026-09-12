@@ -578,7 +578,9 @@ body.reduce-motion .in-settings { animation: none; }
 .ribbon { display: none; }
 
 /* ===== v13: cards com animação própria + loading ===== */
-.cardAnim { opacity: 0; transition: opacity .25s ease; }
+/* no opacity gate: canvases draw from the synchronous sheet cache, an
+   invisible-then-fade loading state was reading as flicker on re-renders */
+.cardAnim { opacity: 1; }
 .cardAnim.ready { opacity: 1; }
 
 /* ===== v14: cohesive pixel storefront (shop v2) ===== */

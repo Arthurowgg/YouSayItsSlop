@@ -748,7 +748,18 @@ def main():
             for (x, yy), c in fr.px.items():
                 strip.px[(f * FR + x, yy)] = c
         save(hid, strip, folder=ANIM)
-    print("hero strips v4 done.")
+        # deterministic 96x96 icon (idle pose, x2 nearest) — replaces legacy RAW slices.
+        # uniform +2px y offset keeps tall rigs (ears/spikes at y0) inside the
+        # canvas and gives every icon the same ground line.
+        ic = HC()
+        draw_frame(ic, cfg, "idle", 0)
+        big = HC(FR * 2, FR * 2)
+        for (x, y), c in ic.px.items():
+            for j in range(2):
+                for i in range(2):
+                    big.px[(x * 2 + i, (y + 1) * 2 + j)] = c
+        save(hid, big, folder=SPR)
+    print("hero strips v4 + baked 96px icons done.")
 
     # ---- neutral "dancer" rig: bakes emote ICONS from real emote frames ----
     dancer = dict(boot=(90, 60, 40), suit=(214, 60, 60), suit2=(58, 108, 168),
@@ -774,7 +785,7 @@ def main():
                 if cc:
                     for j in range(2):
                         for i in range(2):
-                            icon.set(x * 2 + i, y * 2 + j, cc)
+                            icon.set(x * 2 + i, (y + 1) * 2 + j, cc)  # same +1 ground offset as hero icons
         save("emote_%s" % em, icon, folder=SPR)
     print("emote icons baked from dancer strip.")
 
