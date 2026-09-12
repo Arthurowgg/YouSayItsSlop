@@ -2,7 +2,7 @@
 import { el, fmt, coinDataURL } from './util.js';
 import { store } from './store.js';
 import { startParticles, setParticlesEnabled, setVolume, setHoverEnabled, sfx, toggleMute, isMuted } from './fx.js';
-import { setFpsCap } from './anim.js';
+import { setFpsCap, initEmoteAnims, debugPause, debugStep } from './anim.js';
 import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast, modal, shopHome } from './screens.js';
 import { setAnimDebug, getAnimDebug } from './anim.js';
 import { bus } from './bus.js';
@@ -248,6 +248,7 @@ const storeMod = { defaultSave: null };
 
 async function boot() {
   await store.load();
+  initEmoteAnims(store.catalog.emotes);
 
   const ci = document.getElementById('coinIcon');
   ci.addEventListener('error', () => { ci.src = coinDataURL(18); }, { once: true });
@@ -271,6 +272,8 @@ async function boot() {
     const keys = { 1: 'play', 2: 'shop', 3: 'locker', 4: 'tasks', 5: 'dev' };
     if (keys[e.key]) { current = keys[e.key]; sfx.tab(); buildTabs(); renderCurrent(); }
     else if (e.key === '`') { setAnimDebug(!getAnimDebug()); }
+    else if (e.key === ',') { debugPause(); }
+    else if (e.key === '.') { debugStep(1); }
     else if (e.key === 'Escape') {
       const fsx = document.querySelector('.settingsFS');
       if (fsx) { sfx.click(); fsx.remove(); }

@@ -4,6 +4,7 @@ import { store } from './store.js';
 import { sfx, confetti } from './fx.js';
 import { deployMatch } from './match.js';
 import { Animator } from './anim.js';
+import { playEmote } from './emotes.js';
 import { bus } from './bus.js';
 
 const C = () => store.catalog;
@@ -75,7 +76,7 @@ function animChips(stageEl, emoteOnly) {
           class: 'chip',
           onclick: () => {
             sfx.claim();
-            if (anim) anim.setAnim('e_' + e.id.replace('emote_', ''));
+            if (anim) playEmote(anim, e.id);
             store.bump('emotes');
             picker.style.display = 'none';
             if (!store.data.settings.emoteNotes) return;
@@ -392,9 +393,7 @@ function showcase(type, it) {
       el('div', { class: 'animChips emotePlay' }, el('span', { class: 'chip sel' }, '▸ ANIMAÇÃO DO EMOTE')));
     anim = new Animator(cv, 7);
     anim.load(heroOf().id, null);
-    const suf = it.id.replace('emote_', '');
-    const mine = anim;
-    setTimeout(() => { if (anim === mine) mine.setAnim('e_' + suf); }, 60);
+    playEmote(anim, it.id);
   } else {
     box.append(el('div', { class: 'shStage gear' },
       el('span', { class: 'shSpot' }),

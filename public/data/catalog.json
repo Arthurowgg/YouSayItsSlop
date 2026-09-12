@@ -749,7 +749,20 @@
       "art": "assets/spr/emote_dab.png",
       "rarity": "common",
       "price": 0,
-      "desc": "Clássico certificado."
+      "desc": "Clássico certificado.",
+      "anim": {
+        "start": 30,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": null,
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_groove",
@@ -757,7 +770,22 @@
       "art": "assets/spr/emote_groove.png",
       "rarity": "common",
       "price": 0,
-      "desc": "Sábado à noite, toda noite."
+      "desc": "Sábado à noite, toda noite.",
+      "anim": {
+        "start": 72,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": [
+        "notes"
+      ],
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_hype",
@@ -765,7 +793,22 @@
       "art": "assets/spr/emote_hype.png",
       "rarity": "uncommon",
       "price": 250,
-      "desc": "BORA!"
+      "desc": "BORA!",
+      "anim": {
+        "start": 60,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": [
+        "notes"
+      ],
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_runningman",
@@ -773,7 +816,20 @@
       "art": "assets/spr/emote_runningman.png",
       "rarity": "uncommon",
       "price": 300,
-      "desc": "Indo a lugar nenhum, bem rápido."
+      "desc": "Indo a lugar nenhum, bem rápido.",
+      "anim": {
+        "start": 48,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": null,
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_heart",
@@ -781,7 +837,22 @@
       "art": "assets/spr/emote_heart.png",
       "rarity": "rare",
       "price": 300,
-      "desc": "Para os fãs."
+      "desc": "Para os fãs.",
+      "anim": {
+        "start": 66,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": [
+        "notes"
+      ],
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_floss",
@@ -789,7 +860,20 @@
       "art": "assets/spr/emote_floss.png",
       "rarity": "rare",
       "price": 400,
-      "desc": "Pra lá e pra trás. Para sempre."
+      "desc": "Pra lá e pra trás. Para sempre.",
+      "anim": {
+        "start": 24,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": null,
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_robot",
@@ -797,7 +881,20 @@
       "art": "assets/spr/emote_robot.png",
       "rarity": "rare",
       "price": 400,
-      "desc": "Bip. Bop. Bap."
+      "desc": "Bip. Bop. Bap.",
+      "anim": {
+        "start": 42,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": null,
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_macarena",
@@ -805,7 +902,22 @@
       "art": "assets/spr/emote_macarena.png",
       "rarity": "rare",
       "price": 400,
-      "desc": "Você sabe os passos."
+      "desc": "Você sabe os passos.",
+      "anim": {
+        "start": 54,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": [
+        "notes"
+      ],
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_gangnam",
@@ -813,7 +925,22 @@
       "art": "assets/spr/emote_gangnam.png",
       "rarity": "epic",
       "price": 500,
-      "desc": "Estilo pixel de Gangnam."
+      "desc": "Estilo pixel de Gangnam.",
+      "anim": {
+        "start": 18,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": [
+        "notes"
+      ],
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     },
     {
       "id": "emote_moonwalk",
@@ -821,7 +948,20 @@
       "art": "assets/spr/emote_moonwalk.png",
       "rarity": "epic",
       "price": 600,
-      "desc": "Suave. Para trás. Icônico."
+      "desc": "Suave. Para trás. Icônico.",
+      "anim": {
+        "start": 36,
+        "frames": 6,
+        "fps": 9,
+        "loop": true
+      },
+      "chars": "all",
+      "sfx": null,
+      "fx": null,
+      "preview": {
+        "scale": 7,
+        "iconScale": 2
+      }
     }
   ],
   "modes": [

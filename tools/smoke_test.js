@@ -139,6 +139,8 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
   $$('#screen .ecard')[0].click(); await sleep(30);
   ok(!!$('.show2 .emotePlay'), 'emote showcase plays the emote animation');
+  ok(catalog.emotes.every((x) => x.anim && x.anim.frames === 6 && typeof x.anim.start === 'number'), 'emotes carry data-driven animation metadata');
+  ok(!!w.__ANIMS && w.__ANIMS['e_dab'] && w.__ANIMS['e_dab'].start === 30 && w.__ANIMS['e_gangnam'].start === 18, 'emote anims registered from catalog data');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
 
   // bundle buy

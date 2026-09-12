@@ -63,7 +63,8 @@ public/
   js/main.js         boot, name-only tab router, HUD, settings modal
   js/store.js        save-state store (server-backed, localStorage fallback), economy, tasks, inventory
   js/screens.js      renderers: lobby / shop spotlight / locker / tasks(level) / dev
-  js/anim.js         24x24 sprite-strip animator (idle/walk/attack/power)
+  js/anim.js         48px sprite-strip animator, 100% frame-based (no runtime
+                     transforms): idle/walk/attack/power + data-driven emotes
   js/match.js        simulated match: RANDOM map at start -> results -> rewards
   js/fx.js           lightweight particle canvas + WebAudio 8-bit sfx + confetti
   js/util.js         DOM/helpers + procedural coin fallback
@@ -75,7 +76,11 @@ tools/
   make_shop_icons.py re-slices emote/pick/glider sheets into clean transparent
                      96x96 icons (bg flood-key, nearest-neighbor downscale)
   make_sprites.py    deterministic hand-painted 16x16 item icons
-  make_heroes.py     parametric hero animation strips (edit configs to restyle)
+  make_heroes.py     parametric hero strips (idle/walk/attack/power + 10 emote
+                     sequences per hero) and bakes emote icons from a neutral
+                     "dancer" rig so icons == in-game animation
+  validate_assets.py audits every cosmetic icon + strip (transparency, crops,
+                     ground-line stability, emote metadata); exits 1 on problems
   make_maps.py       paints the five 2D maps + survival mode icon
   smoke_test.js      jsdom end-to-end click-through (npm run smoke)
 ```
