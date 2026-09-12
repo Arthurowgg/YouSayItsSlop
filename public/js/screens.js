@@ -53,7 +53,7 @@ function statBars(id) {
 
 function animChips(stageEl, emoteOnly) {
   const chips = el('div', { class: 'animChips' });
-  if (!emoteOnly) [['idle', 'IDLE'], ['walk', 'WALK'], ['attack', 'ATTACK'], ['power', 'POWER']].forEach(([id, label], i) => {
+  if (!emoteOnly) [['idle', 'PARADO'], ['walk', 'ANDAR'], ['attack', 'ATACAR'], ['power', 'PODER']].forEach(([id, label], i) => {
     chips.append(el('button', {
       class: `chip ${i === 0 ? 'sel' : ''}`,
       onclick: (e) => {
@@ -220,8 +220,7 @@ function shopGrid() {
     },
       el('div', { class: 'f2art' }, art,
         el('span', { class: 'rarlbl' }, Rr.label),
-        el('span', { class: 'f2plus' }, '+'),
-        owned ? el('span', { class: 'ownTag' }, 'OBTIDO') : null),
+        owned ? el('span', { class: 'ownDot' }, '✓ OBTIDO') : el('span', { class: 'newTag' }, 'NOVO!')),
       el('div', { class: 'f2bar' },
         el('span', { class: 'f2nm' }, it.name),
         el('span', { class: 'f2pr' }, priceTag(it.price))));
@@ -248,14 +247,16 @@ function shopGrid() {
       style: { '--rc': Rr.color, animationDelay: `${i * 40}ms` },
       onclick: () => { sfx.click(); shopSel = { kind: 'bundle', id: b.id }; bus.refresh(); }
     },
-      el('div', { class: 'f2art' },
+      el('div', { class: 'f2art bArt' },
+        el('div', { class: 'bItems' }, b.items.slice(0, 2).map((id) => {
+          const f = store.findItem(id);
+          return f ? el('img', { class: 'pixel', src: f.item.art, alt: '' }) : null;
+        })),
         heroF ? el('img', { class: 'pixel f2img big', src: portraitOf(heroF.item.id), alt: '' }) : null,
-        el('span', { class: 'rarlbl' }, Rr.label),
-        el('span', { class: 'f2plus' }, '+')),
+        el('span', { class: 'savePill' }, `ECONOMIZE ${fmt(value - b.price)}`)),
       el('div', { class: 'f2bar' },
-        el('span', { class: 'f2nm' }, b.name),
-        el('span', { class: 'f2pr' }, priceTag(b.price))),
-      el('span', { class: 'ribbon' }, `${b.items.length} ITENS · ECONOMIZE ${fmt(value - b.price)}`)));
+        el('span', { class: 'f2nm' }, `${b.name} · ${b.items.length} ITENS`),
+        el('span', { class: 'f2pr' }, priceTag(b.price), el('s', { class: 'oldPr' }, fmt(value))))));
     b.items.forEach((id, j) => {
       const f = store.findItem(id);
       if (f) wrap.append(card(f.item, i + j, 'bItem'));
