@@ -822,14 +822,7 @@ def main():
     single("glider_cosmic", f_cosmic)
     single("glider_claws", f_claws)
 
-    # ---- kree arena icon ----
-    cv = HC(32, 32)
-    cv.disc(16, 16, 13, (40, 46, 70)); cv.disc(16, 16, 11, (60, 70, 105))
-    cv.vline(8, 8, 24, (150, 160, 190)); cv.vline(23, 8, 24, (150, 160, 190))
-    cv.hline(8, 23, 8, (150, 160, 190))
-    cv.line(12, 20, 20, 12, (255, 90, 100), 2); cv.line(12, 12, 20, 20, (130, 240, 255), 2)
-    save("mode_kree_arena", cv, folder=SPR)
-    print("backblings + arena icon done.")
+    print("backblings done.")  # mode icons live in tools/make_mode_icons.py (PLAY v2)
 
 if __name__ == "__main__":
     main()

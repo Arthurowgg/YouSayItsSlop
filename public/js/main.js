@@ -277,7 +277,6 @@ async function boot() {
     else if (e.key === 'Escape') {
       const fsx = document.querySelector('.settingsFS');
       if (fsx) { sfx.click(); fsx.remove(); }
-      else if (document.querySelector('.modePrompt')) document.querySelector('.modePrompt').remove();
       else { shopHome(); renderCurrent(); }
     }
   });

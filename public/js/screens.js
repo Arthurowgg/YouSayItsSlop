@@ -97,102 +97,96 @@ function animChips(stageEl, emoteOnly) {
   return chips;
 }
 
-/* ------------------------------ PLAY / LOBBY (fullscreen) ------------------------------ */
-let lastModeId = null;
+/* ------------------------------ PLAY v2: cinematic mode select ------------------------------ */
+let lastModeId = 'mode_1v1';
 export function renderPlay() {
   killAnim();
   const modes = C().modes, maps = C().maps;
   let mode = modes.find((m) => m.id === lastModeId) || modes[0];
   let map = maps.find((m) => m.id === store.data.lastMap) || pick(maps);
   store.data.lastMap = map.id;
+  const sceneMap = () => (mode.available ? map : (maps.find((m) => m.id === mode.map) || maps[0]));
 
-  const hero = heroOf();
-  const R = rar(hero.rarity);
+  const bg = el('div', { class: 'p2bg', style: { backgroundImage: `url('${sceneMap().art}')` } });
 
-  const bg = el('div', { class: 'bgmap', style: { backgroundImage: `url('${map.art}')` } });
-
-  const playBtn = el('button', { class: 'btn playBig', onclick: () => { sfx.launch(); deployMatch(mode); } }, 'JOGAR');
-
-  const modeIcon = el('img', { class: 'pixel', src: mode.tile, alt: '' });
-  const modeName = el('div', { class: 'rn' }, mode.name);
-  const modeSub = el('div', { class: 'rs' }, `${mode.players} JOGADORES · x${mode.mult} MOEDAS`);
-  const modeRect = el('button', { class: 'hudRect', onclick: () => openModePrompt() },
-    modeIcon, el('div', { class: 'rt' }, el('div', { class: 'rl' }, 'MODO DE JOGO'), modeName, modeSub));
-
-  const mapThumb = el('img', { class: 'pixel mapTh', src: map.art, alt: '' });
-  const mapName = el('div', { class: 'rn' }, map.name);
-  const mapRect = el('button', {
-    class: 'hudRect',
-    onclick: () => {
-      sfx.click(); map = pick(maps); store.data.lastMap = map.id;
-      mapThumb.src = map.art; mapName.textContent = map.name;
-      bg.style.backgroundImage = `url('${map.art}')`; store.persist();
+  const pix = el('div', { class: 'p2pix' });
+  for (let i = 0; i < 14; i++) pix.append(el('span', {
+    style: {
+      left: `${(i * 37 + 13) % 100}%`,
+      top: `${(i * 53 + 29) % 92}%`,
+      animationDelay: `${((i * 0.83) % 6).toFixed(2)}s`,
+      animationDuration: `${(6 + (i % 5) * 1.6).toFixed(2)}s`,
     }
-  }, mapThumb, el('div', { class: 'rt' }, el('div', { class: 'rl' }, 'PRÓXIMO MAPA · TOQUE P/ TROCAR'), mapName));
+  }));
 
-  function openModePrompt() {
-    sfx.tab();
-    const grid = el('div', { class: 'mpGrid' });
-    const root = el('div', { class: 'modePrompt' });
-    function close() { root.remove(); }
-    function draw() {
-      grid.innerHTML = '';
-      modes.forEach((m) => grid.append(el('button', {
-        class: `mpCard ${m.id === mode.id ? 'sel' : ''}`,
-        onclick: () => { sfx.equip(); mode = m; lastModeId = m.id; modeIcon.src = m.tile; modeName.textContent = m.name; modeSub.textContent = `${m.players} JOGADORES · x${m.mult} MOEDAS`; draw(); setTimeout(close, 120); }
+  const head = el('div', { class: 'p2head' },
+    el('div', { class: 'p2kick' }, 'TEMPORADA 1 · NOITE DE NÉON'),
+    el('h2', { class: 'p2title' }, 'ESCOLHA SEU MODO'),
+    el('div', { class: 'p2stats' },
+      el('span', { class: 'chip' }, `PARTIDAS ${store.data.stats.matches}`),
+      el('span', { class: 'chip' }, `VITÓRIAS ${store.data.stats.wins}`)));
+
+  const list = el('div', { class: 'p2modes' });
+  const dName = el('div', { class: 'p2dn' });
+  const dDesc = el('div', { class: 'p2dd' });
+  const dChips = el('div', { class: 'p2chips' });
+  const playBtn = el('button', { class: 'p2play' });
+
+  function draw() {
+    const sm = sceneMap();
+    bg.style.backgroundImage = `url('${sm.art}')`;
+    list.innerHTML = '';
+    modes.forEach((m) => {
+      const ms = maps.find((x) => x.id === (m.available ? map.id : m.map)) || maps[0];
+      list.append(el('button', {
+        class: `p2card ${m.id === mode.id ? 'sel' : ''} ${m.available ? '' : 'locked'}`,
+        onclick: () => { sfx.equip(); mode = m; lastModeId = m.id; draw(); },
       },
-        el('img', { class: 'pixel', src: m.tile, alt: '' }),
-        el('h3', {}, m.name),
-        el('p', {}, m.desc || ''),
-        el('span', { class: 'mpMeta' }, `${m.players} JOGADORES · x${m.mult} MOEDAS`),
-        m.id === mode.id ? el('span', { class: 'mpSel' }, 'SELECIONADO') : null)));
-    }
-    draw();
-    root.append(
-      el('div', { class: 'mpHead' },
-        el('div', { class: 'panelTitle' }, 'SELECIONAR MODO'),
-        el('button', { class: 'btn ghost', onclick: () => { sfx.click(); close(); } }, '✕ FECHAR')),
-      grid);
-    document.getElementById('modalRoot').append(root);
+        el('div', { class: 'p2art' },
+          el('div', { class: 'p2scene', style: { backgroundImage: `url('${ms.art}')` } }),
+          el('img', { class: 'p2tile', src: m.tile, alt: '' })),
+        el('div', { class: 'p2txt' },
+          el('div', { class: 'p2nm' }, m.name),
+          el('div', { class: 'p2ds' }, m.desc),
+          el('div', { class: 'p2meta' },
+            el('span', {}, `${m.players} JOGADORES`),
+            el('span', {}, `x${m.mult} MOEDAS`))),
+        el('span', { class: m.available ? 'p2ok' : 'p2soon' }, m.available ? 'DISPONÍVEL' : 'EM BREVE')));
+    });
+    dName.textContent = mode.name;
+    dDesc.textContent = mode.desc;
+    dChips.innerHTML = '';
+    dChips.append(
+      el('span', { class: 'p2chip' }, `${mode.players} JOGADORES`),
+      el('span', { class: 'p2chip gold' }, `x${mode.mult} MOEDAS`));
+    if (mode.available) dChips.append(el('button', {
+      class: 'p2chip p2map',
+      onclick: () => { sfx.click(); map = pick(maps); store.data.lastMap = map.id; store.persist(); draw(); },
+    }, el('img', { class: 'pixel', src: sm.art, alt: '' }), el('span', { class: 'rn' }, `${sm.name} · TROCAR`)));
+    playBtn.innerHTML = '';
+    playBtn.disabled = !mode.available;
+    playBtn.append(
+      el('span', { class: 'p2pmain' }, mode.available ? 'JOGAR' : 'EM BREVE'),
+      el('span', { class: 'p2psub' }, mode.available ? `${mode.name} · ENTRAR NA FILA` : `${mode.name} CHEGA NA PRÓXIMA TEMPORADA`));
   }
 
-  const modeStrip = el('div', { class: 'modeStrip' }, modes.map((m, ix) => el('button', {
-    class: `msCard ${m.id === mode.id ? 'sel' : ''}`, title: m.desc,
-    onclick: () => {
-      sfx.equip(); mode = m; lastModeId = m.id;
-      modeIcon.src = m.tile; modeName.textContent = m.name;
-      modeSub.textContent = `${m.players} JOGADORES · x${m.mult} MOEDAS`;
-      [...modeStrip.children].forEach((x, j) => x.classList.toggle('sel', j === ix));
-    }
-  }, el('img', { class: 'pixel', src: m.tile, alt: '' }), el('span', {}, m.name))));
+  playBtn.onclick = () => {
+    if (!mode.available) { sfx.deny(); playBtn.classList.remove('shake'); void playBtn.offsetWidth; playBtn.classList.add('shake'); return; }
+    sfx.launch(); deployMatch(mode);
+  };
 
-  const canvas = el('canvas', { class: 'hero pixel' });
-  const emoteChips = animChips(null, true);
-  emoteChips.classList.add('lobbyEmote');
+  draw();
 
-  const stage = el('div', { class: 'stage full in-play' },
+  return el('div', { class: 'play2 in-play' },
     bg,
-    el('div', { class: 'shade soft' }),
-    modeStrip,
-    el('div', { class: 'stageStats' },
-      el('span', { class: 'chip' }, `PARTIDAS ${store.data.stats.matches}`),
-      el('span', { class: 'chip' }, `VITÓRIAS ${store.data.stats.wins}`),
-      el('span', { class: 'chip link', onclick: () => bus.gotoTab && bus.gotoTab('locker') }, 'ARMÁRIO ▸')),
-    el('div', { class: 'heroWrap' }, canvas, el('div', { class: 'floorGlow', style: { '--rc': R.color } })),
-    el('div', { class: 'heroPlate' },
-      el('div', { class: 'pn' }, `${hero.name} · ${styleOf().name}`),
-      el('div', { class: 'pq' }, `“${hero.quote || ''}”`)),
-    el('div', { class: 'hud' },
-      playBtn,
-      emoteChips,
-      el('div', { class: 'hudR' }, modeRect, mapRect))
-  );
-  const heroScale = { S: 6, M: 8, L: 10 }[store.data.settings.heroSize] || 8;
-  anim = new Animator(canvas, heroScale);
-  if (styleOf().filter !== 'none') canvas.style.filter = styleOf().filter;
-  anim.load(hero.id, gliderOf());
-
-  return stage;
+    el('div', { class: 'p2fog a' }), el('div', { class: 'p2fog b' }),
+    pix,
+    el('div', { class: 'p2shade' }),
+    head,
+    list,
+    el('div', { class: 'p2hud' },
+      el('div', { class: 'p2detail' }, dName, dDesc, dChips),
+      playBtn));
 }
 
 /* ------------------------------ SHOP v2: cohesive pixel storefront ------------------------------ */

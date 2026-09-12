@@ -37,7 +37,7 @@ falls back to `localStorage` when the API is unreachable.
 
 | Tab | What it does |
 | --- | --- |
-| **PLAY** | True lobby: your hero shown **in-game** (24x24 animated sprite: IDLE / WALK / ATTACK / POWER / EMOTE previews) standing over the next map. Left panel: 5 original modes (Hero Rush, Squad Siege, Symbiote Siege, Infinity Hunt, Kree Arena), NEXT MAP card with reroll (map is random at match start), big skewed yellow PLAY. |
+| **PLAY** | Cinematic mode-select (PLAY v2): full-bleed animated pixel backdrop (next map art with slow pan, drifting fog, rising embers, vignette) behind a mode-card stack — exactly two modes: **1V1** (available, selected emphasis, pixel preview + description + meta) and **DOMINATION** (selectable for preview but `EM BREVE`, PLAY stays disabled), NEXT-MAP chip with reroll for 1v1, huge skewed yellow PLAY with hover/pressed/disabled states. |
 | **SHOP** | Pixel storefront: night-city backdrop (skyline, stars, rarity glows), featured bundle/hero strip, type-specific cards (animated hero cells, emote ring stages, gear pedestals), dedicated bundle cards with per-item icons, and a showcase page per item (rarity aura, platform, ground shadow, animations). |
 | **LOCKER** | Animated preview + styles (CSS filter recolors); select hero, relic, back bling, emote. Locked items point to the shop. |
 | **TASKS** | Stored **LEVEL + XP bar** up top, daily/weekly tasks with progress bars and claimable coin rewards (no cooldown in test mode). |
@@ -62,7 +62,7 @@ public/
   style.css          pixel design system + all animations
   js/main.js         boot, name-only tab router, HUD, settings modal
   js/store.js        save-state store (server-backed, localStorage fallback), economy, tasks, inventory
-  js/screens.js      renderers: lobby / shop spotlight / locker / tasks(level) / dev
+  js/screens.js      renderers: play mode-select / shop spotlight / locker / tasks(level) / dev
   js/anim.js         48px sprite-strip animator, 100% frame-based (no runtime
                      transforms): idle/walk/attack/power + data-driven emotes
   js/match.js        simulated match: RANDOM map at start -> results -> rewards

@@ -49,23 +49,23 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok(!$('#lvl') && !!$('#settingsBtn') && !$('#scanlines'), 'no level in bar, settings yes, scanlines gone');
   ok($('#coinCount').textContent.replace(/\D/g, '') === '500', 'base coins = 500');
 
-  // lobby (fullscreen)
-  ok(!!$('#screen canvas.hero') && !!$('#screen .stage.full'), 'fullscreen lobby with hero on background');
-  ok($('.heroPlate .pq') && $('.heroPlate .pq').textContent.length > 4, 'hero quote shown in lobby');
-  ok(!!$('.btn.playBig'), 'big PLAY button');
-  ok($$('#screen .hudRect').length === 2, 'two HUD rectangles (mode + map)');
-  ok($$('#screen .msCard').length === 5, 'lobby shows 5 mode cards');
-  $$('#screen .msCard')[2].click(); await sleep(20);
-  ok($$('#screen .msCard')[2].classList.contains('sel'), 'mode strip selects mode');
+  // PLAY v2: cinematic mode select
+  ok(!!$('#screen .play2 .p2bg') && $$('#screen .play2 .p2fog').length === 2 && !!$('#screen .play2 .p2pix'), 'play has layered atmospheric background');
+  ok($$('#screen .p2card').length === 2 && catalog.modes.length === 2, 'exactly two game modes');
+  ok($$('#screen .p2card')[0].classList.contains('sel') && $$('#screen .p2card')[0].textContent.includes('1V1'), '1v1 selected by default');
+  ok($$('#screen .p2card')[0].textContent.includes('DISPONÍVEL'), '1v1 marked available');
+  ok(!$('#screen .p2play').disabled, 'PLAY enabled for 1v1');
+  ok($$('#screen .p2card')[1].textContent.includes('EM BREVE'), 'domination marked coming soon');
+  $$('#screen .p2card')[1].click(); await sleep(30);
+  ok($$('#screen .p2card')[1].classList.contains('sel'), 'domination selectable for preview');
+  ok($('#screen .p2play').disabled && $('#screen .p2play').textContent.includes('EM BREVE'), 'PLAY disabled while domination selected');
+  ok(!$('#deploy'), 'domination cannot start a match');
+  $$('#screen .p2card')[0].click(); await sleep(30);
+  ok($$('#screen .p2card')[0].classList.contains('sel') && !$('#screen .p2play').disabled, 'back to 1v1 re-enables PLAY');
   ok(catalog.emotes.length === 10, 'catalog has 10 emotes');
-  $$('#screen .hudRect')[0].click(); await sleep(30);
-  ok($$('.modePrompt .mpCard').length === 5, 'mode prompt opens fullscreen with 5 modes');
-  $$('.modePrompt .mpCard')[1].click(); await sleep(200);
-  ok(!$('.modePrompt'), 'mode prompt closes after pick');
-  ok($$('#screen .hudRect')[0].textContent.includes(catalog.modes[1].name), 'mode rectangle shows picked mode');
-  const mapBefore = $$('#screen .hudRect')[1].textContent;
-  $$('#screen .hudRect')[1].click(); await sleep(30);
-  ok($$('#screen .hudRect')[1].textContent.length > 4, 'map rectangle rerolls');
+  const mapBefore = $('#screen .p2map .rn').textContent;
+  $('#screen .p2map').click(); await sleep(30);
+  ok($('#screen .p2map .rn').textContent.length > 4, 'next-map chip rerolls');
   void mapBefore;
 
   // settings
@@ -169,7 +169,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   tabBtns()[3].click(); await sleep(30);
   ok($('.levelPanel') && $('.levelPanel').textContent.includes('LV'), 'tasks shows stored level');
   ok(['COMBATE', 'ECONOMIA', 'ESTILO'].every((c) => $('#screen').textContent.includes(c)), 'task categories shown');
-  tabBtns()[0].click(); await sleep(30);
+  tabBtns()[2].click(); await sleep(30);
   $$('#screen .animChips .chip').find((c) => c.textContent === 'EMOTE ▾').click(); await sleep(30);
   const pk = $$('.animChips.picker .chip');
   ok(pk.length === 2, 'emote picker lists owned emotes (DAB+GROOVE)');
@@ -182,7 +182,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // match
   tabBtns()[0].click(); await sleep(30);
-  $$('#screen .btn').find((b) => b.textContent.trim() === 'JOGAR').click();
+  $('#screen .p2play').click();
   await sleep(6000);
   ok(!!$('#screen .in-play, .stage.in-play'), 'per-tab transition class present');
   ok(!!$('#deploy'), 'deploy overlay');
