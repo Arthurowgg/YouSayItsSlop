@@ -23,11 +23,21 @@ function updateHUD() {
 function renderCurrent() {
   const screen = document.getElementById('screen');
   screen.innerHTML = '';
-  const node =
-    current === 'play' ? renderPlay() :
-    current === 'shop' ? renderShop() :
-    current === 'locker' ? renderLocker() :
-    current === 'tasks' ? renderTasks() : renderDev();
+  let node;
+  try {
+    node =
+      current === 'play' ? renderPlay() :
+      current === 'shop' ? renderShop() :
+      current === 'locker' ? renderLocker() :
+      current === 'tasks' ? renderTasks() : renderDev();
+  } catch (e) {
+    // never leave an invisible empty tab: surface the failure on-screen
+    console.error('[render]', current, e);
+    node = el('div', { class: 'renderErr' },
+      el('h3', {}, 'ERRO AO MONTAR A TELA'),
+      el('p', {}, `${current}: ${String((e && e.message) || e)}`),
+      el('button', { class: 'btn', onclick: () => { buildTabs(); renderCurrent(); } }, 'TENTAR NOVAMENTE'));
+  }
   screen.append(node);
   updateHUD();
 }

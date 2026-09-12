@@ -43,6 +43,7 @@ export function debugStep(d = 1) { const a = LIVE[LIVE.length - 1]; if (a) a.ste
 // Decoded sheets are cached so a re-render (UI update, tab switch, item change)
 // attaches the Image synchronously: no blank canvas frame, no load flicker.
 const cache = new Map(); // id -> { img, ready, p }
+const ASSET_V = 16; // bump on asset rebakes to defeat stale caches
 export function preloadHero(id) {
   const c = cache.get(id);
   if (c) return c.ready ? Promise.resolve(c.img) : c.p;
@@ -52,7 +53,7 @@ export function preloadHero(id) {
     const img = new Img();
     img.onload = () => { entry.img = img; entry.ready = true; res(img); };
     img.onerror = () => { entry.ready = true; res(null); }; // clean fallback: stay empty
-    img.src = `assets/anim/${id}.png`;
+    img.src = `assets/anim/${id}.png?v=${ASSET_V}`;
   });
   cache.set(id, entry);
   return entry.p;
@@ -75,7 +76,8 @@ export class Animator {
     canvas.height = FRAME * scale * this.q;
     canvas.style.width = FRAME * scale + 'px';
     canvas.style.height = FRAME * scale + 'px';
-    this.ctx = canvas.getContext('2d');
+    this.ctx = canvas.getContext && canvas.getContext('2d');
+    if (!this.ctx) { this.dead = true; return; } // no 2d context: stay inert, never throw
     this.img = null;
     this.gimg = null;
     this.gid = null;
@@ -109,7 +111,7 @@ export class Animator {
       const Img = (typeof window !== 'undefined' && window.Image) ? window.Image : Image;
       const g = new Img();
       g.onload = () => { if (!this.dead) { this.gimg = g; this.gid = gliderId; this.gsingle = g.width === g.height; } };
-      g.src = `assets/spr/${gliderId}.png`;
+      g.src = `assets/spr/${gliderId}.png?v=${ASSET_V}`;
     } else { this.gimg = null; this.gid = null; }
   }
   setAnim(a, onEnd) {

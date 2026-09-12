@@ -49,6 +49,12 @@ class C:
             for i in range(w):
                 self.set(x + i, y + j, c)
 
+    def disc(self, cx, cy, r, c):
+        for y in range(cy - r, cy + r + 1):
+            for x in range(cx - r, cx + r + 1):
+                if (x - cx) ** 2 + (y - cy) ** 2 <= r * r:
+                    self.set(x, y, c)
+
 
 def outline(cv):
     drawn = dict(cv.px)
@@ -125,8 +131,23 @@ def bake(name, cv):
     print('  ->', name)
 
 
+def coin():
+    cv = C()
+    G = (255, 200, 60)
+    GD = (200, 140, 20)
+    GL = (255, 236, 150)
+    cv.disc(12, 12, 9, GD)
+    cv.disc(12, 11, 8, G)
+    cv.disc(11, 10, 5, GL)
+    cv.disc(12, 11, 3, G)
+    cv.line(12, 8, 12, 14, GD)
+    cv.line(9, 11, 15, 11, GD)
+    return cv
+
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     bake('mode_1v1.png', swords())
     bake('mode_domination.png', flag())
-    print('mode icons done.')
+    bake('coin.png', coin())
+    print('mode icons + coin done.')

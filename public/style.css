@@ -1030,3 +1030,8 @@ button.p2chip:hover { border-color: var(--cyan); transform: translateY(-2px); }
 body.reduce-motion .p2skyline, body.reduce-motion .p2stars::after, body.reduce-motion .p2modeglow,
 body.reduce-motion .p2emblem, body.reduce-motion .p2fog, body.reduce-motion .p2pix span,
 body.reduce-motion .p2card.sel .p2tile { animation: none; }
+
+/* ===== v16: visible render-error fallback (no more silent empty tabs) ===== */
+.renderErr { margin: 40px auto; max-width: 560px; padding: 22px 26px; border-radius: 12px; background: rgba(40, 10, 16, .85); border: 1px solid rgba(255, 90, 90, .5); color: #ffd9d9; }
+.renderErr h3 { margin: 0 0 6px; font-style: italic; letter-spacing: 1px; color: #ff8080; }
+.renderErr p { margin: 0 0 12px; font-size: 13px; word-break: break-word; }
