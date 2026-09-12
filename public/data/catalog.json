@@ -338,6 +338,126 @@
       "rarity": "rare",
       "price": 500,
       "art": "assets/spr/pick_magma.png"
+    },
+    {
+      "id": "pick_h_spider",
+      "name": "PICARETA TEIA",
+      "desc": "Thwip a cada golpe.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_spider.png"
+    },
+    {
+      "id": "pick_h_classic",
+      "name": "PICARETA CLÁSSICA",
+      "desc": "Vermelha e azul como nos quadrinhos.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_classic.png"
+    },
+    {
+      "id": "pick_h_miles",
+      "name": "PICARETA VENENO",
+      "desc": "Choque vermelho a cada colheita.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_miles.png"
+    },
+    {
+      "id": "pick_h_gwen",
+      "name": "PICARETA ZEN",
+      "desc": "Leve como outra dimensão.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_gwen.png"
+    },
+    {
+      "id": "pick_h_venom",
+      "name": "PICARETA SIMBIONTE",
+      "desc": "Nós somos a picareta.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_venom.png"
+    },
+    {
+      "id": "pick_h_iron",
+      "name": "PICARETA REPULSOR",
+      "desc": "Recarga por arco reator.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_iron.png"
+    },
+    {
+      "id": "pick_h_cap",
+      "name": "PICARETA ESTRELAR",
+      "desc": "Aguenta o dia todo.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_cap.png"
+    },
+    {
+      "id": "pick_h_thor",
+      "name": "PICARETA DO TROVÃO",
+      "desc": "Forjada em Nidavellir.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_thor.png"
+    },
+    {
+      "id": "pick_h_hulk",
+      "name": "PICARETA GAMA",
+      "desc": "ESMAGA minérios.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_hulk.png"
+    },
+    {
+      "id": "pick_h_wolverine",
+      "name": "PICARETA DE ADAMANTIUM",
+      "desc": "Nunca precisa afiar.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_wolverine.png"
+    },
+    {
+      "id": "pick_h_widow",
+      "name": "PICARETA DA VIÚVA",
+      "desc": "Ferrão elétrico embutido.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_widow.png"
+    },
+    {
+      "id": "pick_h_hawkeye",
+      "name": "PICARETA ARQUEIRO",
+      "desc": "Mira perfeita, sempre.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_hawkeye.png"
+    },
+    {
+      "id": "pick_h_strange",
+      "name": "PICARETA MÍSTICA",
+      "desc": "Corta o próprio espaço.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_strange.png"
+    },
+    {
+      "id": "pick_h_wanda",
+      "name": "PICARETA CAOS",
+      "desc": "Realidade opcional.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_wanda.png"
+    },
+    {
+      "id": "pick_h_wanda_azure",
+      "name": "PICARETA CAOS AZURE",
+      "desc": "Caos em tom frio.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_wanda_azure.png"
     }
   ],
   "gliders": [
