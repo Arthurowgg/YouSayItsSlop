@@ -290,6 +290,54 @@
       "rarity": "legendary",
       "price": 1200,
       "desc": "Um eco digno do original."
+    },
+    {
+      "id": "pick_plasma",
+      "name": "PICARETA DE PLASMA",
+      "desc": "Lâmina de plasma verde instável.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_plasma.png"
+    },
+    {
+      "id": "pick_web",
+      "name": "PICARETA DE TEIA",
+      "desc": "Rede e azul. Thwip em cada golpe.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_web.png"
+    },
+    {
+      "id": "pick_storm",
+      "name": "PICARETA TEMPESTADE",
+      "desc": "Troveja a cada colheita.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_storm.png"
+    },
+    {
+      "id": "pick_shadow",
+      "name": "PICARETA SOMBRA",
+      "desc": "Quase invisível no escuro.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_shadow.png"
+    },
+    {
+      "id": "pick_quantum",
+      "name": "PICARETA QUÂNTICA",
+      "desc": "Existe em 3 lugares ao mesmo tempo.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/pick_quantum.png"
+    },
+    {
+      "id": "pick_magma",
+      "name": "PICARETA MAGMA",
+      "desc": "Ainda derretendo.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_magma.png"
     }
   ],
   "gliders": [
@@ -324,6 +372,54 @@
       "rarity": "rare",
       "price": 700,
       "desc": "Bandeira de guerra marcada por garras."
+    },
+    {
+      "id": "glider_portal",
+      "name": "PORTAL MÍSTICO",
+      "desc": "Um atalho por outra dimensão.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_portal.png"
+    },
+    {
+      "id": "glider_webwings",
+      "name": "ASAS DE TEIA",
+      "desc": "Plane como uma aranha.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/glider_webwings.png"
+    },
+    {
+      "id": "glider_storm",
+      "name": "NUVEM DE TEMPESTADE",
+      "desc": "Chove só em você.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/glider_storm.png"
+    },
+    {
+      "id": "glider_panther",
+      "name": "SOMBRA DO PANTERA",
+      "desc": "Desce em silêncio.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/glider_panther.png"
+    },
+    {
+      "id": "glider_holo",
+      "name": "CUBO HOLO",
+      "desc": "Flutuação assistida por holograma.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/glider_holo.png"
+    },
+    {
+      "id": "glider_valkyrie",
+      "name": "ELMO ALADO",
+      "desc": "Digno de Valhalla.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/glider_valkyrie.png"
     }
   ],
   "emotes": [

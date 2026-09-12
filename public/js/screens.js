@@ -14,7 +14,8 @@ const rar = (r) => {
 };
 
 let anim = null;
-function killAnim() { if (anim) { anim.destroy(); anim = null; } }
+let liveAnims = [];
+function killAnim() { if (anim) { anim.destroy(); anim = null; } liveAnims.forEach((a) => a.destroy()); liveAnims = []; }
 
 export function toast() { /* notificações removidas */ }
 
@@ -205,7 +206,7 @@ export function renderShop() {
 const portraitOf = (id) => `assets/spr/${id}.png`;
 function shopGrid() {
   const typeOf = (it) => C().heroes.includes(it) ? 'hero' : it.id.startsWith('pick') ? 'pick' : it.id.startsWith('glider') ? 'glider' : 'emote';
-  function card(it, i) {
+  function card(it, i, size = '') {
     const t = typeOf(it);
     const owned = store.owns(t, it.id);
     const Rr = rar(it.rarity);
@@ -213,7 +214,7 @@ function shopGrid() {
       ? el('img', { class: 'pixel f2img', src: portraitOf(it.id), alt: it.name })
       : el('img', { class: 'pixel f2img item', src: it.art, alt: it.name });
     return el('button', {
-      class: `fcard2 ${owned ? 'owned' : ''}`,
+      class: `fcard2 ${size} ${owned ? 'owned' : ''}`,
       style: { '--rc': Rr.color, animationDelay: `${Math.min(i * 20, 280)}ms` },
       onclick: () => { sfx.click(); shopSel = { kind: 'item', type: t, id: it.id }; bus.refresh(); }
     },
@@ -225,38 +226,54 @@ function shopGrid() {
         el('span', { class: 'f2nm' }, it.name),
         el('span', { class: 'f2pr' }, priceTag(it.price))));
   }
-  function bundleCard(b, i) {
+  function liveCard(h, i) {
+    const Rr = rar(h.rarity);
+    const cv = el('canvas', { class: 'pixel f2live' });
+    const b = el('button', {
+      class: 'fcard2 xl live', style: { '--rc': Rr.color, animationDelay: `${i * 20}ms` },
+      onclick: () => { sfx.click(); shopSel = { kind: 'item', type: 'hero', id: h.id }; bus.refresh(); }
+    },
+      el('div', { class: 'f2art' }, cv, el('span', { class: 'rarlbl' }, Rr.label), el('span', { class: 'liveTag' }, 'SKIN AO VIVO')),
+      el('div', { class: 'f2bar' }, el('span', { class: 'f2nm' }, h.name), el('span', { class: 'f2pr' }, priceTag(h.price))));
+    const a = new Animator(cv, 4); a.load(h.id, null); liveAnims.push(a);
+    return b;
+  }
+  function bundleBlock(b, i) {
     const Rr = rar(b.rarity);
-    const value = b.items.reduce((s, id) => { const f = store.findItem(id); return s + (f ? f.item.price : 0); }, 0);
-    const heroId = b.items.map((id) => store.findItem(id)).find((f) => f && f.type === 'hero');
-    const others = b.items.filter((id) => id !== (heroId ? heroId.item.id : '')).slice(0, 3);
-    return el('button', {
-      class: 'fcard2 bundle',
+    const value = b.items.reduce((sum, id) => { const f = store.findItem(id); return sum + (f ? f.item.price : 0); }, 0);
+    const heroF = b.items.map((id) => store.findItem(id)).find((f) => f && f.type === 'hero');
+    const wrap = el('div', { class: 'bBlock' });
+    wrap.append(el('button', {
+      class: 'fcard2 bundle xl',
       style: { '--rc': Rr.color, animationDelay: `${i * 40}ms` },
       onclick: () => { sfx.click(); shopSel = { kind: 'bundle', id: b.id }; bus.refresh(); }
     },
       el('div', { class: 'f2art' },
-        heroId ? el('img', { class: 'pixel f2img big', src: portraitOf(heroId.item.id), alt: '' }) : null,
-        el('div', { class: 'f2stack' }, others.map((id) => {
-          const f = store.findItem(id);
-          return f ? el('img', { class: 'pixel f2mini', src: f.item.art, alt: '' }) : null;
-        })),
+        heroF ? el('img', { class: 'pixel f2img big', src: portraitOf(heroF.item.id), alt: '' }) : null,
         el('span', { class: 'rarlbl' }, Rr.label),
         el('span', { class: 'f2plus' }, '+')),
       el('div', { class: 'f2bar' },
         el('span', { class: 'f2nm' }, b.name),
         el('span', { class: 'f2pr' }, priceTag(b.price))),
-      el('span', { class: 'ribbon' }, `${b.items.length} ITENS · ECONOMIZE ${fmt(value - b.price)}`));
+      el('span', { class: 'ribbon' }, `${b.items.length} ITENS · ECONOMIZE ${fmt(value - b.price)}`)));
+    b.items.forEach((id, j) => {
+      const f = store.findItem(id);
+      if (f) wrap.append(card(f.item, i + j, 'bItem'));
+    });
+    return wrap;
   }
 
-  const bundles = el('div', { class: 'f2grid bundles' });
-  C().bundles.forEach((b, i) => bundles.append(bundleCard(b, i)));
+  const bundles = el('div', { class: 'bWrap' });
+  C().bundles.forEach((b, i) => bundles.append(bundleBlock(b, i)));
   const outfits = el('div', { class: 'f2grid' });
-  C().heroes.forEach((h, i) => outfits.append(card(h, i)));
+  C().heroes.forEach((h, i) => {
+    if (i === 0) outfits.append(liveCard(h, i));
+    else outfits.append(card(h, i, i % 7 === 3 ? 'wide' : ''));
+  });
   const emotes = el('div', { class: 'f2grid small' });
-  C().emotes.forEach((it, i) => emotes.append(card(it, i)));
+  C().emotes.forEach((it, i) => emotes.append(card(it, i, i % 5 === 2 ? 'wide' : '')));
   const gear = el('div', { class: 'f2grid small' });
-  [...C().picks, ...C().gliders].forEach((it, i) => gear.append(card(it, i)));
+  [...C().picks, ...C().gliders].forEach((it, i) => gear.append(card(it, i, i % 6 === 0 ? 'wide' : '')));
 
   const now = new Date(); const end = new Date(now); end.setHours(24, 0, 0, 0);
   const mins = Math.max(0, Math.round((end - now) / 60000));
