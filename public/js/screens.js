@@ -51,9 +51,9 @@ function statBars(id) {
         el('div', { class: 'track' }, el('i', { style: { width: `${n * 10}%` } })))));
 }
 
-function animChips(stageEl) {
+function animChips(stageEl, emoteOnly) {
   const chips = el('div', { class: 'animChips' });
-  [['idle', 'IDLE'], ['walk', 'WALK'], ['attack', 'ATTACK'], ['power', 'POWER']].forEach(([id, label], i) => {
+  if (!emoteOnly) [['idle', 'IDLE'], ['walk', 'WALK'], ['attack', 'ATTACK'], ['power', 'POWER']].forEach(([id, label], i) => {
     chips.append(el('button', {
       class: `chip ${i === 0 ? 'sel' : ''}`,
       onclick: (e) => {
@@ -64,26 +64,38 @@ function animChips(stageEl) {
       }
     }, label));
   });
+  const picker = el('div', { class: 'animChips picker', style: { display: 'none' } });
   chips.append(el('button', {
     class: 'chip',
     onclick: () => {
-      sfx.claim();
-      if (anim) anim.setAnim('power');
-      store.bump('emotes');
-      for (let i = 0; i < 4; i++) setTimeout(() => {
-        const n = el('span', { class: 'note' }, ['♪', '♫', ''][i % 3]);
-        n.style.left = 42 + Math.random() * 16 + '%';
-        n.style.top = 28 + Math.random() * 18 + '%';
-        (stageEl || document.body).append(n);
-        setTimeout(() => n.remove(), 1100);
-      }, i * 160);
-      setTimeout(() => anim && anim.setAnim('idle'), 1800);
+      sfx.click();
+      picker.innerHTML = '';
+      C().emotes.filter((e) => store.owns('emote', e.id)).forEach((e) => {
+        picker.append(el('button', {
+          class: 'chip',
+          onclick: () => {
+            sfx.claim();
+            if (anim) anim.setAnim('e_' + e.id.replace('emote_', ''));
+            store.bump('emotes');
+            picker.style.display = 'none';
+            for (let i = 0; i < 4; i++) setTimeout(() => {
+              const n = el('span', { class: 'note' }, ['♪', '♫', ''][i % 3]);
+              n.style.left = 42 + Math.random() * 16 + '%';
+              n.style.top = 26 + Math.random() * 18 + '%';
+              (stageEl || document.body).append(n);
+              setTimeout(() => n.remove(), 1100);
+            }, i * 160);
+          }
+        }, e.name));
+      });
+      picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
     }
-  }, 'EMOTE'));
+  }, 'EMOTE ▾'));
+  (stageEl || chips).append(picker);
   return chips;
 }
 
-/* ------------------------------ PLAY / LOBBY ------------------------------ */
+/* ------------------------------ PLAY / LOBBY (fullscreen) ------------------------------ */
 let lastModeId = null;
 export function renderPlay() {
   killAnim();
@@ -95,62 +107,78 @@ export function renderPlay() {
   const hero = heroOf();
   const R = rar(hero.rarity);
 
-  const modeList = el('div', { class: 'col', style: { gap: '6px' } });
-  function drawModes() {
-    modeList.innerHTML = '';
-    modes.forEach((m) => modeList.append(el('div', {
-      class: `modeRow pixelbox ${m.id === mode.id ? 'sel' : ''}`,
-      onclick: () => { sfx.tab(); mode = m; lastModeId = m.id; drawModes(); }
-    },
-      el('div', { class: 'tile' }, el('img', { class: 'pixel', src: m.tile, alt: '' })),
-      el('div', {}, el('h3', {}, m.name), el('p', {}, `${m.players} PLAYERS · x${m.mult} COINS`))
-    )));
-  }
-  drawModes();
-
-  const mapImg = el('img', { class: 'pixel', src: map.art, alt: map.name });
-  const mapName = el('span', {}, map.name);
   const bg = el('div', { class: 'bgmap', style: { backgroundImage: `url('${map.art}')` } });
-  const mapCard = el('div', { class: 'mapCard pixelbox' },
-    el('span', { class: 'randTag' }, 'RANDOM AT START'),
-    mapImg,
-    el('div', { class: 'mname' }, mapName,
-      el('button', {
-        class: 'reroll', title: 'Reroll preview',
-        onclick: () => { sfx.click(); map = pick(maps); store.data.lastMap = map.id; mapImg.src = map.art; mapName.textContent = map.name; bg.style.backgroundImage = `url('${map.art}')`; store.persist(); }
-      }, ' REROLL'))
-  );
 
-  const playBtn = el('button', { class: 'btn big', onclick: () => { sfx.launch(); deployMatch(mode); } }, el('span', {}, 'PLAY'));
+  const playBtn = el('button', { class: 'btn playBig', onclick: () => { sfx.launch(); deployMatch(mode); } }, 'PLAY');
 
-  const side = el('div', { class: 'lobbySide' },
-    el('div', { class: 'panelTitle' }, 'GAME MODE'),
-    modeList,
-    el('div', { class: 'panelTitle' }, 'NEXT MAP'),
-    mapCard,
-    playBtn
-  );
+  const modeIcon = el('img', { class: 'pixel', src: mode.tile, alt: '' });
+  const modeName = el('div', { class: 'rn' }, mode.name);
+  const modeSub = el('div', { class: 'rs' }, `${mode.players} PLAYERS · x${mode.mult} COINS`);
+  const modeRect = el('button', { class: 'hudRect', onclick: () => openModePrompt() },
+    modeIcon, el('div', { class: 'rt' }, el('div', { class: 'rl' }, 'GAME MODE'), modeName, modeSub));
+
+  const mapThumb = el('img', { class: 'pixel mapTh', src: map.art, alt: '' });
+  const mapName = el('div', { class: 'rn' }, map.name);
+  const mapRect = el('button', {
+    class: 'hudRect',
+    onclick: () => {
+      sfx.click(); map = pick(maps); store.data.lastMap = map.id;
+      mapThumb.src = map.art; mapName.textContent = map.name;
+      bg.style.backgroundImage = `url('${map.art}')`; store.persist();
+    }
+  }, mapThumb, el('div', { class: 'rt' }, el('div', { class: 'rl' }, 'NEXT MAP · TAP TO REROLL'), mapName));
+
+  function openModePrompt() {
+    sfx.tab();
+    const grid = el('div', { class: 'mpGrid' });
+    const root = el('div', { class: 'modePrompt' });
+    function close() { root.remove(); }
+    function draw() {
+      grid.innerHTML = '';
+      modes.forEach((m) => grid.append(el('button', {
+        class: `mpCard ${m.id === mode.id ? 'sel' : ''}`,
+        onclick: () => { sfx.equip(); mode = m; lastModeId = m.id; modeIcon.src = m.tile; modeName.textContent = m.name; modeSub.textContent = `${m.players} PLAYERS · x${m.mult} COINS`; draw(); setTimeout(close, 120); }
+      },
+        el('img', { class: 'pixel', src: m.tile, alt: '' }),
+        el('h3', {}, m.name),
+        el('p', {}, m.desc || ''),
+        el('span', { class: 'mpMeta' }, `${m.players} PLAYERS · x${m.mult} COINS`),
+        m.id === mode.id ? el('span', { class: 'mpSel' }, 'SELECTED') : null)));
+    }
+    draw();
+    root.append(
+      el('div', { class: 'mpHead' },
+        el('div', { class: 'panelTitle' }, 'SELECT GAME MODE'),
+        el('button', { class: 'btn ghost', onclick: () => { sfx.click(); close(); } }, '✕ CLOSE')),
+      grid);
+    document.getElementById('modalRoot').append(root);
+  }
 
   const canvas = el('canvas', { class: 'hero pixel' });
-  const stage = el('div', { class: 'stage' },
+  const emoteChips = animChips(null, true);
+  emoteChips.classList.add('lobbyEmote');
+
+  const stage = el('div', { class: 'stage full' },
     bg,
-    el('div', { class: 'shade' }),
+    el('div', { class: 'shade soft' }),
     el('div', { class: 'stageStats' },
       el('span', { class: 'chip' }, `MATCHES ${store.data.stats.matches}`),
       el('span', { class: 'chip' }, `WINS ${store.data.stats.wins}`),
-      el('span', { class: 'chip', onclick: () => bus.gotoTab && bus.gotoTab('locker') }, 'LOCKER ▸')),
+      el('span', { class: 'chip link', onclick: () => bus.gotoTab && bus.gotoTab('locker') }, 'LOCKER ▸')),
     el('div', { class: 'heroWrap' }, canvas, el('div', { class: 'floorGlow', style: { '--rc': R.color } })),
     el('div', { class: 'heroPlate' },
       el('div', { class: 'pn' }, `${hero.name} · ${styleOf().name}`),
-      el('div', { class: 'pq' }, `“${hero.quote || ''}”`))
+      el('div', { class: 'pq' }, `“${hero.quote || ''}”`)),
+    el('div', { class: 'hud' },
+      playBtn,
+      emoteChips,
+      el('div', { class: 'hudR' }, modeRect, mapRect))
   );
-  stage.append(animChips(stage));
-
-  anim = new Animator(canvas, 6);
+  anim = new Animator(canvas, 7);
   if (styleOf().filter !== 'none') canvas.style.filter = styleOf().filter;
   anim.load(hero.id, gliderOf());
 
-  return el('div', { class: 'cols screen-anim' }, side, stage);
+  return stage;
 }
 
 /* ------------------------------ SHOP ------------------------------ */
@@ -161,58 +189,67 @@ export function renderShop() {
   return shopGrid();
 }
 
+const portraitOf = (id) => `assets/spr/portrait_${id}.png`;
 function shopGrid() {
   const typeOf = (it) => C().heroes.includes(it) ? 'hero' : it.id.startsWith('pick') ? 'pick' : it.id.startsWith('glider') ? 'glider' : 'emote';
-  function card(it, i) {
+  function card(it, i, small) {
     const t = typeOf(it);
     const owned = store.owns(t, it.id);
     const Rr = rar(it.rarity);
+    const art = t === 'hero'
+      ? el('img', { class: 'pixel fartImg', src: portraitOf(it.id), alt: it.name })
+      : Object.assign(artImg(it), { className: 'pixel fartImg item' });
     return el('button', {
-      class: `card ${owned ? 'owned' : ''} ${['legendary', 'marvel'].includes(it.rarity) ? 'glow' : ''}`,
-      style: { '--rc': Rr.color, animationDelay: `${Math.min(i * 20, 280)}ms` },
+      class: `fcard ${small ? 'small' : ''} ${owned ? 'owned' : ''}`,
+      style: { '--rc': Rr.color, animationDelay: `${Math.min(i * 25, 300)}ms` },
       onclick: () => { sfx.click(); shopSel = { kind: 'item', type: t, id: it.id }; bus.refresh(); }
     },
-      el('div', { class: 'art' }, artImg(it)),
-      el('div', { class: 'nm' }, it.name),
-      el('div', { class: 'row' },
-        el('span', { class: 'rar' }, Rr.label),
-        owned ? el('span', { style: { color: '#7dffb0' } }, 'OWNED') : priceTag(it.price)));
+      el('div', { class: 'fart' }, art, owned ? el('span', { class: 'ownTag' }, 'OWNED') : null),
+      el('div', { class: 'fbar' },
+        el('span', { class: 'fnm' }, it.name),
+        priceTag(it.price)));
   }
   function bundleCard(b, i) {
     const Rr = rar(b.rarity);
     const value = b.items.reduce((s, id) => { const f = store.findItem(id); return s + (f ? f.item.price : 0); }, 0);
+    const arts = b.items.slice(0, 3).map((id) => {
+      const f = store.findItem(id);
+      if (!f) return null;
+      return el('img', {
+        class: `pixel bartImg ${f.type === 'hero' ? '' : 'item'}`,
+        src: f.type === 'hero' ? portraitOf(f.item.id) : f.item.art, alt: ''
+      });
+    });
     return el('button', {
-      class: 'card bundle',
+      class: 'fcard bundle',
       style: { '--rc': Rr.color, animationDelay: `${i * 40}ms` },
       onclick: () => { sfx.click(); shopSel = { kind: 'bundle', id: b.id }; bus.refresh(); }
     },
-      el('div', { class: 'bart' }, b.items.slice(0, 3).map((id) => {
-        const f = store.findItem(id); return f ? artImg(f.item, 54) : null;
-      })),
-      el('div', { class: 'nm' }, b.name),
-      el('div', { class: 'row' },
-        el('span', { class: 'rar' }, `${b.items.length} ITEMS · VALUE ${fmt(value)}`),
+      el('div', { class: 'fart trio' }, arts),
+      el('div', { class: 'fbar' },
+        el('span', { class: 'fnm' }, b.name),
         priceTag(b.price)),
       el('span', { class: 'tag' }, `-${Math.round((1 - b.price / Math.max(1, value)) * 100)}%`));
   }
 
-  const bundles = el('div', { class: 'grid cards', style: { gridTemplateColumns: 'repeat(auto-fill,minmax(210px,1fr))' } });
-  C().bundles.forEach((b, i) => bundles.append(bundleCard(b, i)));
-  const heroesGrid = el('div', { class: 'grid cards' });
-  C().heroes.forEach((h, i) => heroesGrid.append(card(h, i)));
-  const dailyGrid = el('div', { class: 'grid cards' });
-  [...C().picks, ...C().gliders, ...C().emotes].forEach((it, i) => dailyGrid.append(card(it, i)));
+  const featHeroes = C().heroes.filter((h) => ['epic', 'legendary', 'marvel'].includes(h.rarity));
+  const dailyHeroes = C().heroes.filter((h) => !featHeroes.includes(h));
+  const featured = el('div', { class: 'fgrid' });
+  C().bundles.forEach((b, i) => featured.append(bundleCard(b, i)));
+  featHeroes.forEach((h, i) => featured.append(card(h, i)));
+  const daily = el('div', { class: 'fgrid small' });
+  dailyHeroes.forEach((h, i) => daily.append(card(h, i, true)));
+  [...C().picks, ...C().gliders, ...C().emotes].forEach((it, i) => daily.append(card(it, i, true)));
 
   const now = new Date(); const end = new Date(now); end.setHours(24, 0, 0, 0);
   const mins = Math.max(0, Math.round((end - now) / 60000));
-  return el('div', { class: 'col scroll screen-anim', style: { height: '100%' } },
+  return el('div', { class: 'col scroll screen-anim shopBg', style: { height: '100%' } },
     el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
-      el('div', { class: 'panelTitle' }, 'ITEM SHOP'),
+      el('div', { class: 'shopTitle' }, 'ITEM SHOP'),
       el('span', { style: { fontSize: '15px', color: 'var(--dim)' } },
         store.data.dev.noCooldown ? 'TEST MODE — STOCK NEVER LOCKS' : `NEW STOCK IN ${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`)),
-    el('div', { class: 'panelTitle' }, 'BUNDLES'), bundles,
-    el('div', { class: 'panelTitle', style: { marginTop: '10px' } }, 'FEATURED HEROES'), heroesGrid,
-    el('div', { class: 'panelTitle', style: { marginTop: '10px' } }, 'RELICS · BACK BLING · EMOTES'), dailyGrid);
+    el('div', { class: 'secTitle' }, 'FEATURED'), featured,
+    el('div', { class: 'secTitle' }, 'DAILY'), daily);
 }
 
 function buyButton(type, id, price, after) {
@@ -328,16 +365,14 @@ export function renderLocker() {
 
   const canvas = el('canvas', { class: 'hero pixel' });
   const plate = el('div', { class: 'heroPlate', style: { position: 'static', transform: 'none', marginTop: '8px' } });
-  const chips = el('div', { style: { display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'center' } });
-  [['idle', 'IDLE'], ['walk', 'WALK'], ['attack', 'ATTACK'], ['power', 'POWER']].forEach(([id, label], i) => {
-    chips.append(el('button', {
-      class: `chip ${i === 0 ? 'sel' : ''}`, style: { position: 'static' },
-      onclick: (e) => { sfx.click(); if (anim) anim.setAnim(id); chips.querySelectorAll('.chip').forEach((c) => c.classList.remove('sel')); e.currentTarget.classList.add('sel'); }
-    }, label));
-  });
   const stageBox = el('div', { class: 'pixelbox lockerPrev' },
     el('div', { class: 'floorGlow', style: { '--rc': rar(heroOf().rarity).color, position: 'absolute', bottom: '86px' } }),
-    canvas, plate, chips);
+    canvas, plate);
+  const chips = animChips(stageBox);
+  chips.style.position = 'static';
+  chips.style.justifyContent = 'center';
+  chips.style.marginTop = '10px';
+  stageBox.append(chips);
 
   function syncPreview() {
     plate.innerHTML = '';

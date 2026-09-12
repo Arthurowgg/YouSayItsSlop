@@ -11,7 +11,7 @@ export function defaultSave() {
     owned: ['spiderman', 'blackwidow'],
     picks: ['pick_axe'],
     gliders: [],
-    emotes: ['emote_salute'],
+    emotes: ['emote_salute', 'emote_wave'],
     equipped: { hero: 'spiderman', style: 'default', pick: 'pick_axe', glider: null, emote: 'emote_salute' },
     stats: { matches: 0, wins: 0, purchases: 0, equips: 0, emotes: 0 },
     tasks: {},

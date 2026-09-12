@@ -171,6 +171,38 @@ def mode(kind):
         cv.line(12, 10, 12, 2, STEEL); cv.hline(9, 12, 2, STEEL); cv.vline(9, 2, 4, STEEL)
     return cv
 
+def emote24(kind):
+    cv = C(24, 24)
+    hx, hy = 9, 3
+    cv.rect(hx, hy, 6, 5, SKIN); cv.hline(hx, hx + 5, hy, HAIR)
+    cv.rect(hx, 8, 6, 6, JUMP)
+    cv.vline(hx + 1, 14, 18, (50, 60, 90)); cv.vline(hx + 4, 14, 18, (50, 60, 90))
+    A = lambda x0, y0, x1, y1: cv.line(x0, y0, x1, y1, JUMP)
+    if kind == "dance":
+        A(9, 9, 6, 5); A(14, 9, 17, 12); cv.set(5, 3, CYAN); cv.set(18, 10, PINK)
+    elif kind == "wave":
+        A(14, 8, 18, 4); A(9, 9, 8, 12); cv.set(19, 3, CYAN)
+    elif kind == "cheer":
+        A(9, 8, 6, 3); A(14, 8, 17, 3); cv.set(5, 2, GOLD); cv.set(18, 2, GOLD)
+    elif kind == "flex":
+        A(9, 9, 6, 9); cv.line(6, 9, 6, 6, JUMP); cv.set(6, 5, SKIN)
+        A(14, 9, 17, 9); cv.line(17, 9, 17, 6, JUMP); cv.set(17, 5, SKIN)
+    elif kind == "bow":
+        cv.rect(hx + 1, hy + 3, 6, 5, SKIN); cv.hline(hx + 1, hx + 6, hy + 3, HAIR)
+        A(9, 10, 8, 13); A(14, 10, 15, 13)
+    elif kind == "laugh":
+        A(9, 9, 10, 12); A(14, 9, 13, 12); cv.set(17, 2, WHT); cv.set(18, 4, WHT)
+    elif kind == "salute":
+        A(14, 8, 16, 5); cv.set(17, 4, SKIN); A(9, 9, 8, 12)
+    elif kind == "heart":
+        A(9, 8, 10, 4); A(14, 8, 13, 4)
+        for (x, y) in [(10, 0), (13, 0), (9, 1), (12, 1), (14, 1), (10, 2), (13, 2), (11, 2), (12, 2), (11, 3), (12, 3)]: cv.set(x, y, PINK)
+    elif kind == "shrug":
+        A(9, 9, 5, 8); A(14, 9, 18, 8); cv.set(19, 4, WHT); cv.set(18, 3, WHT); cv.set(19, 5, WHT)
+    elif kind == "point":
+        A(14, 9, 20, 9); cv.set(20, 9, SKIN); cv.set(21, 9, WHT); cv.set(22, 9, WHT); A(9, 9, 8, 12)
+    return cv
+
 def main():
     print("[paint] hand-drawn sprites")
     save("coin", coin())
@@ -182,10 +214,8 @@ def main():
     save("glider_shield", glider("shield"))
     save("glider_cosmic", glider("cosmic"))
     save("glider_claws", glider("claws"))
-    save("emote_dance", emote("dance"))
-    save("emote_salute", emote("salute"))
-    save("emote_flex", emote("flex"))
-    save("emote_heart", emote("heart"))
+    for k in ["dance", "wave", "cheer", "flex", "bow", "laugh", "salute", "heart", "shrug", "point"]:
+        save(f"emote_{k}", emote24(k))
     save("mode_br", mode("br"))
     save("mode_rumble", mode("rumble"))
     save("mode_stw", mode("stw"))

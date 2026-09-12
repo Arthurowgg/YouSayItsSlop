@@ -196,6 +196,28 @@ button { font-family: var(--ui); color: inherit; background: none; border: none;
 .note { position: absolute; font-size: 22px; color: var(--cyan); animation: noteUp 1s ease forwards; text-shadow: 0 2px 4px #000; }
 @keyframes noteUp { to { transform: translateY(-80px); opacity: 0; } }
 
+/* ---- lobby extras: party + news ticker ---- */
+.partyRow { display: flex; gap: 8px; }
+.pslot {
+  flex: 1; display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px;
+  background: rgba(6, 13, 38, .6); border: 1px dashed var(--line); color: var(--dim); font-size: 16px;
+  min-height: 52px;
+}
+.pslot.full { border-style: solid; border-color: var(--gold); color: var(--gold); background: rgba(24, 36, 80, .8); }
+.pslot img { image-rendering: pixelated; }
+.ticker {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: min(58%, 620px); overflow: hidden; border-radius: 999px;
+  background: rgba(4, 8, 26, .72); border: 1px solid var(--line); backdrop-filter: blur(4px);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.ticker .tk {
+  display: inline-block; white-space: nowrap; padding: 3px 0; font-size: 16px; color: var(--cyan);
+  animation: tick 26s linear infinite; will-change: transform;
+}
+@keyframes tick { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+.animChips.picker { top: 46px; max-width: 60%; background: rgba(4, 8, 26, .8); border-radius: 12px; padding: 6px; }
+
 /* ---- shop pages ---- */
 .pageHead { display: flex; align-items: center; gap: 14px; }
 .prevPanel { position: relative; flex: none; width: 380px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 20px 12px 14px; overflow: hidden; }
@@ -283,3 +305,55 @@ pre.save { font-family: var(--ui); font-size: 15px; color: #9ef4ff; background: 
   .lobbySide { width: 280px; }
   .prevPanel { width: 320px; }
 }
+
+/* ============ v5: fullscreen lobby, mode prompt, fortnite shop ============ */
+.stage.full { border-radius: 0; border: none; box-shadow: none; }
+.stage.full .bgmap { filter: brightness(.9) saturate(1.12); }
+.stage.full .shade.soft { background: linear-gradient(180deg, rgba(4,8,26,.5), transparent 20%, transparent 55%, rgba(4,8,26,.9) 94%); }
+.stage.full .heroWrap { bottom: 118px; }
+.hud { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; gap: 12px; padding: 14px 18px; }
+.hudR { margin-left: auto; display: flex; gap: 12px; }
+.btn.playBig { font-size: 34px; padding: 14px 58px; letter-spacing: 3px; border-radius: 14px; }
+.hudRect { display: flex; gap: 10px; align-items: center; text-align: left; width: 252px; padding: 8px 12px; border-radius: 12px; background: rgba(6,13,38,.78); border: 1px solid var(--line); color: var(--ink); cursor: pointer; transition: transform .15s ease, border-color .15s ease; backdrop-filter: blur(3px); }
+.hudRect:hover { transform: translateY(-2px); border-color: var(--cyan); }
+.hudRect img { width: 46px; height: 46px; border-radius: 8px; flex: none; }
+.hudRect img.mapTh { object-fit: cover; }
+.hudRect .rt { min-width: 0; }
+.hudRect .rl { font-size: 12px; color: var(--dim); letter-spacing: 1px; }
+.hudRect .rn { font-size: 18px; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hudRect .rs { font-size: 13px; color: var(--cyan); }
+.lobbyEmote { position: relative; align-self: flex-end; margin-bottom: 4px; }
+.lobbyEmote .picker { top: auto; bottom: 44px; left: 0; max-width: none; }
+.modePrompt { position: fixed; inset: 0; z-index: 80; background: rgba(3,6,20,.93); backdrop-filter: blur(6px); display: flex; flex-direction: column; gap: 18px; padding: 48px 6vw; animation: fadeIn .18s ease; }
+.mpHead { display: flex; justify-content: space-between; align-items: center; }
+.mpGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; align-content: start; overflow: auto; }
+.mpCard { position: relative; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; padding: 18px; border-radius: 16px; border: 2px solid var(--line); background: linear-gradient(170deg, #17244f, #0b1030); color: var(--ink); cursor: pointer; transition: transform .15s ease, border-color .15s; text-align: left; }
+.mpCard:hover { transform: translateY(-3px); border-color: var(--cyan); }
+.mpCard.sel { border-color: var(--gold); box-shadow: 0 0 24px rgba(255,210,60,.25); }
+.mpCard img { width: 72px; height: 72px; image-rendering: pixelated; }
+.mpCard h3 { font-size: 22px; color: var(--gold); }
+.mpCard p { font-size: 14px; color: var(--dim); }
+.mpMeta { font-size: 13px; color: var(--cyan); }
+.mpSel { position: absolute; top: 12px; right: 12px; color: #0b1030; background: var(--gold); font-size: 12px; padding: 2px 8px; border-radius: 6px; }
+.shopBg { background: linear-gradient(180deg, #101a3f 0%, #0a1130 40%, #070c22 100%); }
+.shopTitle { font-size: 30px; letter-spacing: 3px; color: var(--gold); text-shadow: 0 2px 0 #000; }
+.secTitle { margin: 18px 0 10px; font-size: 20px; letter-spacing: 2px; color: var(--cyan); border-left: 4px solid var(--cyan); padding-left: 10px; }
+.fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+.fgrid.small { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.fcard { position: relative; border-radius: 14px; overflow: hidden; border: 2px solid var(--rc); background: linear-gradient(170deg, var(--rc) 0%, #0a0f2c 85%); cursor: pointer; color: var(--ink); padding: 0; transition: transform .15s ease, box-shadow .15s ease; animation: cardIn .3s ease backwards; }
+.fcard:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.fcard .fart { height: 176px; display: flex; align-items: flex-end; justify-content: center; gap: 6px; padding: 10px 10px 0; background: radial-gradient(80% 70% at 50% 32%, rgba(255,255,255,.14), transparent 75%); }
+.fgrid.small .fcard .fart { height: 122px; }
+.fartImg { width: 132px; height: 132px; }
+.fgrid.small .fartImg { width: 92px; height: 92px; }
+.fartImg.item { width: 96px; height: 96px; }
+.fgrid.small .fartImg.item { width: 72px; height: 72px; }
+.fcard .fbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(5,8,24,.78); font-size: 15px; }
+.fnm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.fcard .ownTag { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6); color: #7dffb0; border: 1px solid #7dffb0; font-size: 12px; padding: 1px 7px; border-radius: 6px; }
+.fcard.bundle { grid-column: span 2; }
+.fcard.bundle .fart { align-items: center; }
+.bartImg { width: 100px; height: 100px; }
+.bartImg.item { width: 64px; height: 64px; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(10px); } }
+@keyframes fadeIn { from { opacity: 0; } }

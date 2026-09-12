@@ -49,11 +49,21 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok(!$('#lvl') && !!$('#settingsBtn') && !$('#scanlines'), 'no level in bar, settings yes, scanlines gone');
   ok($('#coinCount').textContent.replace(/\D/g, '') === '500', 'base coins = 500');
 
-  // lobby
-  ok($$('#screen .modeRow').length === 5, 'lobby 5 modes with generated icons');
-  ok(!!$('#screen canvas.hero'), 'lobby animated hero canvas');
+  // lobby (fullscreen)
+  ok(!!$('#screen canvas.hero') && !!$('#screen .stage.full'), 'fullscreen lobby with hero on background');
   ok($('.heroPlate .pq') && $('.heroPlate .pq').textContent.length > 4, 'hero quote shown in lobby');
-  ok($$('#screen .animChips .chip').length === 5, 'IDLE/WALK/ATTACK/POWER/EMOTE chips');
+  ok(!!$('.btn.playBig'), 'big PLAY button');
+  ok($$('#screen .hudRect').length === 2, 'two HUD rectangles (mode + map)');
+  ok(catalog.emotes.length === 10, 'catalog has 10 emotes');
+  $$('#screen .hudRect')[0].click(); await sleep(30);
+  ok($$('.modePrompt .mpCard').length === 5, 'mode prompt opens fullscreen with 5 modes');
+  $$('.modePrompt .mpCard')[1].click(); await sleep(200);
+  ok(!$('.modePrompt'), 'mode prompt closes after pick');
+  ok($$('#screen .hudRect')[0].textContent.includes(catalog.modes[1].name), 'mode rectangle shows picked mode');
+  const mapBefore = $$('#screen .hudRect')[1].textContent;
+  $$('#screen .hudRect')[1].click(); await sleep(30);
+  ok($$('#screen .hudRect')[1].textContent.length > 4, 'map rectangle rerolls');
+  void mapBefore;
 
   // settings
   $('#settingsBtn').click(); await sleep(30);
@@ -68,12 +78,13 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // shop: bundles + item pages
   await toShopGrid();
-  ok($$('.card.bundle').length === 4, 'shop shows 4 bundles');
-  $$('.card.bundle')[0].click(); await sleep(30);
+  ok($('#screen').textContent.includes('FEATURED') && $('#screen').textContent.includes('DAILY'), 'shop has FEATURED + DAILY sections');
+  ok($$('.fcard.bundle').length === 4, 'shop shows 4 bundles');
+  $$('.fcard.bundle')[0].click(); await sleep(30);
   ok($('#screen').textContent.includes('INCLUDED'), 'bundle page lists included items');
   ok($$('.inclRow').length === 3, 'bundle page shows 3 included rows');
   $$('.pageHead .btn').find((b) => b.textContent.includes('BACK')).click(); await sleep(30);
-  $$('#screen .card').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
+  $$('#screen .fcard').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
   ok($('.itemName') && $('.itemName').textContent === 'IRON MAN', 'item page opens for IRON MAN');
   ok(!!$('.statbars'), 'item page shows stat bars');
   ok(!!$('.itemQuote') && $('.itemQuote').textContent.length > 4, 'item page shows hero quote');
@@ -85,7 +96,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   $$('#screen .btn').find((b) => b.textContent.includes('+5000')).click(); await sleep(30);
   ok($('#coinCount').textContent.replace(/\D/g, '') === '5500', 'dev +5000');
   await toShopGrid();
-  $$('#screen .card').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
+  $$('#screen .fcard').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
   $$('.actions .btn').find((b) => b.textContent.includes('BUY')).click(); await sleep(30);
   ok($('#coinCount').textContent.replace(/\D/g, '') === String(5500 - 1600), 'coins deducted (3,900)');
   $$('.actions .btn').find((b) => b.textContent.includes('SELECT HERO')).click(); await sleep(30);
@@ -93,7 +104,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // bundle buy
   await toShopGrid();
-  $$('.card.bundle')[1].click(); await sleep(30);
+  $$('.fcard.bundle')[1].click(); await sleep(30);
   $$('.actions .btn').find((b) => b.textContent.includes('BUY BUNDLE')).click(); await sleep(30);
   ok($('#toasts').textContent.includes('BUNDLE UNLOCKED'), 'bundle purchase works');
 
@@ -110,7 +121,10 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($('.levelPanel') && $('.levelPanel').textContent.includes('LV'), 'tasks shows stored level');
   ok(['COMBAT', 'ECONOMY', 'STYLE'].every((c) => $('#screen').textContent.includes(c)), 'task categories shown');
   tabBtns()[0].click(); await sleep(30);
-  $$('#screen .animChips .chip').find((c) => c.textContent === 'EMOTE').click(); await sleep(30);
+  $$('#screen .animChips .chip').find((c) => c.textContent === 'EMOTE ▾').click(); await sleep(30);
+  const pk = $$('.animChips.picker .chip');
+  ok(pk.length === 2, 'emote picker lists owned emotes (SALUTE+WAVE)');
+  pk[1].click(); await sleep(30);
   tabBtns()[3].click(); await sleep(30);
   ok($('#screen').textContent.includes('1/1'), 'emote task 1/1');
   const claim = $$('#screen .btn').find((b) => b.textContent === 'CLAIM' && !b.disabled);
@@ -119,7 +133,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // match
   tabBtns()[0].click(); await sleep(30);
-  $$('#screen .btn.big').find((b) => b.textContent.includes('PLAY')).click();
+  $$('#screen .btn').find((b) => b.textContent.trim() === 'PLAY').click();
   await sleep(6000);
   ok(!!$('#deploy'), 'deploy overlay');
   ok(catalog.maps.some((m) => $('#deploy').textContent.includes(m.name)), 'random map picked');
