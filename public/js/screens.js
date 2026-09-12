@@ -107,7 +107,8 @@ export function renderPlay() {
   store.data.lastMap = map.id;
   const sceneMap = () => (mode.available ? map : (maps.find((m) => m.id === mode.map) || maps[0]));
 
-  const bg = el('div', { class: 'p2bg', style: { backgroundImage: `url('${sceneMap().art}')` } });
+  const glow = el('div', { class: 'p2modeglow' });
+  const emblem = el('img', { class: 'p2emblem pixel', src: mode.tile, alt: '' });
 
   const pix = el('div', { class: 'p2pix' });
   for (let i = 0; i < 14; i++) pix.append(el('span', {
@@ -132,9 +133,11 @@ export function renderPlay() {
   const dChips = el('div', { class: 'p2chips' });
   const playBtn = el('button', { class: 'p2play' });
 
+  let root = null;
   function draw() {
     const sm = sceneMap();
-    bg.style.backgroundImage = `url('${sm.art}')`;
+    emblem.src = mode.tile;
+    if (root) root.dataset.mode = mode.id;
     list.innerHTML = '';
     modes.forEach((m) => {
       const ms = maps.find((x) => x.id === (m.available ? map.id : m.map)) || maps[0];
@@ -175,18 +178,22 @@ export function renderPlay() {
     sfx.launch(); deployMatch(mode);
   };
 
-  draw();
-
-  return el('div', { class: 'play2 in-play' },
-    bg,
+  root = el('div', { class: 'play2 in-play' },
+    el('div', { class: 'p2sky' }),
+    el('div', { class: 'p2stars' }),
+    el('div', { class: 'p2skyline' }),
+    glow,
     el('div', { class: 'p2fog a' }), el('div', { class: 'p2fog b' }),
     pix,
+    emblem,
     el('div', { class: 'p2shade' }),
     head,
     list,
     el('div', { class: 'p2hud' },
       el('div', { class: 'p2detail' }, dName, dDesc, dChips),
       playBtn));
+  draw();
+  return root;
 }
 
 /* ------------------------------ SHOP v2: cohesive pixel storefront ------------------------------ */

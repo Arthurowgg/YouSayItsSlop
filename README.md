@@ -37,7 +37,7 @@ falls back to `localStorage` when the API is unreachable.
 
 | Tab | What it does |
 | --- | --- |
-| **PLAY** | Cinematic mode-select (PLAY v2): full-bleed animated pixel backdrop (next map art with slow pan, drifting fog, rising embers, vignette) behind a mode-card stack — exactly two modes: **1V1** (available, selected emphasis, pixel preview + description + meta) and **DOMINATION** (selectable for preview but `EM BREVE`, PLAY stays disabled), NEXT-MAP chip with reroll for 1v1, huge skewed yellow PLAY with hover/pressed/disabled states. |
+| **PLAY** | Cinematic mode-select (PLAY v2): layered night-city scene (sky gradient, twinkling stars, drifting pixel skyline, fog banks, rising embers, mode-tinted glow) with a floating mode emblem as focal point; mode-card stack with exactly two modes — **1V1** (available, selected emphasis, pixel preview + description + meta) and **DOMINATION** (selectable for preview but `EM BREVE`, PLAY stays disabled); NEXT-MAP chip with reroll for 1v1; huge skewed yellow PLAY with hover/pressed/disabled states. |
 | **SHOP** | Pixel storefront: night-city backdrop (skyline, stars, rarity glows), featured bundle/hero strip, type-specific cards (animated hero cells, emote ring stages, gear pedestals), dedicated bundle cards with per-item icons, and a showcase page per item (rarity aura, platform, ground shadow, animations). |
 | **LOCKER** | Animated preview + styles (CSS filter recolors); select hero, relic, back bling, emote. Locked items point to the shop. |
 | **TASKS** | Stored **LEVEL + XP bar** up top, daily/weekly tasks with progress bars and claimable coin rewards (no cooldown in test mode). |

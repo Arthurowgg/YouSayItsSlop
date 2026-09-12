@@ -50,7 +50,8 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($('#coinCount').textContent.replace(/\D/g, '') === '500', 'base coins = 500');
 
   // PLAY v2: cinematic mode select
-  ok(!!$('#screen .play2 .p2bg') && $$('#screen .play2 .p2fog').length === 2 && !!$('#screen .play2 .p2pix'), 'play has layered atmospheric background');
+  ok(!!$('#screen .play2 .p2sky') && !!$('#screen .play2 .p2stars') && !!$('#screen .play2 .p2skyline') && $$('#screen .play2 .p2fog').length === 2 && !!$('#screen .play2 .p2pix'), 'play has layered atmospheric scene (sky/stars/skyline/fog/embers)');
+  ok($('#screen .play2').dataset.mode === 'mode_1v1' && !!$('#screen .p2emblem'), 'scene tinted + emblem for selected mode');
   ok($$('#screen .p2card').length === 2 && catalog.modes.length === 2, 'exactly two game modes');
   ok($$('#screen .p2card')[0].classList.contains('sel') && $$('#screen .p2card')[0].textContent.includes('1V1'), '1v1 selected by default');
   ok($$('#screen .p2card')[0].textContent.includes('DISPONÍVEL'), '1v1 marked available');
@@ -58,6 +59,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($$('#screen .p2card')[1].textContent.includes('EM BREVE'), 'domination marked coming soon');
   $$('#screen .p2card')[1].click(); await sleep(30);
   ok($$('#screen .p2card')[1].classList.contains('sel'), 'domination selectable for preview');
+  ok($('#screen .play2').dataset.mode === 'mode_domination' && $('#screen .p2emblem').src.includes('mode_domination'), 'scene tint + emblem follow selection');
   ok($('#screen .p2play').disabled && $('#screen .p2play').textContent.includes('EM BREVE'), 'PLAY disabled while domination selected');
   ok(!$('#deploy'), 'domination cannot start a match');
   $$('#screen .p2card')[0].click(); await sleep(30);
