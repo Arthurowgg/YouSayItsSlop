@@ -3,7 +3,7 @@ import { el, fmt, coinDataURL } from './util.js';
 import { store } from './store.js';
 import { startParticles, setParticlesEnabled, setVolume, setHoverEnabled, sfx, toggleMute, isMuted } from './fx.js';
 import { setFpsCap } from './anim.js';
-import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast, modal } from './screens.js';
+import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast, modal, shopHome } from './screens.js';
 import { bus } from './bus.js';
 
 const TABS = [
@@ -88,7 +88,7 @@ function startFpsMeter() {
 function openSettings() {
   const s = store.data.settings;
   const rootEl = document.getElementById('modalRoot');
-  const root = el('div', { class: 'settingsFS' });
+  const root = el('div', { class: 'settingsFS in-settings' });
   const tabsBar = el('div', { class: 'setTabs' });
   const listEl = el('div', { class: 'setList' });
   const descEl = el('div', { class: 'setDesc' });
@@ -265,6 +265,17 @@ async function boot() {
 
   startParticles();
   applySettings();
+  window.addEventListener('keydown', (e) => {
+    if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    const keys = { 1: 'play', 2: 'shop', 3: 'locker', 4: 'tasks', 5: 'dev' };
+    if (keys[e.key]) { current = keys[e.key]; sfx.tab(); buildTabs(); renderCurrent(); }
+    else if (e.key === 'Escape') {
+      const fsx = document.querySelector('.settingsFS');
+      if (fsx) { sfx.click(); fsx.remove(); }
+      else if (document.querySelector('.modePrompt')) document.querySelector('.modePrompt').remove();
+      else { shopHome(); renderCurrent(); }
+    }
+  });
   buildTabs();
   renderCurrent();
   toast('BEM-VINDO AO LOBBY PIXEL', 'green');

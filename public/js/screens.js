@@ -16,12 +16,7 @@ const rar = (r) => {
 let anim = null;
 function killAnim() { if (anim) { anim.destroy(); anim = null; } }
 
-export function toast(msg, kind = '') {
-  const t = el('div', { class: `toast ${kind}` }, msg);
-  document.getElementById('toasts').append(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; }, 2400);
-  setTimeout(() => t.remove(), 2800);
-}
+export function toast() { /* notificações removidas */ }
 
 export function modal(node) {
   const root = document.getElementById('modalRoot');
@@ -91,7 +86,7 @@ function animChips(stageEl, emoteOnly) {
               setTimeout(() => n.remove(), 1100);
             }, i * 160);
           }
-        }, e.name));
+        }, el('img', { class: 'chipIcon pixel', src: e.art, alt: '' }), e.name));
       });
       picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
     }
@@ -159,11 +154,22 @@ export function renderPlay() {
     document.getElementById('modalRoot').append(root);
   }
 
+  const modeStrip = el('div', { class: 'modeStrip' }, modes.map((m, ix) => el('button', {
+    class: `msCard ${m.id === mode.id ? 'sel' : ''}`, title: m.desc,
+    onclick: () => {
+      sfx.equip(); mode = m; lastModeId = m.id;
+      modeIcon.src = m.tile; modeName.textContent = m.name;
+      modeSub.textContent = `${m.players} JOGADORES · x${m.mult} MOEDAS`;
+      [...modeStrip.children].forEach((x, j) => x.classList.toggle('sel', j === ix));
+    }
+  }, el('img', { class: 'pixel', src: m.tile, alt: '' }), el('span', {}, m.name))));
+
   const canvas = el('canvas', { class: 'hero pixel' });
   const emoteChips = animChips(null, true);
   emoteChips.classList.add('lobbyEmote');
 
-  const stage = el('div', { class: 'stage full' },
+  const stage = el('div', { class: 'stage full in-play' },
+    modeStrip,
     bg,
     el('div', { class: 'shade soft' }),
     el('div', { class: 'stageStats' },
@@ -189,13 +195,14 @@ export function renderPlay() {
 
 /* ------------------------------ SHOP ------------------------------ */
 let shopSel = null; // null | {kind:'item',type,id} | {kind:'bundle',id}
+export function shopHome() { shopSel = null; }
 export function renderShop() {
   killAnim();
   if (shopSel) return shopSel.kind === 'bundle' ? bundlePage(shopSel.id) : itemPage(shopSel.type, shopSel.id);
   return shopGrid();
 }
 
-const portraitOf = (id) => `assets/spr/portrait_${id}.png`;
+const portraitOf = (id) => `assets/spr/${id}.png`;
 function shopGrid() {
   const typeOf = (it) => C().heroes.includes(it) ? 'hero' : it.id.startsWith('pick') ? 'pick' : it.id.startsWith('glider') ? 'glider' : 'emote';
   function card(it, i) {
@@ -253,7 +260,7 @@ function shopGrid() {
 
   const now = new Date(); const end = new Date(now); end.setHours(24, 0, 0, 0);
   const mins = Math.max(0, Math.round((end - now) / 60000));
-  return el('div', { class: 'col scroll screen-anim shopBg', style: { height: '100%' } },
+  return el('div', { class: 'col scroll screen-anim in-shop shopBg', style: { height: '100%' } },
     el('div', { class: 'shopHead' },
       el('div', { class: 'shopTitle' }, 'LOJA DE ITENS'),
       el('span', { class: 'shopTimer' },
@@ -282,16 +289,16 @@ function buyButton(type, id, price, after) {
       if (store.data.settings.confirmBuys) {
         const nm = (store.findItem(id) || { item: { name: '' } }).item.name;
         const m = modal(el('div', {},
-          el('h2', {}, 'CONFIRM PURCHASE'),
-          el('p', { style: { fontSize: '16px', margin: '10px 0 14px' } }, `Buy ${nm} for ${fmt(price)} coins?`),
+          el('h2', {}, 'CONFIRMAR COMPRA'),
+          el('p', { style: { fontSize: '16px', margin: '10px 0 14px' } }, `Comprar ${nm} por ${fmt(price)} moedas?`),
           el('div', { style: { display: 'flex', gap: '10px', justifyContent: 'flex-end' } },
-            el('button', { class: 'btn ghost', onclick: () => m.close() }, 'CANCEL'),
-            el('button', { class: 'btn', onclick: () => { m.close(); doBuy(); } }, 'BUY'))));
+            el('button', { class: 'btn ghost', onclick: () => m.close() }, 'CANCELAR'),
+            el('button', { class: 'btn', onclick: () => { m.close(); doBuy(); } }, 'COMPRAR'))));
       } else doBuy();
     }
   }, 'COMPRAR ', priceTag(price));
   if (!eq) return el('button', { class: 'btn blue', onclick: () => { sfx.equip(); store.equip(type, id); toast('EQUIPADO', 'green'); bus.refresh(); } }, type === 'hero' ? 'ESCOLHER HERÓI' : 'EQUIPAR');
-  return el('span', { class: 'ownedTag' }, '★ EQUIPPED');
+  return el('span', { class: 'ownedTag' }, '★ EQUIPADO');
 }
 
 function previewPanel(heroId, gliderId, bigIcon) {
@@ -324,7 +331,7 @@ function itemPage(type, id) {
     el('div', { class: 'priceLine' }, priceTag(it.price), store.owns(type, id) ? el('span', { style: { color: '#7dffb0', fontSize: '16px' } }, ' · OBTIDO') : null),
     el('div', { class: 'actions' }, buyButton(type, id, it.price)));
 
-  return el('div', { class: 'col screen-anim', style: { height: '100%', gap: '12px' } },
+  return el('div', { class: 'col screen-anim in-page', style: { height: '100%', gap: '12px' } },
     el('div', { class: 'pageHead' },
       el('button', { class: 'btn ghost', onclick: () => { sfx.click(); shopSel = null; bus.refresh(); } }, '◂ VOLTAR'),
       el('div', { class: 'panelTitle' }, 'LOJA DE ITENS')),
@@ -371,7 +378,7 @@ function bundlePage(id) {
     el('div', { class: 'panelTitle' }, 'INCLUÍDO'), rows,
     el('div', { class: 'actions' }, allOwned ? el('span', { class: 'ownedTag' }, 'TUDO OBTIDO') : buy));
 
-  return el('div', { class: 'col screen-anim', style: { height: '100%', gap: '12px' } },
+  return el('div', { class: 'col screen-anim in-page', style: { height: '100%', gap: '12px' } },
     el('div', { class: 'pageHead' },
       el('button', { class: 'btn ghost', onclick: () => { sfx.click(); shopSel = null; bus.refresh(); } }, '◂ VOLTAR'),
       el('div', { class: 'panelTitle' }, 'PACOTE')),
@@ -428,6 +435,15 @@ export function renderLocker() {
   const catCol = el('div', { class: 'lkCats' });
   const headRow = el('div', { class: 'lkHead' });
   const gridWrap = el('div', { class: 'f2grid small lockerGrid' });
+  let lkQ = '', lkRar = '';
+  const lkTools = el('div', { class: 'lkTools' },
+    el('input', { class: 'lkSearch', placeholder: 'PESQUISAR NO ARMÁRIO…', oninput: (ev) => { lkQ = ev.target.value.toLowerCase(); drawGrid(); } }));
+  ['', 'common', 'uncommon', 'rare', 'epic', 'legendary', 'marvel'].forEach((r) => {
+    lkTools.append(el('button', {
+      class: `lkF ${r === '' ? 'sel' : ''}`, style: r ? { '--rc': rar(r).color } : {},
+      onclick: (ev) => { sfx.tab(); lkRar = r; [...lkTools.querySelectorAll('.lkF')].forEach((b) => b.classList.remove('sel')); ev.currentTarget.classList.add('sel'); drawGrid(); }
+    }, r ? rar(r).label : 'TODOS'));
+  });
 
   function drawCats() {
     catCol.innerHTML = '';
@@ -444,6 +460,7 @@ export function renderLocker() {
     else if (cat === 'pick') list = C().picks.filter((x) => store.owns('pick', x.id));
     else if (cat === 'glider') list = C().gliders.filter((x) => store.owns('glider', x.id));
     else list = C().emotes.filter((x) => store.owns('emote', x.id));
+    list = list.filter((x) => (!lkQ || (x.name || '').toLowerCase().includes(lkQ)) && (!lkRar || x.rarity === lkRar));
     headRow.innerHTML = '';
     headRow.append(el('span', { class: 'lkAll' }, `TODOS (${list.length})`));
     if (!list.length) {
@@ -475,13 +492,13 @@ export function renderLocker() {
   drawCats(); drawGrid();
 
   const left = el('div', { class: 'lkLeft' }, stageBox, chips, loadoutRow);
-  const right = el('div', { class: 'lkRight' }, catCol, el('div', { class: 'col', style: { flex: '1', minWidth: '0', gap: '10px' } }, headRow, gridWrap));
-  return el('div', { class: 'cols screen-anim lockerWrap' }, left, right);
+  const right = el('div', { class: 'lkRight' }, catCol, el('div', { class: 'col', style: { flex: '1', minWidth: '0', gap: '10px' } }, lkTools, headRow, gridWrap));
+  return el('div', { class: 'cols screen-anim in-locker lockerWrap' }, left, right);
 }
 /* ------------------------------ TASKS (categorized) ------------------------------ */
 export function renderTasks() {
   killAnim();
-  const wrap = el('div', { class: 'col scroll screen-anim', style: { height: '100%' } });
+  const wrap = el('div', { class: 'col scroll screen-anim in-tasks', style: { height: '100%' } });
   wrap.append(el('div', { class: 'levelPanel pixelbox' },
     el('span', { class: 'lv' }, `LV ${store.data.level}`),
     el('div', { class: 'xpbar' }, el('i', { style: { width: `${Math.min(100, (store.data.xp / store.xpNeed()) * 100)}%` } })),
@@ -516,7 +533,7 @@ export function renderTasks() {
 /* ------------------------------ DEV ------------------------------ */
 export function renderDev() {
   killAnim();
-  const wrap = el('div', { class: 'col scroll screen-anim', style: { height: '100%', gap: '12px' } });
+  const wrap = el('div', { class: 'col scroll screen-anim in-dev', style: { height: '100%', gap: '12px' } });
   wrap.append(
     el('div', { style: { display: 'flex', gap: '12px', alignItems: 'center' } },
       el('div', { class: 'panelTitle' }, 'DEV / LAB DE MOEDAS'),

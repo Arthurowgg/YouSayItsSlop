@@ -477,3 +477,50 @@ button { font-family: inherit; font-size: 16px; }
   .lkLoadout { flex-direction: column; }
   .modePrompt { padding: 24px 5vw; }
 }
+
+/* ===== v9: feel de jogo (sem fade), shop relayout, locker tools ===== */
+.screen-anim { animation: none !important; }
+.in-play   { animation: trZoom .38s cubic-bezier(.2,.9,.25,1.15) both; }
+.in-shop   { animation: trSlideL .34s cubic-bezier(.16,.84,.3,1) both; }
+.in-locker { animation: trSlideR .34s cubic-bezier(.16,.84,.3,1) both; }
+.in-tasks  { animation: trDrop .4s cubic-bezier(.2,.9,.3,1.2) both; }
+.in-dev    { animation: trGlitch .32s steps(5) both; }
+.in-page   { animation: trPop .3s cubic-bezier(.2,.9,.3,1.2) both; }
+.in-settings { animation: trSet .32s cubic-bezier(.16,.84,.3,1) both; }
+@keyframes trZoom { from { transform: scale(1.14); clip-path: circle(46% at 50% 52%); filter: saturate(1.5) brightness(1.35); } to { transform: scale(1); clip-path: circle(120% at 50% 50%); filter: none; } }
+@keyframes trSlideL { from { transform: translateX(110px) skewX(-5deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes trSlideR { from { transform: translateX(-110px) skewX(5deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes trDrop { from { transform: translateY(-80px); opacity: 0; } 62% { transform: translateY(7px); opacity: 1; } to { transform: none; } }
+@keyframes trGlitch { 0% { clip-path: inset(0 0 82% 0); transform: translateX(-10px); } 30% { clip-path: inset(28% 0 42% 0); transform: translateX(8px); } 60% { clip-path: inset(62% 0 8% 0); transform: translateX(-5px); } 100% { clip-path: inset(0); transform: none; } }
+@keyframes trPop { from { transform: translateY(28px) scale(.95); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes trSet { from { transform: translateX(7%); opacity: 0; } to { transform: none; opacity: 1; } }
+body.reduce-motion .in-play, body.reduce-motion .in-shop, body.reduce-motion .in-locker,
+body.reduce-motion .in-tasks, body.reduce-motion .in-dev, body.reduce-motion .in-page,
+body.reduce-motion .in-settings { animation: none; }
+#toasts { display: none; }
+
+/* lobby: faixa de modos (aba play cheia) */
+.modeStrip { position: absolute; top: 62px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 3; }
+.msCard { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 118px; padding: 8px 6px 7px; border-radius: 10px; border: 1px solid var(--line); background: rgba(6,13,38,.82); color: var(--ink); cursor: pointer; font-size: 10px; letter-spacing: .5px; text-transform: uppercase; backdrop-filter: blur(3px); transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease; }
+.msCard img { width: 34px; height: 34px; image-rendering: pixelated; }
+.msCard:hover { transform: translateY(-3px); border-color: var(--cyan); }
+.msCard.sel { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 8px 22px rgba(255,176,46,.22); background: linear-gradient(180deg, rgba(255,176,46,.14), rgba(6,13,38,.85)); }
+@media (max-width: 900px) { .modeStrip { flex-wrap: wrap; width: min(92vw, 620px); } .msCard { width: calc(33% - 6px); } }
+
+/* locker: pesquisa + filtros */
+.lkTools { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.lkSearch { flex: 1; min-width: 150px; background: #0a1230; border: 1px solid var(--line); color: var(--ink); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 12px; letter-spacing: .5px; }
+.lkSearch:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(37,201,242,.25); }
+.lkF { padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: #0a1230; color: var(--ink); cursor: pointer; font-size: 10px; letter-spacing: .6px; transition: border-color .12s ease, background .12s ease; }
+.lkF:hover { border-color: var(--rc, var(--cyan)); }
+.lkF.sel { border-color: var(--rc, var(--cyan)); color: #fff; background: var(--rc, var(--cyan)); }
+
+/* chips de emote com ícone */
+.chipIcon { width: 22px; height: 22px; image-rendering: pixelated; margin-right: 6px; vertical-align: -6px; }
+
+/* shop/locker cards: ícone é o protagonista, fundo na cor da raridade */
+.fcard2 { background: linear-gradient(168deg, var(--rc) 0%, #0b1434 78%); background-blend-mode: overlay, normal; border-color: var(--rc); border-radius: 12px; overflow: hidden; }
+.f2art { height: 112px; background: radial-gradient(130% 95% at 50% 105%, var(--rc), transparent 72%); }
+.f2img { width: 92px; height: 92px; image-rendering: pixelated; filter: drop-shadow(0 5px 12px rgba(0,0,0,.6)); transition: transform .16s cubic-bezier(.2,.9,.3,1.4); }
+.fcard2:hover .f2img { transform: scale(1.1) translateY(-3px); }
+.f2img.item { width: 84px; height: 84px; }

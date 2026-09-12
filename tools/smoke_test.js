@@ -2,8 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const { JSDOM } = require('jsdom');
-
 const REPO = process.env.REPO || path.join(__dirname, '..');
+
 const html = fs.readFileSync(path.join(REPO, 'public/index.html'), 'utf8');
 const catalog = JSON.parse(fs.readFileSync(path.join(REPO, 'public/data/catalog.json'), 'utf8'));
 
@@ -54,6 +54,9 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($('.heroPlate .pq') && $('.heroPlate .pq').textContent.length > 4, 'hero quote shown in lobby');
   ok(!!$('.btn.playBig'), 'big PLAY button');
   ok($$('#screen .hudRect').length === 2, 'two HUD rectangles (mode + map)');
+  ok($$('#screen .msCard').length === 5, 'lobby shows 5 mode cards');
+  $$('#screen .msCard')[2].click(); await sleep(20);
+  ok($$('#screen .msCard')[2].classList.contains('sel'), 'mode strip selects mode');
   ok(catalog.emotes.length === 10, 'catalog has 10 emotes');
   $$('#screen .hudRect')[0].click(); await sleep(30);
   ok($$('.modePrompt .mpCard').length === 5, 'mode prompt opens fullscreen with 5 modes');
@@ -94,8 +97,9 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($('.itemName') && $('.itemName').textContent === 'HOMEM DE FERRO', 'item page opens for IRON MAN');
   ok(!!$('.statbars'), 'item page shows stat bars');
   ok(!!$('.itemQuote') && $('.itemQuote').textContent.length > 4, 'item page shows hero quote');
+  const c0 = Number($('#coinCount').textContent.replace(/\D/g, ''));
   $$('.actions .btn').find((b) => b.textContent.includes('COMPRAR')).click(); await sleep(30);
-  ok($('#toasts').textContent.includes('MOEDAS INSUFICIENTES'), 'buy denied at 500');
+  ok(Number($('#coinCount').textContent.replace(/\D/g, '')) === c0, 'buy denied at 500');
 
   // dev coins then buy + equip
   tabBtns()[4].click(); await sleep(30);
@@ -111,18 +115,23 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   // bundle buy
   await toShopGrid();
   $$('.fcard2.bundle')[1].click(); await sleep(30);
+  const cBefore = Number($('#coinCount').textContent.replace(/\D/g, ''));
   $$('.actions .btn').find((b) => b.textContent.includes('COMPRAR PACOTE')).click(); await sleep(30);
-  ok($('#toasts').textContent.includes('PACOTE DESBLOQUEADO'), 'bundle purchase works');
+  ok(Number($('#coinCount').textContent.replace(/\D/g, '')) < cBefore, 'bundle purchase works (coins deducted)');
 
   // locker with combined backbling
   tabBtns()[2].click(); await sleep(30);
   ok(!!$('#screen canvas.hero'), 'locker animated preview');
   ok($$('.lockerGrid .fcard2').length === 4, 'locker shows only owned outfits (4 after test buys)');
   ok($('.lkLoadout') && $$('.lkSlot').length === 3, 'loadout row shows equipped cosmetics');
+  ok(!!$('.lkSearch') && $$('.lkF').length === 7, 'locker search + 7 rarity filters');
+  $('.lkSearch').value = 'aranha'; $('.lkSearch').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(20);
+  ok($$('.lockerGrid .fcard2').length >= 1 && $$('.lockerGrid .fcard2').every((c) => c.textContent.toLowerCase().includes('aranha')), 'locker search filters');
+  $('.lkSearch').value = ''; $('.lkSearch').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(20);
   const catBling = $$('.lkCat').find((c) => c.textContent === 'BACK BLING');
   catBling.click(); await sleep(30);
   $$('.lockerGrid .fcard2').find((c) => c.textContent.includes('ASAS DE ANJO')).click(); await sleep(30);
-  ok($('#toasts').textContent.includes('EQUIPADO'), 'glider equipped (combines on hero)');
+  ok($$('.lockerGrid .fcard2').some((c) => c.classList.contains('equipped')), 'glider equipped (combines on hero)');
   ok($('.lkLoadout').textContent.includes('ASAS DE ANJO'), 'loadout shows equipped back bling');
 
   // tasks categories + level
@@ -138,12 +147,13 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($('#screen').textContent.includes('1/1'), 'emote task 1/1');
   const claim = $$('#screen .btn').find((b) => b.textContent === 'RESGATAR' && !b.disabled);
   ok(!!claim, 'claim enabled');
-  if (claim) { claim.click(); await sleep(30); ok($('#toasts').textContent.includes('TAREFA CONCLUÍDA'), 'task claimed'); }
+  if (claim) { const cb2 = Number($('#coinCount').textContent.replace(/\D/g, '')); claim.click(); await sleep(30); ok(Number($('#coinCount').textContent.replace(/\D/g, '')) > cb2, 'task claimed (reward)'); }
 
   // match
   tabBtns()[0].click(); await sleep(30);
   $$('#screen .btn').find((b) => b.textContent.trim() === 'JOGAR').click();
   await sleep(6000);
+  ok(!!$('#screen .in-play, .stage.in-play'), 'per-tab transition class present');
   ok(!!$('#deploy'), 'deploy overlay');
   ok(catalog.maps.some((m) => $('#deploy').textContent.includes(m.name)), 'random map picked');
   const back = $$('#deploy .btn').find((b) => b.textContent.includes('VOLTAR AO LOBBY'));
