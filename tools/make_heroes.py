@@ -21,7 +21,7 @@ RED = (214, 42, 48)
 BLUE = (40, 90, 190)
 PINK = (255, 92, 170)
 BARK = (122, 88, 52)
-EMOTES = ['dance', 'wave', 'cheer', 'flex', 'bow', 'laugh', 'salute', 'heart', 'shrug', 'point']
+EMOTES = ['gangnam', 'floss', 'dab', 'moonwalk', 'robot', 'runningman', 'macarena', 'hype', 'heart', 'groove']
 
 def sh(c, f): return tuple(min(255, int(v * f)) for v in c[:3])
 
@@ -66,26 +66,26 @@ def outline(cv):
             if (x + dx, y + dy) not in drawn: cv.set(x + dx, y + dy, OUT)
 
 HEROES = {
- "spiderman": dict(suit=(214, 42, 48), suit2=(38, 88, 190), accent=(214, 42, 48), skin=(240, 190, 140), quote="Your friendly neighborhood pixel-slinger."),
- "spiderman_classic": dict(suit=(198, 30, 36), suit2=(28, 66, 158), accent=(198, 30, 36), skin=(240, 190, 140), quote="Classic suit. Classic responsibility."),
- "miles": dict(suit=(24, 24, 30), suit2=(24, 24, 30), accent=(230, 42, 52), skin=(150, 100, 70), quote="Alright, one more swing."),
- "gwen": dict(suit=(240, 240, 246), suit2=(24, 24, 30), accent=(255, 92, 170), skin=(245, 210, 180), quote="You wouldn't get it. It's a whole dimension thing."),
- "venom": dict(suit=(18, 18, 24), suit2=(18, 18, 24), accent=(230, 60, 70), skin=(18, 18, 24), big=True, quote="We are done talking."),
- "ironman": dict(suit=(198, 36, 42), suit2=(150, 30, 36), accent=GOLD, skin=(240, 190, 140), quote="Power at 100 percent. Try to keep up."),
- "capamerica": dict(suit=(40, 90, 190), suit2=(40, 90, 190), accent=RED, skin=(240, 190, 140), quote="I can do this all day."),
- "thor": dict(suit=(90, 100, 125), suit2=(62, 68, 88), accent=GOLD, skin=(245, 210, 180), hair=(250, 220, 120), cape=(198, 36, 48), quote="Bring me that horizon!"),
- "hulk": dict(suit=(72, 172, 82), suit2=(122, 72, 172), accent=(72, 172, 82), skin=(72, 172, 82), big=True, quote="Puny menu. HULK SMASH."),
- "wolverine": dict(suit=(250, 200, 44), suit2=(40, 90, 190), accent=(250, 200, 44), skin=(240, 190, 140), quote="Bub, I don't line up."),
- "blackwidow": dict(suit=(30, 30, 38), suit2=(30, 30, 38), accent=GOLD, skin=(245, 210, 180), hair=(172, 52, 42), quote="Red in my ledger. You're adding to it."),
- "hawkeye": dict(suit=(122, 62, 172), suit2=(62, 42, 92), accent=(248, 248, 252), skin=(240, 190, 140), quote="Wind's fine. I'm better."),
- "drstrange": dict(suit=(42, 72, 162), suit2=(42, 72, 162), accent=(255, 160, 40), skin=(240, 200, 160), hair=(96, 96, 108), cape=(190, 32, 42), quote="Dormammu, I've come to bargain."),
- "scarletwitch": dict(suit=(198, 36, 52), suit2=(122, 22, 38), accent=(255, 92, 100), skin=(245, 210, 180), hair=(150, 32, 40), quote="You have no idea what I can do."),
- "scarletwitch_azure": dict(suit=(52, 92, 202), suit2=(32, 52, 122), accent=(130, 205, 255), skin=(245, 210, 180), hair=(150, 32, 40), quote="Chaos, but make it cool."),
- "blackpanther": dict(suit=(28, 28, 36), suit2=(28, 28, 36), accent=SILV, skin=(28, 28, 36), quote="Wakanda forever."),
- "captainmarvel": dict(suit=(42, 72, 172), suit2=(198, 36, 48), accent=GOLD, skin=(245, 210, 180), hair=(250, 220, 120), quote="Higher. Further. Faster."),
- "captainmarvel_classic": dict(suit=(42, 72, 172), suit2=(42, 72, 172), accent=GOLD, skin=(245, 210, 180), hair=(250, 220, 120), quote="The original star-spangled problem."),
- "antman": dict(suit=(142, 26, 42), suit2=(32, 32, 38), accent=SILV, skin=(240, 190, 140), quote="It's not size, it's timing."),
- "antman_unmasked": dict(suit=(142, 26, 42), suit2=(32, 32, 38), accent=SILV, skin=(240, 190, 140), hair=(122, 82, 42), quote="Scott Lang. Mostly reformed."),
+ "spiderman": dict(boot=(198, 30, 36), suit=(214, 42, 48), suit2=(38, 88, 190), accent=(214, 42, 48), skin=(240, 190, 140), quote="Your friendly neighborhood pixel-slinger."),
+ "spiderman_classic": dict(boot=(198, 30, 36), suit=(198, 30, 36), suit2=(28, 66, 158), accent=(198, 30, 36), skin=(240, 190, 140), quote="Classic suit. Classic responsibility."),
+ "miles": dict(boot=(198, 30, 36), suit=(24, 24, 30), suit2=(24, 24, 30), accent=(230, 42, 52), skin=(150, 100, 70), quote="Alright, one more swing."),
+ "gwen": dict(boot=(24, 24, 30), suit=(240, 240, 246), suit2=(24, 24, 30), accent=(255, 92, 170), skin=(245, 210, 180), quote="You wouldn't get it. It's a whole dimension thing."),
+ "venom": dict(boot=(18, 18, 24), suit=(18, 18, 24), suit2=(18, 18, 24), accent=(230, 60, 70), skin=(18, 18, 24), big=True, quote="We are done talking."),
+ "ironman": dict(boot=(150, 30, 36), suit=(198, 36, 42), suit2=(150, 30, 36), accent=GOLD, skin=(240, 190, 140), quote="Power at 100 percent. Try to keep up."),
+ "capamerica": dict(boot=(150, 30, 36), suit=(40, 90, 190), suit2=(40, 90, 190), accent=RED, skin=(240, 190, 140), quote="I can do this all day."),
+ "thor": dict(boot=(60, 60, 74), suit=(90, 100, 125), suit2=(62, 68, 88), accent=GOLD, skin=(245, 210, 180), hair=(250, 220, 120), cape=(198, 36, 48), quote="Bring me that horizon!"),
+ "hulk": dict(boot=(40, 110, 50), suit=(72, 172, 82), suit2=(122, 72, 172), accent=(72, 172, 82), skin=(72, 172, 82), big=True, quote="Puny menu. HULK SMASH."),
+ "wolverine": dict(boot=(250, 200, 44), suit=(250, 200, 44), suit2=(40, 90, 190), accent=(250, 200, 44), skin=(240, 190, 140), quote="Bub, I don't line up."),
+ "blackwidow": dict(boot=(30, 30, 38), suit=(30, 30, 38), suit2=(30, 30, 38), accent=GOLD, skin=(245, 210, 180), hair=(172, 52, 42), quote="Red in my ledger. You're adding to it."),
+ "hawkeye": dict(boot=(62, 42, 92), suit=(122, 62, 172), suit2=(62, 42, 92), accent=(248, 248, 252), skin=(240, 190, 140), quote="Wind's fine. I'm better."),
+ "drstrange": dict(boot=(120, 60, 40), suit=(42, 72, 162), suit2=(42, 72, 162), accent=(255, 160, 40), skin=(240, 200, 160), hair=(96, 96, 108), cape=(190, 32, 42), quote="Dormammu, I've come to bargain."),
+ "scarletwitch": dict(boot=(122, 22, 38), suit=(198, 36, 52), suit2=(122, 22, 38), accent=(255, 92, 100), skin=(245, 210, 180), hair=(150, 32, 40), quote="You have no idea what I can do."),
+ "scarletwitch_azure": dict(boot=(32, 52, 122), suit=(52, 92, 202), suit2=(32, 52, 122), accent=(130, 205, 255), skin=(245, 210, 180), hair=(150, 32, 40), quote="Chaos, but make it cool."),
+ "blackpanther": dict(boot=(28, 28, 36), suit=(28, 28, 36), suit2=(28, 28, 36), accent=SILV, skin=(28, 28, 36), quote="Wakanda forever."),
+ "captainmarvel": dict(boot=(198, 36, 48), suit=(42, 72, 172), suit2=(198, 36, 48), accent=GOLD, skin=(245, 210, 180), hair=(250, 220, 120), quote="Higher. Further. Faster."),
+ "captainmarvel_classic": dict(boot=(198, 36, 48), suit=(42, 72, 172), suit2=(42, 72, 172), accent=GOLD, skin=(245, 210, 180), hair=(250, 220, 120), quote="The original star-spangled problem."),
+ "antman": dict(boot=(32, 32, 38), suit=(142, 26, 42), suit2=(32, 32, 38), accent=SILV, skin=(240, 190, 140), quote="It's not size, it's timing."),
+ "antman_unmasked": dict(boot=(32, 32, 38), suit=(142, 26, 42), suit2=(32, 32, 38), accent=SILV, skin=(240, 190, 140), hair=(122, 82, 42), quote="Scott Lang. Mostly reformed."),
 }
 
 # ---------------------------------------------------------------- heads
@@ -98,139 +98,186 @@ def HEADS(hid):
         suit, skin = c["suit"], c["skin"]
         hr = c.get("hair")
         if hid in ("spiderman", "spiderman_classic"):
-            cv.rect(hx, hy, hw, 12, suit)
-            dk = sh(suit, .55)
-            cv.vline(hx + hw // 2, hy, hy + 11, dk)
-            for yy in (hy + 2, hy + 8, hy + 10): cv.hline(hx, hx + hw - 1, yy, dk)
-            lens(cv, hx + 2, hy + 4, 4, 3); lens(cv, hx + hw - 6, hy + 4, 4, 3)
+            cv.rect(hx, hy, hw, 13, suit)
+            dk = sh(suit, .5)
+            cv.vline(hx + hw // 2, hy, hy + 12, dk)
+            for yy in (hy + 2, hy + 9, hy + 11): cv.hline(hx, hx + hw - 1, yy, dk)
+            for i in range(4):
+                cv.set(hx + 1 + i, hy + 1 + (i // 3), dk); cv.set(hx + hw - 2 - i, hy + 1 + (i // 3), dk)
+            cv.rect(hx + 1, hy + 4, 6, 4, BLACK); cv.rect(hx + hw - 7, hy + 4, 6, 4, BLACK)
+            cv.rect(hx + 2, hy + 5, 4, 2, WHITE); cv.set(hx + 1, hy + 5, WHITE)
+            cv.rect(hx + hw - 6, hy + 5, 4, 2, WHITE); cv.set(hx + hw - 2, hy + 5, WHITE)
         elif hid == "miles":
-            cv.rect(hx, hy, hw, 12, suit)
-            lens(cv, hx + 2, hy + 4, 4, 3); lens(cv, hx + hw - 6, hy + 4, 4, 3)
-            for ex in (hx + 1, hx + hw - 6):
-                cv.hline(ex, ex + 5, hy + 3, c["accent"]); cv.hline(ex, ex + 5, hy + 8, c["accent"])
-            cv.vline(hx + hw // 2, hy, hy + 11, sh(c["accent"], .5))
+            cv.rect(hx, hy, hw, 13, suit)
+            dk = sh(c["accent"], .45)
+            cv.vline(hx + hw // 2, hy, hy + 12, dk)
+            for yy in (hy + 2, hy + 10): cv.hline(hx, hx + hw - 1, yy, dk)
+            cv.rect(hx + 1, hy + 4, 6, 4, c["accent"]); cv.rect(hx + hw - 7, hy + 4, 6, 4, c["accent"])
+            cv.rect(hx + 2, hy + 5, 4, 2, WHITE); cv.set(hx + 1, hy + 5, WHITE)
+            cv.rect(hx + hw - 6, hy + 5, 4, 2, WHITE); cv.set(hx + hw - 2, hy + 5, WHITE)
         elif hid == "gwen":
-            cv.rect(hx - 1, hy - 1, hw + 2, 14, suit)
+            cv.rect(hx - 1, hy - 1, hw + 2, 15, suit)
             cv.hline(hx - 1, hx + hw, hy - 1, PINK)
-            cv.rect(hx + 2, hy + 3, hw - 4, 8, (42, 38, 46))
-            cv.rect(hx + 3, hy + 4, hw - 6, 6, skin)
-            cv.set(hx + 4, hy + 6, WHITE); cv.set(hx + 5, hy + 6, WHITE)
-            cv.set(hx + hw - 5, hy + 6, WHITE); cv.set(hx + hw - 6, hy + 6, WHITE)
-            cv.set(hx + 2, hy + 3, PINK); cv.set(hx + hw - 3, hy + 3, PINK)
+            cv.set(hx - 1, hy, PINK); cv.set(hx + hw, hy, PINK)
+            cv.rect(hx + 3, hy + 3, hw - 6, 9, (44, 40, 50))
+            cv.rect(hx + 4, hy + 4, hw - 8, 7, skin)
+            cv.rect(hx + 5, hy + 6, 2, 2, WHITE); cv.rect(hx + hw - 7, hy + 6, 2, 2, WHITE)
+            cv.set(hx + 3, hy + 3, PINK); cv.set(hx + hw - 4, hy + 3, PINK)
         elif hid == "ironman":
-            cv.rect(hx, hy, hw, 12, suit)
-            cv.rect(hx + 3, hy + 3, hw - 6, 8, GOLD)
-            cv.rect(hx + 4, hy + 5, 3, 1, WHITE); cv.rect(hx + hw - 7, hy + 5, 3, 1, WHITE)
-            cv.hline(hx + 5, hx + hw - 6, hy + 9, sh(GOLD, .6))
-            cv.hline(hx + 2, hx + hw - 3, hy + 1, sh(suit, 1.3))
+            cv.rect(hx, hy, hw, 13, suit)
+            cv.hline(hx + 2, hx + hw - 3, hy + 1, sh(suit, 1.35))
+            cv.rect(hx + 4, hy + 3, hw - 8, 9, GOLD)
+            cv.hline(hx + 4, hx + hw - 5, hy + 3, sh(GOLD, 1.3))
+            cv.rect(hx + 5, hy + 5, 3, 1, WHITE); cv.rect(hx + hw - 8, hy + 5, 3, 1, WHITE)
+            cv.set(hx + 5, hy + 6, CYAN); cv.set(hx + hw - 6, hy + 6, CYAN)
+            cv.hline(hx + 6, hx + hw - 7, hy + 9, sh(GOLD, .55))
+            cv.vline(hx + 2, hy + 3, hy + 11, sh(suit, .7)); cv.vline(hx + hw - 3, hy + 3, hy + 11, sh(suit, .7))
         elif hid == "capamerica":
-            cv.rect(hx, hy, hw, 12, suit)
-            cv.rect(hx + 2, hy + 7, hw - 4, 5, skin)
-            lens(cv, hx + 2, hy + 4, 3, 2); lens(cv, hx + hw - 5, hy + 4, 3, 2)
-            cv.set(hx + hw // 2, hy + 1, WHITE)
-            cv.set(hx - 1, hy + 3, WHITE); cv.set(hx - 1, hy + 5, WHITE)
-            cv.set(hx + hw, hy + 3, WHITE); cv.set(hx + hw, hy + 5, WHITE)
-            cv.hline(hx + 4, hx + hw - 5, hy + 10, sh(skin, .75))
+            cv.rect(hx, hy, hw, 13, suit)
+            cv.rect(hx + 3, hy + 8, hw - 6, 5, skin)
+            cv.rect(hx + 2, hy + 4, 4, 2, WHITE); cv.rect(hx + hw - 6, hy + 4, 4, 2, WHITE)
+            cv.set(hx + 3, hy + 4, BLACK); cv.set(hx + hw - 4, hy + 4, BLACK)
+            cv.set(hx + hw // 2, hy + 1, WHITE); cv.set(hx + hw // 2 - 1, hy + 2, WHITE); cv.set(hx + hw // 2 + 1, hy + 2, WHITE)
+            cv.set(hx - 1, hy + 3, WHITE); cv.set(hx - 1, hy + 5, WHITE); cv.set(hx - 1, hy + 4, WHITE)
+            cv.set(hx + hw, hy + 3, WHITE); cv.set(hx + hw, hy + 5, WHITE); cv.set(hx + hw, hy + 4, WHITE)
+            cv.hline(hx + 5, hx + hw - 6, hy + 11, sh(skin, .7))
+            cv.vline(hx + 2, hy + 8, hy + 12, sh(suit, .7)); cv.vline(hx + hw - 3, hy + 8, hy + 12, sh(suit, .7))
         elif hid == "thor":
-            cv.rect(hx, hy, hw, 12, skin)
-            cv.rect(hx, hy, hw, 2, hr); cv.vline(hx, hy, hy + 12, hr); cv.vline(hx + hw - 1, hy, hy + 12, hr)
-            cv.set(hx + 4, hy + 5, (70, 130, 200)); cv.set(hx + hw - 5, hy + 5, (70, 130, 200))
-            cv.hline(hx + 4, hx + hw - 5, hy + 9, sh(hr, .8))
-            cv.hline(hx + 3, hx + hw - 4, hy + 4, sh(skin, .8))
+            cv.rect(hx, hy, hw, 13, skin)
+            cv.rect(hx, hy, hw, 2, hr)
+            cv.vline(hx, hy, hy + 13, hr); cv.vline(hx + 1, hy + 2, hy + 13, sh(hr, .85))
+            cv.vline(hx + hw - 1, hy, hy + 13, hr); cv.vline(hx + hw - 2, hy + 2, hy + 13, sh(hr, .85))
+            cv.set(hx + 3, hy + 2, hr); cv.set(hx + hw - 4, hy + 2, hr)
+            cv.set(hx + 4, hy + 5, (70, 130, 200)); cv.set(hx + 5, hy + 5, (70, 130, 200))
+            cv.set(hx + hw - 5, hy + 5, (70, 130, 200)); cv.set(hx + hw - 6, hy + 5, (70, 130, 200))
+            cv.hline(hx + 4, hx + hw - 5, hy + 4, sh(skin, .8))
+            cv.hline(hx + 4, hx + hw - 5, hy + 10, sh(hr, .75)); cv.hline(hx + 5, hx + hw - 6, hy + 11, sh(hr, .65))
         elif hid == "hulk":
-            cv.rect(hx - 1, hy, hw + 2, 13, skin)
+            cv.rect(hx - 1, hy, hw + 2, 14, skin)
             cv.rect(hx - 1, hy, hw + 2, 2, (22, 62, 30))
-            cv.hline(hx + 1, hx + 5, hy + 4, BLACK); cv.hline(hx + hw - 6, hx + hw - 2, hy + 4, BLACK)
+            cv.line(hx + 1, hy + 3, hx + 5, hy + 4, BLACK, 1); cv.line(hx + hw - 2, hy + 3, hx + hw - 6, hy + 4, BLACK, 1)
             cv.set(hx + 3, hy + 5, WHITE); cv.set(hx + hw - 4, hy + 5, WHITE)
-            cv.hline(hx + 3, hx + hw - 4, hy + 10, sh(skin, .6))
+            cv.line(hx + 3, hy + 11, hx + hw - 4, hy + 10, sh(skin, .55), 1)
+            cv.set(hx + 1, hy + 8, sh(skin, .8)); cv.set(hx + hw - 2, hy + 8, sh(skin, .8))
         elif hid == "blackwidow":
-            cv.rect(hx, hy, hw, 12, skin)
+            cv.rect(hx, hy, hw, 13, skin)
             cv.rect(hx, hy, hw, 3, hr)
-            cv.vline(hx, hy, hy + 13, hr); cv.vline(hx + hw - 1, hy, hy + 13, hr)
-            cv.vline(hx - 1, hy + 4, hy + 13, sh(hr, .8)); cv.vline(hx + hw, hy + 4, hy + 13, sh(hr, .8))
-            cv.set(hx + 4, hy + 6, (60, 120, 160)); cv.set(hx + hw - 5, hy + 6, (60, 120, 160))
-            cv.set(hx + hw // 2, hy + 10, (190, 60, 60))
+            cv.vline(hx, hy, hy + 14, hr); cv.vline(hx + hw - 1, hy, hy + 14, hr)
+            cv.vline(hx - 1, hy + 3, hy + 14, sh(hr, .8)); cv.vline(hx + hw, hy + 3, hy + 14, sh(hr, .8))
+            cv.vline(hx + 1, hy + 2, hy + 12, sh(hr, 1.15)); cv.vline(hx + hw - 2, hy + 2, hy + 12, sh(hr, 1.15))
+            cv.hline(hx + 3, hx + 6, hy + 4, BLACK); cv.hline(hx + hw - 7, hx + hw - 4, hy + 4, BLACK)
+            cv.set(hx + 4, hy + 5, (70, 140, 170)); cv.set(hx + 5, hy + 5, (70, 140, 170))
+            cv.set(hx + hw - 5, hy + 5, (70, 140, 170)); cv.set(hx + hw - 6, hy + 5, (70, 140, 170))
+            cv.set(hx + hw // 2, hy + 10, (190, 60, 60)); cv.set(hx + hw // 2 - 1, hy + 10, (190, 60, 60))
         elif hid == "hawkeye":
-            cv.rect(hx - 1, hy - 1, hw + 2, 14, suit)
-            cv.rect(hx + 2, hy + 2, hw - 4, 9, skin)
-            cv.rect(hx + 2, hy + 4, hw - 4, 2, BLACK)
-            cv.set(hx + 4, hy + 4, WHITE); cv.set(hx + hw - 5, hy + 4, WHITE)
-            cv.hline(hx + 4, hx + hw - 5, hy + 9, sh(skin, .75))
-        elif hid == "drstrange":
-            cv.rect(hx, hy, hw, 12, skin)
-            cv.rect(hx, hy, hw, 2, hr); cv.set(hx, hy + 2, hr); cv.set(hx + hw - 1, hy + 2, hr)
-            cv.vline(hx, hy + 2, hy + 6, hr); cv.vline(hx + hw - 1, hy + 2, hy + 6, hr)
-            cv.set(hx + 4, hy + 5, (70, 110, 160)); cv.set(hx + hw - 5, hy + 5, (70, 110, 160))
-            cv.hline(hx + 4, hx + hw - 5, hy + 9, (90, 70, 60))
-            cv.set(hx + hw // 2, hy + 10, (90, 70, 60)); cv.set(hx + hw // 2, hy + 11, (90, 70, 60))
-            cv.rect(hx - 2, hy + 9, 2, 4, c.get("cape", RED)); cv.rect(hx + hw, hy + 9, 2, 4, c.get("cape", RED))
-        elif hid in ("scarletwitch", "scarletwitch_azure"):
-            cv.rect(hx, hy, hw, 12, skin)
-            cv.rect(hx, hy, hw, 3, hr)
-            cv.vline(hx, hy, hy + 13, hr); cv.vline(hx + hw - 1, hy, hy + 13, hr)
-            cv.vline(hx - 1, hy + 5, hy + 13, sh(hr, .8)); cv.vline(hx + hw, hy + 5, hy + 13, sh(hr, .8))
-            cv.set(hx + hw // 2 - 2, hy, c["accent"]); cv.set(hx + hw // 2, hy - 1, c["accent"]); cv.set(hx + hw // 2 + 2, hy, c["accent"])
-            cv.set(hx + 4, hy + 6, (140, 40, 50)); cv.set(hx + hw - 5, hy + 6, (140, 40, 50))
-        elif hid == "blackpanther":
-            cv.rect(hx, hy, hw, 12, suit)
-            cv.line(hx + 2, hy, hx, hy - 3, suit, 2); cv.line(hx + hw - 3, hy, hx + hw - 1, hy - 3, suit, 2)
-            lens(cv, hx + 2, hy + 4, 3, 2, (170, 240, 200)); lens(cv, hx + hw - 5, hy + 4, 3, 2, (170, 240, 200))
-            cv.hline(hx + 3, hx + hw - 4, hy + 9, SILV)
-        elif hid == "captainmarvel":
-            cv.rect(hx, hy, hw, 12, skin)
-            cv.rect(hx, hy, hw, 3, hr)
-            cv.vline(hx, hy, hy + 11, hr); cv.vline(hx + hw - 1, hy, hy + 11, hr)
-            cv.set(hx + 4, hy + 5, (70, 130, 200)); cv.set(hx + hw - 5, hy + 5, (70, 130, 200))
-            cv.hline(hx + 4, hx + hw - 5, hy + 9, sh(skin, .8))
-        elif hid == "captainmarvel_classic":
-            cv.rect(hx, hy, hw, 12, suit)
-            cv.vline(hx + hw // 2, hy, hy + 3, GOLD)
-            lens(cv, hx + 2, hy + 4, 3, 2); lens(cv, hx + hw - 5, hy + 4, 3, 2)
-            cv.vline(hx - 1, hy + 4, hy + 11, hr); cv.vline(hx + hw, hy + 4, hy + 11, hr)
-        elif hid == "antman":
-            cv.rect(hx, hy, hw, 12, suit)
-            cv.vline(hx + hw // 2, hy, hy + 11, (32, 32, 38))
-            cv.rect(hx + 2, hy + 4, 3, 3, SILV); cv.rect(hx + hw - 5, hy + 4, 3, 3, SILV)
-            cv.set(hx + 3, hy + 5, RED); cv.set(hx + hw - 4, hy + 5, RED)
-        elif hid == "antman_unmasked":
-            cv.rect(hx, hy, hw, 12, skin)
-            cv.rect(hx, hy, hw, 3, hr); cv.set(hx, hy + 3, hr); cv.set(hx + hw - 1, hy + 3, hr)
-            cv.set(hx + 4, hy + 6, BLACK); cv.set(hx + hw - 5, hy + 6, BLACK)
-            cv.hline(hx + 4, hx + hw - 5, hy + 9, sh(skin, .75))
-        elif hid == "venom":
-            cv.rect(hx - 1, hy - 1, hw + 2, 14, suit)
-            cv.rect(hx + 1, hy + 3, 5, 3, WHITE); cv.set(hx, hy + 2, WHITE); cv.set(hx + 6, hy + 2, WHITE)
-            cv.rect(hx + hw - 6, hy + 3, 5, 3, WHITE); cv.set(hx + hw - 1, hy + 2, WHITE); cv.set(hx + hw - 7, hy + 2, WHITE)
-            cv.hline(hx + 1, hx + hw - 2, hy + 9, WHITE)
-            for xx in (hx + 2, hx + 5, hx + hw - 3, hx + hw - 6): cv.set(xx, hy + 10, WHITE)
-        elif hid == "wolverine":
-            cv.rect(hx, hy, hw, 12, suit)
-            cv.rect(hx + 2, hy + 8, hw - 4, 4, skin)
-            cv.rect(hx + 1, hy + 3, 5, 3, BLACK); cv.rect(hx + hw - 6, hy + 3, 5, 3, BLACK)
-            cv.set(hx + 3, hy + 4, WHITE); cv.set(hx + hw - 4, hy + 4, WHITE)
-            cv.line(hx + 1, hy + 1, hx - 2, hy - 3, BLACK, 2); cv.line(hx + hw - 2, hy + 1, hx + hw + 1, hy - 3, BLACK, 2)
+            cv.rect(hx - 1, hy - 1, hw + 2, 15, suit)
+            cv.set(hx + hw // 2, hy - 2, sh(suit, 1.2))
+            cv.rect(hx + 2, hy + 2, hw - 4, 10, skin)
+            cv.rect(hx + 2, hy + 4, hw - 4, 3, BLACK)
+            cv.set(hx + 4, hy + 5, WHITE); cv.set(hx + 5, hy + 5, WHITE)
+            cv.set(hx + hw - 5, hy + 5, WHITE); cv.set(hx + hw - 6, hy + 5, WHITE)
             cv.hline(hx + 4, hx + hw - 5, hy + 10, sh(skin, .7))
+        elif hid == "drstrange":
+            cv.rect(hx, hy, hw, 13, skin)
+            cv.rect(hx, hy, hw, 2, hr)
+            cv.vline(hx, hy + 1, hy + 6, hr); cv.vline(hx + hw - 1, hy + 1, hy + 6, hr)
+            cv.hline(hx + 3, hx + 6, hy + 4, sh(skin, .75)); cv.hline(hx + hw - 7, hx + hw - 4, hy + 4, sh(skin, .75))
+            cv.set(hx + 4, hy + 5, (80, 120, 170)); cv.set(hx + hw - 5, hy + 5, (80, 120, 170))
+            cv.hline(hx + 4, hx + hw - 5, hy + 9, (95, 75, 62))
+            cv.set(hx + 3, hy + 9, hr); cv.set(hx + hw - 4, hy + 9, hr)
+            cv.set(hx + hw // 2, hy + 10, (95, 75, 62)); cv.set(hx + hw // 2, hy + 11, (95, 75, 62)); cv.set(hx + hw // 2, hy + 12, (95, 75, 62))
+            cv.rect(hx - 2, hy + 8, 2, 5, c.get("cape", RED)); cv.rect(hx + hw, hy + 8, 2, 5, c.get("cape", RED))
+            cv.set(hx - 2, hy + 7, sh(c.get("cape", RED), 1.2)); cv.set(hx + hw + 1, hy + 7, sh(c.get("cape", RED), 1.2))
+        elif hid in ("scarletwitch", "scarletwitch_azure"):
+            cv.rect(hx, hy, hw, 13, skin)
+            cv.rect(hx, hy, hw, 3, hr)
+            cv.vline(hx, hy, hy + 14, hr); cv.vline(hx + hw - 1, hy, hy + 14, hr)
+            cv.vline(hx - 1, hy + 4, hy + 14, sh(hr, .85)); cv.vline(hx + hw, hy + 4, hy + 14, sh(hr, .85))
+            cv.set(hx + hw // 2 - 3, hy, c["accent"]); cv.set(hx + hw // 2 - 1, hy - 1, c["accent"]); cv.set(hx + hw // 2 + 1, hy - 1, c["accent"])
+            cv.set(hx + hw // 2 + 3, hy, c["accent"]); cv.set(hx + hw // 2, hy - 2, c["accent"])
+            cv.set(hx + 4, hy + 6, (150, 40, 55)); cv.set(hx + 5, hy + 6, (150, 40, 55))
+            cv.set(hx + hw - 5, hy + 6, (150, 40, 55)); cv.set(hx + hw - 6, hy + 6, (150, 40, 55))
+        elif hid == "blackpanther":
+            cv.rect(hx, hy, hw, 13, suit)
+            cv.line(hx + 2, hy, hx, hy - 3, suit, 2); cv.line(hx + hw - 3, hy, hx + hw - 1, hy - 3, suit, 2)
+            cv.set(hx, hy - 3, sh(suit, 1.4)); cv.set(hx + hw - 1, hy - 3, sh(suit, 1.4))
+            cv.vline(hx + hw // 2, hy, hy + 12, sh(suit, .6))
+            cv.rect(hx + 1, hy + 4, 5, 3, BLACK); cv.rect(hx + hw - 6, hy + 4, 5, 3, BLACK)
+            cv.rect(hx + 2, hy + 5, 3, 1, (170, 240, 200)); cv.rect(hx + hw - 5, hy + 5, 3, 1, (170, 240, 200))
+            cv.hline(hx + 4, hx + hw - 5, hy + 10, SILV)
+        elif hid == "captainmarvel":
+            cv.rect(hx, hy, hw, 13, skin)
+            cv.rect(hx, hy, hw, 3, hr)
+            cv.vline(hx, hy, hy + 12, hr); cv.vline(hx + hw - 1, hy, hy + 12, hr)
+            cv.vline(hx + 1, hy + 2, hy + 10, sh(hr, 1.15)); cv.vline(hx + hw - 2, hy + 2, hy + 10, sh(hr, 1.15))
+            cv.set(hx + 4, hy + 5, (70, 130, 200)); cv.set(hx + 5, hy + 5, (70, 130, 200))
+            cv.set(hx + hw - 5, hy + 5, (70, 130, 200)); cv.set(hx + hw - 6, hy + 5, (70, 130, 200))
+            cv.hline(hx + 4, hx + hw - 5, hy + 4, sh(skin, .8))
+            cv.hline(hx + 5, hx + hw - 6, hy + 10, sh(skin, .75))
+        elif hid == "captainmarvel_classic":
+            cv.rect(hx, hy, hw, 13, suit)
+            cv.vline(hx + hw // 2, hy, hy + 4, GOLD)
+            cv.set(hx + hw // 2, hy - 1, GOLD)
+            cv.rect(hx + 2, hy + 4, 4, 2, WHITE); cv.rect(hx + hw - 6, hy + 4, 4, 2, WHITE)
+            cv.set(hx + 3, hy + 4, BLACK); cv.set(hx + hw - 4, hy + 4, BLACK)
+            cv.vline(hx - 1, hy + 5, hy + 12, hr); cv.vline(hx + hw, hy + 5, hy + 12, hr)
+            cv.hline(hx + 4, hx + hw - 5, hy + 10, sh(skin, .75))
+            cv.rect(hx + 3, hy + 8, hw - 6, 5, skin)
+        elif hid == "antman":
+            cv.rect(hx, hy, hw, 13, suit)
+            cv.vline(hx + hw // 2, hy, hy + 12, (32, 32, 38))
+            cv.hline(hx + 2, hx + hw - 3, hy + 2, sh(suit, 1.3))
+            cv.rect(hx + 2, hy + 4, 4, 4, SILV); cv.rect(hx + hw - 6, hy + 4, 4, 4, SILV)
+            cv.set(hx + 3, hy + 5, RED); cv.set(hx + 4, hy + 6, RED)
+            cv.set(hx + hw - 4, hy + 5, RED); cv.set(hx + hw - 5, hy + 6, RED)
+        elif hid == "antman_unmasked":
+            cv.rect(hx, hy, hw, 13, skin)
+            cv.rect(hx, hy, hw, 3, hr)
+            cv.set(hx, hy + 3, hr); cv.set(hx + hw - 1, hy + 3, hr)
+            cv.hline(hx + 3, hx + 6, hy + 4, sh(skin, .75)); cv.hline(hx + hw - 7, hx + hw - 4, hy + 4, sh(skin, .75))
+            cv.set(hx + 4, hy + 5, BLACK); cv.set(hx + hw - 5, hy + 5, BLACK)
+            cv.hline(hx + 4, hx + hw - 5, hy + 9, sh(skin, .7))
+            cv.hline(hx + 4, hx + hw - 5, hy + 11, sh(skin, .85))
+        elif hid == "venom":
+            cv.rect(hx - 1, hy - 1, hw + 2, 15, suit)
+            cv.rect(hx + 1, hy + 3, 6, 4, WHITE); cv.set(hx, hy + 2, WHITE); cv.set(hx + 7, hy + 2, WHITE)
+            cv.set(hx + 2, hy + 7, WHITE); cv.set(hx + 5, hy + 7, WHITE)
+            cv.rect(hx + hw - 7, hy + 3, 6, 4, WHITE); cv.set(hx + hw - 1, hy + 2, WHITE); cv.set(hx + hw - 8, hy + 2, WHITE)
+            cv.set(hx + hw - 3, hy + 7, WHITE); cv.set(hx + hw - 6, hy + 7, WHITE)
+            cv.hline(hx + 1, hx + hw - 2, hy + 10, WHITE)
+            for xx in (hx + 2, hx + 5, hx + 8, hx + hw - 3, hx + hw - 6, hx + hw - 9): cv.set(xx, hy + 11, WHITE)
+        elif hid == "wolverine":
+            cv.rect(hx, hy, hw, 13, suit)
+            cv.rect(hx + 3, hy + 8, hw - 6, 5, skin)
+            cv.rect(hx + 1, hy + 3, 6, 4, BLACK); cv.rect(hx + hw - 7, hy + 3, 6, 4, BLACK)
+            cv.set(hx + 3, hy + 4, WHITE); cv.set(hx + 4, hy + 4, WHITE)
+            cv.set(hx + hw - 4, hy + 4, WHITE); cv.set(hx + hw - 5, hy + 4, WHITE)
+            cv.line(hx + 1, hy + 1, hx - 2, hy - 4, BLACK, 2); cv.line(hx + hw - 2, hy + 1, hx + hw + 1, hy - 4, BLACK, 2)
+            cv.set(hx - 2, hy - 4, (250, 200, 44)); cv.set(hx + hw + 1, hy - 4, (250, 200, 44))
+            cv.vline(hx + 2, hy + 8, hy + 11, BLACK); cv.vline(hx + hw - 3, hy + 8, hy + 11, BLACK)
+            cv.hline(hx + 5, hx + hw - 6, hy + 11, sh(skin, .7))
         elif hid == "deadpool":
-            cv.rect(hx, hy, hw, 12, suit)
-            cv.rect(hx + 1, hy + 3, 5, 4, BLACK); cv.rect(hx + hw - 6, hy + 3, 5, 4, BLACK)
-            cv.rect(hx + 2, hy + 4, 3, 2, WHITE); cv.rect(hx + hw - 5, hy + 4, 3, 2, WHITE)
+            cv.rect(hx, hy, hw, 13, suit)
+            cv.rect(hx + 1, hy + 3, 6, 5, BLACK); cv.rect(hx + hw - 7, hy + 3, 6, 5, BLACK)
+            cv.rect(hx + 2, hy + 4, 4, 3, WHITE); cv.rect(hx + hw - 6, hy + 4, 4, 3, WHITE)
+            cv.set(hx + 3, hy + 5, BLACK); cv.set(hx + hw - 4, hy + 5, BLACK)
         elif hid == "gamora":
-            cv.rect(hx, hy, hw, 12, (72, 172, 82))
+            cv.rect(hx, hy, hw, 13, (72, 172, 82))
             cv.rect(hx, hy, hw, 2, (40, 22, 46))
-            cv.vline(hx, hy, hy + 12, (40, 22, 46)); cv.vline(hx + hw - 1, hy, hy + 12, (40, 22, 46))
-            cv.set(hx + 2, hy + 1, (190, 60, 70))
+            cv.vline(hx, hy, hy + 13, (40, 22, 46)); cv.vline(hx + hw - 1, hy, hy + 13, (40, 22, 46))
+            cv.set(hx + 2, hy + 1, (190, 60, 70)); cv.set(hx + 3, hy + 2, (190, 60, 70))
             cv.set(hx + 4, hy + 5, BLACK); cv.set(hx + hw - 5, hy + 5, BLACK)
         elif hid == "rocket":
-            cv.rect(hx + 1, hy + 1, hw - 2, 11, (140, 100, 60))
+            cv.rect(hx + 1, hy + 1, hw - 2, 12, (140, 100, 60))
             cv.rect(hx + 2, hy - 1, 3, 3, (140, 100, 60)); cv.rect(hx + hw - 5, hy - 1, 3, 3, (140, 100, 60))
             cv.set(hx + 3, hy, (90, 60, 40)); cv.set(hx + hw - 4, hy, (90, 60, 40))
-            cv.rect(hx + 4, hy + 6, hw - 8, 4, (220, 200, 170))
-            cv.set(hx + hw // 2, hy + 6, BLACK)
+            cv.rect(hx + 4, hy + 7, hw - 8, 4, (220, 200, 170))
+            cv.set(hx + hw // 2, hy + 7, BLACK)
             cv.set(hx + 4, hy + 4, BLACK); cv.set(hx + 5, hy + 4, WHITE)
             cv.set(hx + hw - 5, hy + 4, BLACK); cv.set(hx + hw - 6, hy + 4, WHITE)
         elif hid == "groot":
-            cv.rect(hx, hy, hw, 12, BARK)
-            cv.vline(hx + 3, hy, hy + 11, sh(BARK, .7)); cv.vline(hx + hw - 4, hy + 2, hy + 11, sh(BARK, .7))
+            cv.rect(hx, hy, hw, 13, BARK)
+            cv.vline(hx + 3, hy, hy + 12, sh(BARK, .7)); cv.vline(hx + hw - 4, hy + 2, hy + 12, sh(BARK, .7))
             cv.line(hx, hy + 3, hx - 3, hy + 1, BARK, 2); cv.line(hx + hw - 1, hy + 4, hx + hw + 2, hy + 2, BARK, 2)
             cv.rect(hx + 3, hy + 5, 3, 2, (40, 26, 16)); cv.rect(hx + hw - 6, hy + 5, 3, 2, (40, 26, 16))
             cv.set(hx + 4, hy + 5, (120, 160, 90)); cv.set(hx + hw - 5, hy + 5, (120, 160, 90))
@@ -521,6 +568,7 @@ def draw_frame(cv, cfg, anim, fi):
     bob = 0; lean = 0
     legL = legR = (0, 0)
     handL = handR = None
+    fx = []
     if anim == "idle":
         bob = [0, 1, 1, 0][fi]
     elif anim == "walk":
@@ -546,28 +594,56 @@ def draw_frame(cv, cfg, anim, fi):
             handL = (12 - fi, 20 - fi * 3); handR = (35 + fi, 20 - fi * 3)
     elif anim == "emote":
         em = cfg.get("em")
-        if em == "dance":
-            bob = [0, 1, 0, 1][fi]; s = 1 if fi % 2 == 0 else -1
-            handL = (13 - 2 * s, 15 if s > 0 else 7); handR = (35 + 2 * s, 7 if s > 0 else 15)
-            legL = (2 * s, 0); legR = (-2 * s, 0)
-        elif em == "wave":
-            bob = fi % 2; handR = (36 + (fi % 2) * 2, 7); handL = (15, 27)
-        elif em == "cheer":
-            bob = [0, -1, -1, 0][fi]; handL = (11, 6); handR = (37, 6)
-        elif em == "flex":
-            handL = (12, 15 if fi in (1, 3) else 13); handR = (36, 15 if fi in (1, 3) else 13)
-        elif em == "bow":
-            lean = [0, 2, 2, 1][fi]; handL = (16, 26); handR = (32, 26)
-        elif em == "laugh":
-            bob = [0, -1, 0, -1][fi]; handL = (20, 27); handR = (28, 27)
-        elif em == "salute":
-            handR = (30, 7); handL = (15, 27)
+        if em == "gangnam":
+            bob = [0, 1, 0, 1, 0, 1][fi]; ph = fi % 2
+            if ph == 0: handL, handR = (19, 22), (29, 22)
+            else: handL, handR = (12, 20), (36, 20)
+            if ph: legL = (3, 2)
+            else: legR = (3, 2)
+        elif em == "floss":
+            dx = [-3, 0, 3, 3, 0, -3][fi]
+            if fi % 2 == 0: handL, handR = (14 + dx, 26), (40 + dx, 22)
+            else: handL, handR = (14 + dx, 22), (40 + dx, 26)
+            legL = (dx // 2, 0); legR = (dx // 2, 0)
+        elif em == "dab":
+            if fi < 2:
+                handL, handR = (10, 12), (40, 10)
+            else:
+                lean = -2; bob = fi % 2
+                handL, handR = (18, 7), (42, 9)
+        elif em == "moonwalk":
+            lean = -1
+            legL = ([3, 1, -2, -3, -1, 2][fi], 0); legR = ([-2, -3, -1, 2, 3, 1][fi], 0)
+            handL, handR = (14, 28), (34, 28)
+            if fi % 2 == 0: fx = [24]
+        elif em == "robot":
+            poses = [((10, 20), (38, 20)), ((10, 14), (38, 20)), ((10, 14), (38, 12)),
+                     ((16, 20), (38, 12)), ((16, 20), (32, 20)), ((10, 20), (32, 14))]
+            handL, handR = poses[fi]
+            if fi % 2 == 1: fx = [25]
+        elif em == "runningman":
+            bob = [0, 1, 0, 1, 0, 1][fi]; ph = fi % 2
+            if ph: legL, legR = (2, 3), (-2, 0); handL, handR = (14, 24), (34, 18)
+            else: legL, legR = (-2, 0), (2, 3); handL, handR = (16, 18), (34, 24)
+        elif em == "macarena":
+            seqh = [((15, 27), (36, 20)), ((34, 24), (36, 20)), ((34, 24), (36, 12)),
+                    ((34, 12), (36, 12)), ((20, 6), (28, 6)), ((16, 26), (32, 26))]
+            handL, handR = seqh[fi]
+            bob = 1 if fi == 5 else 0
+        elif em == "hype":
+            bob = [0, -2, -2, 0, 1, 0][fi]
+            if fi in (1, 2): handL, handR = (11, 4), (37, 4); fx = [26]
+            elif fi == 3: handL, handR = (13, 10), (35, 10)
         elif em == "heart":
-            handL = (21, 5); handR = (27, 5)
-        elif em == "shrug":
-            handL = (9, 20); handR = (39, 20); bob = [0, 1, 0, 0][fi]
-        elif em == "point":
-            handR = (40, 19); handL = (17, 26)
+            handL, handR = (21, 5), (27, 5)
+            bob = [0, 0, 1, 0, 0, 1][fi]
+            fx = [22]
+        elif em == "groove":
+            ph = fi // 3
+            bob = fi % 2
+            if ph == 0: handL, handR = (17, 26), (40, 6)
+            else: handL, handR = (8, 6), (31, 26)
+            if fi % 3 == 0: fx = [27]
 
     # back props behind body
     if cfg.get("cape"):
@@ -590,7 +666,9 @@ def draw_frame(cv, cfg, anim, fi):
         foot = (hip[0] + dx, 43 - lift)
         cv.line(hip[0], hip[1], knee[0], knee[1], sh(suit2, .85), 3 if big else 2)
         cv.line(knee[0], knee[1], foot[0], foot[1], suit2, 3 if big else 2)
-        cv.line(foot[0] - 1, foot[1], foot[0] + 2, foot[1], BLACK, 1)
+        boot = cfg.get("boot", (24, 24, 32))
+        cv.line(foot[0] - 1, foot[1] - 1, foot[0] - 1, foot[1], boot, 2)
+        cv.line(foot[0] - 1, foot[1], foot[0] + 2, foot[1], boot, 1)
 
     # torso
     tw = 22 if big else 16
@@ -600,6 +678,7 @@ def draw_frame(cv, cfg, anim, fi):
     cv.vline(tx + tw - 1, 18 + bob, 30 + bob, dS)
     cv.hline(tx, tx + tw - 1, 18 + bob, sh(suit, 1.25))
     cv.hline(tx, tx + tw - 1, 30 + bob, acc)
+    cv.rect(23, 29 + bob, 2, 2, sh(acc, 1.3))
 
     # arms
     shL, shR = (tx + 1, 20 + bob), (tx + tw - 2, 20 + bob)
@@ -624,9 +703,9 @@ def draw_frame(cv, cfg, anim, fi):
 
     # emblem + head
     EMB_FN[hid](cv, cfg, tx, 18 + bob, tw)
-    hw = 15 if big else 14
+    hw = 18 if big else 16
     hx = 24 - hw // 2 + lean
-    hy = 5 + bob + lean
+    hy = 4 + bob + lean
     HEAD_FN[hid](cv, cfg, hx, hy, hw, bob)
 
     outline(cv)
@@ -636,18 +715,26 @@ def draw_frame(cv, cfg, anim, fi):
     if anim == "power": POW_FN[hid](cv, cfg, fi, H)
     if anim == "emote":
         em = cfg.get("em")
-        if em == "flex" and fi in (1, 3): cv.set(9, 11, acc); cv.set(38, 11, acc)
-        if em == "laugh" and fi in (1, 3): cv.set(33, 3, WHITE); cv.set(35, 5, WHITE)
-        if em == "heart":
-            for d in ((22, 1), (26, 1), (21, 2), (27, 2), (22, 3), (26, 3), (23, 4), (25, 4), (24, 5)):
+        if em == "gangnam" and fi in (0, 3):
+            cv.set(8, 10, CYAN); cv.set(40, 8, PINK)
+        if 24 in fx:  # moonwalk speed lines
+            cv.line(6, 26, 10, 26, WHITE, 1); cv.line(7, 32, 11, 32, WHITE, 1)
+        if 25 in fx:  # robot joint clicks
+            cv.set(handL[0], handL[1] - 2, CYAN); cv.set(handR[0], handR[1] - 2, CYAN)
+        if 26 in fx:  # hype sparks
+            cv.set(10, 2, GOLD); cv.set(38, 2, GOLD); cv.set(24, 1, WHITE)
+        if 22 in fx:  # heart (pulsing)
+            s = 1 if fi in (2, 5) else 0
+            for d in ((22 - s, 1), (26 + s, 1), (21 - s, 2), (27 + s, 2), (22, 3), (26, 3), (23, 4), (25, 4), (24, 5)):
                 cv.set(d[0], d[1], PINK)
-        if em == "point" and fi in (1, 2): cv.line(42, 18, 45, 18, WHITE, 1)
+        if 27 in fx:  # disco sparkle at fingertip
+            cv.set(41, 4, GOLD); cv.set(7, 4, GOLD)
 
 def main():
     seq = [("idle", i) for i in range(4)] + [("walk", i) for i in range(6)] + \
           [("attack", i) for i in range(4)] + [("power", i) for i in range(4)]
     for e in EMOTES:
-        seq += [(e, i) for i in range(4)]
+        seq += [(e, i) for i in range(6)]
     for hid, base in HEROES.items():
         cfg = dict(base); cfg["id"] = hid
         strip = HC(FR * len(seq), FR)
@@ -669,10 +756,13 @@ def main():
         for f in range(2):
             cv = HC()
             up = 0 if f == 0 else 3
-            for i in range(10):
-                h = 14 - abs(i - 4) * 2 + up
-                cv.vline(22 - i, 26 - h, 26, WHITE); cv.vline(25 + i, 26 - h, 26, WHITE)
+            for i in range(11):
+                h = 15 - abs(i - 4) * 2 + up
+                cv.vline(22 - i, 26 - h, 26, WHITE if i % 2 == 0 else sh(WHITE, .82))
+                cv.vline(25 + i, 26 - h, 26, WHITE if i % 2 == 0 else sh(WHITE, .82))
                 cv.set(22 - i, 26 - h, GOLD); cv.set(25 + i, 26 - h, GOLD)
+                cv.set(22 - i, 26 - h + 1, sh(GOLD, .7)); cv.set(25 + i, 26 - h + 1, sh(GOLD, .7))
+            cv.vline(23, 20 - up, 26, GOLD); cv.vline(24, 20 - up, 26, GOLD)
             outline(cv)
             for (x, yy), c in cv.px.items(): s.px[(f * FR + x, yy)] = c
         save("glider_wings", s, folder=ANIM)
@@ -682,15 +772,23 @@ def main():
         cv.disc(24, 24, 12, RED); cv.disc(24, 24, 8.5, WHITE); cv.disc(24, 24, 5, BLUE)
         for d in ((0, -3), (3, 0), (0, 3), (-3, 0), (2, -2), (-2, -2), (2, 2), (-2, 2)): cv.set(24 + d[0], 24 + d[1], WHITE)
     def f_cosmic(cv):
-        for yy in range(8, 42):
-            w = 6 + (yy - 8) // 2
-            cv.hline(24 - w, 24 + w, yy, (62, 22, 112))
-            cv.hline(24 - w, 24 - w + 2, yy, (92, 42, 152))
-        for (x, yy) in [(20, 14), (28, 20), (17, 26), (30, 30), (23, 36)]: cv.set(x, yy, WHITE)
+        for yy in range(7, 42):
+            w = 6 + (yy - 7) // 2
+            cv.hline(24 - w, 24 + w, yy, (52, 18, 102) if yy % 3 else (62, 22, 112))
+            cv.hline(24 - w, 24 - w + 2, yy, (112, 62, 182))
+            cv.hline(24 + w - 1, 24 + w, yy, (32, 10, 62))
+        for (x, yy) in [(20, 14), (28, 20), (17, 26), (30, 30), (23, 36), (26, 12), (19, 33)]:
+            cv.set(x, yy, WHITE); cv.set(x + 1, yy, CYAN)
+        cv.hline(21, 27, 9, (160, 90, 220))
     def f_claws(cv):
-        cv.vline(14, 6, 44, (120, 90, 50))
-        cv.rect(15, 8, 22, 22, (20, 20, 26))
-        for i in range(3): cv.line(18 + i * 6, 10, 22 + i * 6, 28, SILV, 2)
+        cv.line(12, 8, 36, 40, (110, 70, 40), 2)
+        cv.line(36, 8, 12, 40, (110, 70, 40), 2)
+        cv.rect(14, 7, 22, 24, (20, 20, 26))
+        cv.hline(14, 35, 7, (60, 60, 74)); cv.vline(14, 7, 30, (60, 60, 74))
+        for i in range(3):
+            cv.line(18 + i * 6, 9, 22 + i * 6, 29, SILV, 2)
+            cv.set(19 + i * 6, 10, WHITE)
+        cv.set(24, 12, GOLD); cv.set(25, 13, GOLD)
     wings()
     single("glider_shield", f_shield)
     single("glider_cosmic", f_cosmic)

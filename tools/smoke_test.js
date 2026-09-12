@@ -78,13 +78,14 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // shop: bundles + item pages
   await toShopGrid();
-  ok($('#screen').textContent.includes('FEATURED') && $('#screen').textContent.includes('DAILY'), 'shop has FEATURED + DAILY sections');
-  ok($$('.fcard.bundle').length === 4, 'shop shows 4 bundles');
-  $$('.fcard.bundle')[0].click(); await sleep(30);
+  ok(['BUNDLES', 'OUTFITS', 'EMOTES'].every((s) => $('#screen').textContent.includes(s)) && !$('#screen').textContent.includes('DAILY'), 'shop sections (no daily)');
+  ok($$('#screen .secTitle').filter((t) => t.textContent === 'EMOTES')[0].nextElementSibling.querySelectorAll('.fcard2').length === 10, 'shop EMOTES section lists 10 emotes');
+  ok($$('.fcard2.bundle').length === 4, 'shop shows 4 bundles');
+  $$('.fcard2.bundle')[0].click(); await sleep(30);
   ok($('#screen').textContent.includes('INCLUDED'), 'bundle page lists included items');
   ok($$('.inclRow').length === 3, 'bundle page shows 3 included rows');
   $$('.pageHead .btn').find((b) => b.textContent.includes('BACK')).click(); await sleep(30);
-  $$('#screen .fcard').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
+  $$('#screen .fcard2').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
   ok($('.itemName') && $('.itemName').textContent === 'IRON MAN', 'item page opens for IRON MAN');
   ok(!!$('.statbars'), 'item page shows stat bars');
   ok(!!$('.itemQuote') && $('.itemQuote').textContent.length > 4, 'item page shows hero quote');
@@ -96,7 +97,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   $$('#screen .btn').find((b) => b.textContent.includes('+5000')).click(); await sleep(30);
   ok($('#coinCount').textContent.replace(/\D/g, '') === '5500', 'dev +5000');
   await toShopGrid();
-  $$('#screen .fcard').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
+  $$('#screen .fcard2').find((c) => c.textContent.includes('IRON MAN')).click(); await sleep(30);
   $$('.actions .btn').find((b) => b.textContent.includes('BUY')).click(); await sleep(30);
   ok($('#coinCount').textContent.replace(/\D/g, '') === String(5500 - 1600), 'coins deducted (3,900)');
   $$('.actions .btn').find((b) => b.textContent.includes('SELECT HERO')).click(); await sleep(30);
@@ -104,17 +105,20 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // bundle buy
   await toShopGrid();
-  $$('.fcard.bundle')[1].click(); await sleep(30);
+  $$('.fcard2.bundle')[1].click(); await sleep(30);
   $$('.actions .btn').find((b) => b.textContent.includes('BUY BUNDLE')).click(); await sleep(30);
   ok($('#toasts').textContent.includes('BUNDLE UNLOCKED'), 'bundle purchase works');
 
   // locker with combined backbling
   tabBtns()[2].click(); await sleep(30);
   ok(!!$('#screen canvas.hero'), 'locker animated preview');
-  const catBling = $$('.chip').find((c) => c.textContent === 'BACK BLING');
+  ok($$('.lockerGrid .fcard2').length === 4, 'locker shows only owned outfits (4 after test buys)');
+  ok($('.lkLoadout') && $$('.lkSlot').length === 3, 'loadout row shows equipped cosmetics');
+  const catBling = $$('.lkCat').find((c) => c.textContent === 'BACK BLING');
   catBling.click(); await sleep(30);
-  $$('#screen .card').find((c) => c.textContent.includes('ANGEL WINGS')).click(); await sleep(30);
+  $$('.lockerGrid .fcard2').find((c) => c.textContent.includes('ANGEL WINGS')).click(); await sleep(30);
   ok($('#toasts').textContent.includes('EQUIPPED'), 'glider equipped (combines on hero)');
+  ok($('.lkLoadout').textContent.includes('ANGEL WINGS'), 'loadout shows equipped back bling');
 
   // tasks categories + level
   tabBtns()[3].click(); await sleep(30);
@@ -123,7 +127,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   tabBtns()[0].click(); await sleep(30);
   $$('#screen .animChips .chip').find((c) => c.textContent === 'EMOTE ▾').click(); await sleep(30);
   const pk = $$('.animChips.picker .chip');
-  ok(pk.length === 2, 'emote picker lists owned emotes (SALUTE+WAVE)');
+  ok(pk.length === 2, 'emote picker lists owned emotes (DAB+GROOVE)');
   pk[1].click(); await sleep(30);
   tabBtns()[3].click(); await sleep(30);
   ok($('#screen').textContent.includes('1/1'), 'emote task 1/1');

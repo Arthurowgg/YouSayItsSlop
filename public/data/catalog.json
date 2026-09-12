@@ -49,16 +49,16 @@
     { "id": "glider_claws",  "name": "PANTHER BANNER", "art": "assets/spr/glider_claws.png",  "rarity": "rare",      "price": 700,  "desc": "Claw-marked war flag." }
   ],
   "emotes": [
-    { "id": "emote_salute", "name": "SALUTE",      "art": "assets/spr/emote_salute.png", "rarity": "common",   "price": 0,   "desc": "Respect." },
-    { "id": "emote_wave",   "name": "WAVE",        "art": "assets/spr/emote_wave.png",   "rarity": "common",   "price": 200, "desc": "Hey, over here!" },
-    { "id": "emote_point",  "name": "POINT",       "art": "assets/spr/emote_point.png",  "rarity": "common",   "price": 200, "desc": "You. Me. Fight." },
-    { "id": "emote_shrug",  "name": "SHRUG",       "art": "assets/spr/emote_shrug.png",  "rarity": "uncommon", "price": 250, "desc": "Whatever, hero." },
-    { "id": "emote_bow",    "name": "BOW",         "art": "assets/spr/emote_bow.png",    "rarity": "uncommon", "price": 250, "desc": "Thank you, thank you." },
-    { "id": "emote_cheer",  "name": "CHEER",       "art": "assets/spr/emote_cheer.png",  "rarity": "uncommon", "price": 300, "desc": "Victory laps only." },
-    { "id": "emote_dance",  "name": "PIXEL GROOVE","art": "assets/spr/emote_dance.png",  "rarity": "rare",     "price": 300, "desc": "Certified lobby moves." },
-    { "id": "emote_laugh",  "name": "LAUGH",       "art": "assets/spr/emote_laugh.png",  "rarity": "rare",     "price": 300, "desc": "Ha. Ha. Ha." },
-    { "id": "emote_heart",  "name": "HEART SIGN",  "art": "assets/spr/emote_heart.png",  "rarity": "rare",     "price": 300, "desc": "For the fans." },
-    { "id": "emote_flex",   "name": "MEGA FLEX",   "art": "assets/spr/emote_flex.png",   "rarity": "uncommon", "price": 400, "desc": "Show those gains." }
+    { "id": "emote_dab",        "name": "THE DAB",      "art": "assets/spr/emote_dab.png",        "rarity": "common",   "price": 0,   "desc": "Certified classic." },
+    { "id": "emote_groove",     "name": "DISCO GROOVE", "art": "assets/spr/emote_groove.png",     "rarity": "common",   "price": 0,   "desc": "Saturday night, every night." },
+    { "id": "emote_hype",       "name": "HYPE JUMP",    "art": "assets/spr/emote_hype.png",       "rarity": "uncommon", "price": 250, "desc": "LET'S GOOO." },
+    { "id": "emote_runningman", "name": "RUNNING MAN",  "art": "assets/spr/emote_runningman.png", "rarity": "uncommon", "price": 300, "desc": "Going nowhere, fast." },
+    { "id": "emote_heart",      "name": "HEART SIGN",   "art": "assets/spr/emote_heart.png",      "rarity": "rare",     "price": 300, "desc": "For the fans." },
+    { "id": "emote_floss",      "name": "THE FLOSS",    "art": "assets/spr/emote_floss.png",      "rarity": "rare",     "price": 400, "desc": "Back and forth. Forever." },
+    { "id": "emote_robot",      "name": "THE ROBOT",    "art": "assets/spr/emote_robot.png",      "rarity": "rare",     "price": 400, "desc": "Beep. Boop. Bop." },
+    { "id": "emote_macarena",   "name": "MACARENA",     "art": "assets/spr/emote_macarena.png",   "rarity": "rare",     "price": 400, "desc": "You know the steps." },
+    { "id": "emote_gangnam",    "name": "GANGNAM RIDE", "art": "assets/spr/emote_gangnam.png",    "rarity": "epic",     "price": 500, "desc": "Oppa pixel style." },
+    { "id": "emote_moonwalk",   "name": "MOONWALK",     "art": "assets/spr/emote_moonwalk.png",   "rarity": "epic",     "price": 600, "desc": "Smooth. Backwards. Iconic." }
   ],
   "modes": [
     { "id": "hero_rush",     "name": "HERO RUSH",     "tile": "assets/spr/mode_hero_rush.png",     "players": 100, "mult": 1.0, "desc": "100 heroes drop in. Last one standing takes the crown." },

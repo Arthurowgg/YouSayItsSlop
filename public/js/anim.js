@@ -6,8 +6,8 @@ export const ANIMS = {
   attack: { start: 10, count: 4, fps: 12 },
   power:  { start: 14, count: 4, fps: 9 },
 };
-export const EMOTES = ['dance', 'wave', 'cheer', 'flex', 'bow', 'laugh', 'salute', 'heart', 'shrug', 'point'];
-EMOTES.forEach((e, i) => { ANIMS['e_' + e] = { start: 18 + i * 4, count: 4, fps: 8 }; });
+export const EMOTES = ['gangnam', 'floss', 'dab', 'moonwalk', 'robot', 'runningman', 'macarena', 'hype', 'heart', 'groove'];
+EMOTES.forEach((e, i) => { ANIMS['e_' + e] = { start: 18 + i * 6, count: 6, fps: 10 }; });
 const GLIDER_OFF = {
   glider_wings:  { dx: 0,   dy: -2 },
   glider_shield: { dx: -11, dy: 0 },
