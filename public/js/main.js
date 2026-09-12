@@ -4,6 +4,7 @@ import { store } from './store.js';
 import { startParticles, setParticlesEnabled, setVolume, setHoverEnabled, sfx, toggleMute, isMuted } from './fx.js';
 import { setFpsCap } from './anim.js';
 import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast, modal, shopHome } from './screens.js';
+import { setAnimDebug, getAnimDebug } from './anim.js';
 import { bus } from './bus.js';
 
 const TABS = [
@@ -269,6 +270,7 @@ async function boot() {
     if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
     const keys = { 1: 'play', 2: 'shop', 3: 'locker', 4: 'tasks', 5: 'dev' };
     if (keys[e.key]) { current = keys[e.key]; sfx.tab(); buildTabs(); renderCurrent(); }
+    else if (e.key === '`') { setAnimDebug(!getAnimDebug()); }
     else if (e.key === 'Escape') {
       const fsx = document.querySelector('.settingsFS');
       if (fsx) { sfx.click(); fsx.remove(); }

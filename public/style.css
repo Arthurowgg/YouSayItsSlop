@@ -576,3 +576,7 @@ body.reduce-motion .in-settings { animation: none; }
 .secTitle { font-style: italic; font-weight: 900; font-size: 26px; letter-spacing: 1.5px; text-transform: uppercase; transform: skewX(-8deg); color: #fff; text-shadow: 0 3px 10px rgba(0,0,0,.5); }
 .f2plus { display: none; }
 .ribbon { display: none; }
+
+/* ===== v13: cards com animação própria + loading ===== */
+.cardAnim { opacity: 0; transition: opacity .25s ease; }
+.cardAnim.ready { opacity: 1; }

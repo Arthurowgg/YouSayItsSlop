@@ -3,11 +3,14 @@
 // unique per-hero power FX. No transform-jumping idle: idle uses planted frames.
 export const FRAME = 48;
 export const ANIMS = {
-  idle:   { start: 0, count: 4, fps: 3,  loop: true },
-  walk:   { start: 0, count: 4, fps: 9,  loop: true },
-  attack: { start: 0, count: 4, fps: 10, loop: false },
-  power:  { start: 0, count: 4, fps: 8,  loop: false },
+  idle:   { start: 0,  count: 4, fps: 4,  loop: true },
+  walk:   { start: 4,  count: 6, fps: 9,  loop: true },
+  attack: { start: 10, count: 4, fps: 10, loop: false },
+  power:  { start: 14, count: 4, fps: 8,  loop: false },
 };
+let ANIM_DEBUG = false;
+export function setAnimDebug(v) { ANIM_DEBUG = !!v; }
+export function getAnimDebug() { return ANIM_DEBUG; }
 export const EMOTES = ['gangnam', 'floss', 'dab', 'moonwalk', 'robot', 'runningman', 'macarena', 'hype', 'heart', 'groove'];
 EMOTES.forEach((e) => { ANIMS['e_' + e] = { start: 0, count: 6, fps: 9, loop: true }; });
 let FPS_CAP = 60;
@@ -165,6 +168,7 @@ export class Animator {
       this.res = img.height;
       this.frames = Math.max(1, Math.round(img.width / img.height));
       this.frame = 0;
+      this.cv.classList.add('ready');
       if (!this.raf) this.raf = requestAnimationFrame((t) => this.loop(t));
     });
     if (gliderId) {
@@ -212,9 +216,19 @@ export class Animator {
       }
     }
     const isEmote = this.anim.startsWith('e_');
-    const poses = isEmote ? (EMOTE_POSES[this.anim.slice(2)] || POSES.idle) : (POSES[this.anim] || POSES.idle);
-    const [dx, dy, rot, sc] = poses[f % poses.length];
-    const src = this.anim === 'idle' ? IDLE_SRC[f % IDLE_SRC.length] : this.anim === 'walk' ? [0, 1, 0, 1][f % 4] : (f % this.frames);
+    const full = this.frames >= 18; // real generated sequences: idle/walk/attack/power
+    let dx = 0, dy = 0, rot = 0, sc = 1, src;
+    if (full && !isEmote) {
+      src = A.start + f; // true frames, no transform posing
+    } else if (isEmote) {
+      const poses = EMOTE_POSES[this.anim.slice(2)] || POSES.idle;
+      [dx, dy, rot, sc] = poses[f % poses.length];
+      src = f % Math.min(4, this.frames);
+    } else {
+      const poses = POSES[this.anim] || POSES.idle;
+      [dx, dy, rot, sc] = poses[f % poses.length];
+      src = this.anim === 'idle' ? IDLE_SRC[f % IDLE_SRC.length] : this.anim === 'walk' ? [0, 1, 0, 1][f % 4] : (f % this.frames);
+    }
     if (this.anim === 'power') { c.shadowColor = FX_COLORS[this.hid] || '#fff'; c.shadowBlur = 6 * S; }
     c.save();
     c.translate((24 + dx) * S, (24 + dy) * S);
@@ -224,6 +238,14 @@ export class Animator {
     c.restore();
     c.shadowBlur = 0;
     if (this.hid && !isEmote) drawHeroFX(c, S, this.hid, this.anim, f);
+    if (ANIM_DEBUG) {
+      const u = S;
+      c.strokeStyle = 'rgba(0,255,120,.9)'; c.lineWidth = Math.max(1, u * 0.4);
+      c.beginPath(); c.moveTo(0, 44 * u); c.lineTo(48 * u, 44 * u); c.stroke();
+      c.strokeStyle = 'rgba(255,80,80,.9)'; c.strokeRect(6 * u, 2 * u, 36 * u, 42 * u);
+      c.fillStyle = '#7dffb0'; c.font = `${3 * u}px monospace`;
+      c.fillText(`${this.anim} f${f}/${A.count} ${A.fps}fps ${this.res}px`, 1 * u, 5 * u);
+    }
   }
   destroy() { this.dead = true; if (typeof cancelAnimationFrame !== 'undefined') cancelAnimationFrame(this.raf); this.raf = 0; }
 }

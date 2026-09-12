@@ -210,10 +210,13 @@ function shopGrid() {
     const t = typeOf(it);
     const owned = store.owns(t, it.id);
     const Rr = rar(it.rarity);
-    const art = t === 'hero'
-      ? el('img', { class: 'pixel f2img', src: portraitOf(it.id), alt: it.name })
-      : el('img', { class: 'pixel f2img item', src: it.art, alt: it.name });
-    return el('button', {
+    let art;
+    if (t === 'hero') {
+      art = el('canvas', { class: 'pixel f2img cardAnim' });
+    } else {
+      art = el('img', { class: 'pixel f2img item', src: it.art, alt: it.name });
+    }
+    const btn = el('button', {
       class: `fcard2 ${size} ${owned ? 'owned' : ''}`,
       style: { '--rc': Rr.color, animationDelay: `${Math.min(i * 20, 280)}ms` },
       onclick: () => { sfx.click(); shopSel = { kind: 'item', type: t, id: it.id }; bus.refresh(); }
@@ -224,6 +227,8 @@ function shopGrid() {
       el('div', { class: 'f2bar' },
         el('span', { class: 'f2nm' }, it.name),
         el('span', { class: 'f2pr' }, priceTag(it.price))));
+    if (t === 'hero') { const a = new Animator(art, 2); a.load(it.id, null); liveAnims.push(a); }
+    return btn;
   }
   function liveCard(h, i) {
     const Rr = rar(h.rarity);
