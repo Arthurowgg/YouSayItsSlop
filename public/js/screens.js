@@ -170,9 +170,9 @@ export function renderPlay() {
   emoteChips.classList.add('lobbyEmote');
 
   const stage = el('div', { class: 'stage full in-play' },
-    modeStrip,
     bg,
     el('div', { class: 'shade soft' }),
+    modeStrip,
     el('div', { class: 'stageStats' },
       el('span', { class: 'chip' }, `PARTIDAS ${store.data.stats.matches}`),
       el('span', { class: 'chip' }, `VITÓRIAS ${store.data.stats.wins}`),
@@ -318,15 +318,14 @@ function buyButton(type, id, price, after) {
   return el('span', { class: 'ownedTag' }, '★ EQUIPADO');
 }
 
-function previewPanel(heroId, gliderId, bigIcon) {
+function previewPanel(heroId, gliderId, bigIcon, mainArt) {
   const cv = el('canvas', { class: 'hero pixel' });
   const box = el('div', { class: 'prevPanel pixelbox' },
     el('div', { class: 'prevBg' }),
-    cv,
+    mainArt ? el('div', { class: 'mainArt' }, mainArt) : cv,
     bigIcon ? el('div', { class: 'sideIcon' }, bigIcon) : null,
     el('div', { class: 'floorGlow', style: { '--rc': '#35e0ff' } }));
-  anim = new Animator(cv, 6);
-  anim.load(heroId, gliderId);
+  if (!mainArt) { anim = new Animator(cv, 6); anim.load(heroId, gliderId); }
   box.append(animChips(box));
   return box;
 }
@@ -353,7 +352,7 @@ function itemPage(type, id) {
       el('button', { class: 'btn ghost', onclick: () => { sfx.click(); shopSel = null; bus.refresh(); } }, '◂ VOLTAR'),
       el('div', { class: 'panelTitle' }, 'LOJA DE ITENS')),
     el('div', { class: 'cols', style: { flex: '1', minHeight: '0' } },
-      previewPanel(hero.id, glider, bigIcon),
+      previewPanel(hero.id, glider, bigIcon, (type === 'pick' || type === 'emote') ? artImg(it, 170) : null),
       details));
 }
 

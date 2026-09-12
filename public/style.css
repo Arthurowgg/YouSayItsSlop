@@ -546,3 +546,11 @@ body.reduce-motion .in-settings { animation: none; }
   .f2grid, .f2grid.small, .bBlock { grid-template-columns: repeat(2, 1fr); }
   .fcard2.xl { grid-column: span 2; }
 }
+
+/* ===== v11: preview de item + camadas do lobby ===== */
+.mainArt { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 180px; }
+.mainArt img { width: 170px; height: 170px; image-rendering: pixelated; filter: drop-shadow(0 10px 24px rgba(0,0,0,.65)); animation: trPop .3s cubic-bezier(.2,.9,.3,1.2) both; }
+.stage .bgmap { z-index: 0; }
+.stage .shade { z-index: 1; }
+.stage .heroWrap, .stage .hud, .stage .stageStats, .stage .heroPlate, .stage .modeStrip { z-index: 2; }
+.stage .hud, .stage .stageStats, .stage .heroPlate { position: absolute; }

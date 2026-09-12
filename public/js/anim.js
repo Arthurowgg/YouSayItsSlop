@@ -141,7 +141,8 @@ export class Animator {
       if (this.dead) return;
       this.img = img;
       this.hid = heroId;
-      this.frames = Math.max(1, Math.round(img.width / FRAME));
+      this.res = img.height;
+      this.frames = Math.max(1, Math.round(img.width / img.height));
       this.legacy = this.frames > 4;
       this.frame = 0;
       if (!this.raf) this.raf = requestAnimationFrame((t) => this.loop(t));
@@ -149,7 +150,7 @@ export class Animator {
     img.src = `assets/anim/${heroId}.png`;
     if (gliderId) {
       const g = new Img();
-      g.onload = () => { if (!this.dead) { this.gimg = g; this.gid = gliderId; this.glegacy = g.width > FRAME; } };
+      g.onload = () => { if (!this.dead) { this.gimg = g; this.gid = gliderId; this.gsingle = g.width === g.height; } };
       g.src = `assets/spr/${gliderId}.png`;
     } else { this.gimg = null; this.gid = null; }
   }
@@ -173,19 +174,20 @@ export class Animator {
     if (this.gimg) {
       const off = GLIDER_OFF[this.gid] || { dx: 0, dy: 0 };
       const sway = [0, -1, 0, 1][f % 4];
-      if (this.glegacy) {
-        const gw = Math.round(this.gimg.width / FRAME);
-        const gf = gw > 1 ? (Math.floor(f / 2) % gw) : 0;
-        c.drawImage(this.gimg, gf * FRAME, 0, FRAME, FRAME, off.dx * S, (off.dy + sway) * S, FRAME * S, FRAME * S);
+      if (this.gsingle) {
+        c.drawImage(this.gimg, 0, 0, this.gimg.width, this.gimg.height, off.dx * S, (off.dy + sway) * S - 4 * S, FRAME * S, FRAME * S);
       } else {
-        c.drawImage(this.gimg, off.dx * S, (off.dy + sway) * S - 4 * S, FRAME * S, FRAME * S);
+        const gw = Math.round(this.gimg.width / this.gimg.height);
+        const gf = gw > 1 ? (Math.floor(f / 2) % gw) : 0;
+        const gr = this.gimg.height;
+        c.drawImage(this.gimg, gf * gr, 0, gr, gr, off.dx * S, (off.dy + sway) * S, FRAME * S, FRAME * S);
       }
     }
     if (this.legacy) {
       const LA = { idle: [0, 4], walk: [4, 6], attack: [10, 4], power: [14, 4] }[this.anim] ||
         [18 + EMOTES.indexOf(this.anim.slice(2)) * 6, 6];
       const src = LA[0] + (f % LA[1]);
-      c.drawImage(this.img, src * FRAME, 0, FRAME, FRAME, 0, 0, FRAME * S, FRAME * S);
+      c.drawImage(this.img, src * this.res, 0, this.res, this.res, 0, 0, FRAME * S, FRAME * S);
     } else {
       const poses = this.anim.startsWith('e_') ? (EMOTE_POSES[this.anim.slice(2)] || POSES.idle) : (POSES[this.anim] || POSES.idle);
       const [dx, dy, rot, sc] = poses[f % poses.length];
@@ -194,7 +196,7 @@ export class Animator {
       c.translate((24 + dx) * S, (24 + dy) * S);
       c.rotate(rot);
       c.scale(sc, sc);
-      c.drawImage(this.img, (f % this.frames) * FRAME, 0, FRAME, FRAME, -24 * S, -24 * S, FRAME * S, FRAME * S);
+      c.drawImage(this.img, (f % this.frames) * this.res, 0, this.res, this.res, -24 * S, -24 * S, FRAME * S, FRAME * S);
       c.restore();
       c.shadowBlur = 0;
     }
