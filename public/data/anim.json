@@ -1,0 +1,326 @@
+{
+ "antman": {
+  "anims": {
+   "ability": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 4,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ },
+ "blackpanther": {
+  "anims": {
+   "ability": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 4,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ },
+ "capamerica": {
+  "anims": {
+   "ability": {
+    "count": 2,
+    "fps": 6,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 2,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ },
+ "drstrange": {
+  "anims": {
+   "ability": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 4,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ },
+ "hulk": {
+  "anims": {
+   "ability": {
+    "count": 2,
+    "fps": 6,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 2,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ },
+ "ironman": {
+  "anims": {
+   "ability": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 4,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ },
+ "spiderman": {
+  "anims": {
+   "ability": {
+    "count": 2,
+    "fps": 6,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 2,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ },
+ "venom": {
+  "anims": {
+   "ability": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 4,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ },
+ "wolverine": {
+  "anims": {
+   "ability": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 12
+   },
+   "attack": {
+    "count": 4,
+    "fps": 3,
+    "loop": false,
+    "start": 8
+   },
+   "idle": {
+    "count": 4,
+    "fps": 5,
+    "loop": true,
+    "start": 0
+   },
+   "walk": {
+    "count": 4,
+    "fps": 4,
+    "loop": true,
+    "start": 4
+   }
+  },
+  "frame": 112,
+  "frames": {
+   "ability": 4,
+   "attack": 4,
+   "idle": 4,
+   "walk": 4
+  },
+  "source": "art_ai"
+ }
+}

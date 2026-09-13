@@ -9,9 +9,9 @@ export function defaultSave() {
     level: 1,
     xp: 0,
     owned: ['spiderman', 'blackpanther'],
-    picks: ['pick_axe'],
-    gliders: [],
-    equipped: { hero: 'spiderman', style: 'default', pick: 'pick_axe', glider: null },
+    picks: ['pick_spiderman', 'pick_blackpanther'],
+    blings: [],
+    equipped: { hero: 'spiderman', style: 'default', pick: 'pick_spiderman', bling: null },
     stats: { matches: 0, wins: 0, purchases: 0, equips: 0 },
     tasks: {},
     dev: { noCooldown: true, unlockAll: false },
@@ -46,6 +46,15 @@ export class Store {
         if (!j.empty) { this.data = { ...defaultSave(), ...j }; this.api = true; }
       }
     } catch { /* offline / file:// -> localStorage */ }
+    // old saves carried gliders/emotes bags and an equipped.glider key:
+    // drop them so nothing in the new build reads a retired field
+    delete this.data.gliders;
+    delete this.data.emotes;
+    if (this.data.equipped) {
+      delete this.data.equipped.glider;
+      delete this.data.equipped.emote;
+      if (this.data.equipped.bling === undefined) this.data.equipped.bling = null;
+    }
     if (!this.api) {
       try {
         const raw = localStorage.getItem('mpr_save');
@@ -147,15 +156,16 @@ export class Store {
     this.emit('stats');
   }
 
-  // ---- inventory ----
+  // ---- inventory ---- (three bags only: heroes / relics / back blings)
+  bagOf(type) { return type === 'hero' ? 'owned' : type === 'pick' ? 'picks' : 'blings'; }
   owns(type, id) {
     if (this.data.dev.unlockAll) return true;
-    const bag = type === 'hero' ? 'owned' : type === 'pick' ? 'picks' : type === 'glider' ? 'gliders' : 'emotes';
-    return this.data[bag].includes(id);
+    const bag = this.bagOf(type);
+    return (this.data[bag] || []).includes(id);
   }
   buy(type, id, price) {
     if (this.owns(type, id) || this.data.coins < price) return false;
-    const bag = type === 'hero' ? 'owned' : type === 'pick' ? 'picks' : type === 'glider' ? 'gliders' : 'emotes';
+    const bag = this.bagOf(type);
     this.data[bag].push(id);
     this.data.coins -= price;
     this.bump('purchases');
@@ -168,8 +178,7 @@ export class Store {
     for (const id of b.items) {
       const it = this.findItem(id);
       if (!it || this.owns(it.type, id)) continue;
-      const bag = it.type === 'hero' ? 'owned' : it.type === 'pick' ? 'picks' : it.type === 'glider' ? 'gliders' : 'emotes';
-      this.data[bag].push(id);
+      this.data[this.bagOf(it.type)].push(id);
     }
     this.bump('purchases');
     this.emit('buy');
@@ -177,14 +186,14 @@ export class Store {
   }
   findItem(id) {
     const c = this.catalog;
-    if (c.heroes.some((h) => h.id === id)) return { type: 'hero', item: c.heroes.find((h) => h.id === id) };
-    if (c.picks.some((h) => h.id === id)) return { type: 'pick', item: c.picks.find((h) => h.id === id) };
-    if (c.gliders.some((h) => h.id === id)) return { type: 'glider', item: c.gliders.find((h) => h.id === id) };
-    if ((c.emotes || []).some((h) => h.id === id)) return { type: 'emote', item: c.emotes.find((h) => h.id === id) };
-    return null;
+    const hit = (list, type) => {
+      const item = (list || []).find((x) => x.id === id);
+      return item ? { type, item } : null;
+    };
+    return hit(c.heroes, 'hero') || hit(c.picks, 'pick') || hit(c.blings, 'bling');
   }
   equip(type, id) {
-    const key = type === 'hero' ? 'hero' : type === 'pick' ? 'pick' : type === 'glider' ? 'glider' : type === 'emote' ? 'emote' : 'style';
+    const key = type === 'hero' ? 'hero' : type === 'pick' ? 'pick' : 'bling';
     this.data.equipped[key] = id;
     this.bump('equips');
     this.emit('equip');
