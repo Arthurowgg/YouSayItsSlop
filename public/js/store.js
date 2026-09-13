@@ -8,12 +8,11 @@ export function defaultSave() {
     coins: COIN_BASE,
     level: 1,
     xp: 0,
-    owned: ['spiderman', 'blackwidow'],
+    owned: ['spiderman', 'blackpanther'],
     picks: ['pick_axe'],
     gliders: [],
-    emotes: ['emote_dab', 'emote_groove'],
-    equipped: { hero: 'spiderman', style: 'default', pick: 'pick_axe', glider: null, emote: 'emote_salute' },
-    stats: { matches: 0, wins: 0, purchases: 0, equips: 0, emotes: 0 },
+    equipped: { hero: 'spiderman', style: 'default', pick: 'pick_axe', glider: null },
+    stats: { matches: 0, wins: 0, purchases: 0, equips: 0 },
     tasks: {},
     dev: { noCooldown: true, unlockAll: false },
     settings: {
@@ -21,7 +20,7 @@ export function defaultSave() {
       brightness: 100, contrast: 100, saturation: 100, smoothing: false, bgGlow: true, screenShake: true,
       uiScale: 100, largeText: false, showQuotes: true, rarTags: false, fpsMeter: false, heroSize: 'M',
       reduceMotion: false, highContrast: false, colorblind: false,
-      confirmBuys: false, emoteNotes: true,
+      confirmBuys: false,
     },
     day: todayKey(),
     week: weekKey(),
@@ -62,20 +61,7 @@ export class Store {
     }
     this.rollCalendars();
     this.ensureTasks();
-    this.fixEmotes();
     this.data.settings = { ...defaultSave().settings, ...this.data.settings };
-  }
-
-  fixEmotes() {
-    const map = {
-      emote_salute: 'emote_groove', emote_wave: 'emote_dab', emote_dance: 'emote_gangnam',
-      emote_flex: 'emote_robot', emote_cheer: 'emote_hype', emote_laugh: 'emote_hype',
-      emote_shrug: 'emote_groove', emote_bow: 'emote_macarena', emote_point: 'emote_runningman',
-    };
-    const valid = new Set((this.catalog?.emotes || []).map((e) => e.id));
-    const set = new Set((this.data.emotes || []).map((id) => map[id] || id).filter((id) => valid.has(id)));
-    ['emote_dab', 'emote_groove'].forEach((id) => set.add(id));
-    this.data.emotes = [...set];
   }
 
   _saveTimer = 0;
@@ -194,7 +180,7 @@ export class Store {
     if (c.heroes.some((h) => h.id === id)) return { type: 'hero', item: c.heroes.find((h) => h.id === id) };
     if (c.picks.some((h) => h.id === id)) return { type: 'pick', item: c.picks.find((h) => h.id === id) };
     if (c.gliders.some((h) => h.id === id)) return { type: 'glider', item: c.gliders.find((h) => h.id === id) };
-    if (c.emotes.some((h) => h.id === id)) return { type: 'emote', item: c.emotes.find((h) => h.id === id) };
+    if ((c.emotes || []).some((h) => h.id === id)) return { type: 'emote', item: c.emotes.find((h) => h.id === id) };
     return null;
   }
   equip(type, id) {

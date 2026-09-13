@@ -64,7 +64,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok(!$('#deploy'), 'domination cannot start a match');
   $$('#screen .p2card')[0].click(); await sleep(30);
   ok($$('#screen .p2card')[0].classList.contains('sel') && !$('#screen .p2play').disabled, 'back to 1v1 re-enables PLAY');
-  ok(catalog.emotes.length === 10, 'catalog has 10 emotes');
+  ok(!catalog.emotes, 'emotes removed from catalog');
   const mapBefore = $('#screen .p2map .rn').textContent;
   $('#screen .p2map').click(); await sleep(30);
   ok($('#screen .p2map .rn').textContent.length > 4, 'next-map chip rerolls');
@@ -86,35 +86,34 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
     if (bk) { bk.click(); await sleep(30); }
   }
 
-  // shop: bundles + item pages
+  // shop v3: category sections with scroll-snap
   await toShopGrid();
-  ok(['PACOTES', 'TRAJES', 'EMOTES'].every((s) => $('#screen').textContent.includes(s)) && !$('#screen').textContent.includes('DAILY'), 'shop sections (no daily)');
-  ok($$('#screen .secTitle').filter((t) => t.textContent === 'EMOTES')[0].nextElementSibling.querySelectorAll('.fcard2').length === 10, 'shop EMOTES section lists 10 emotes');
-  ok($$('.fcard2.bundle').length === 4, 'shop shows 4 bundles');
+  ok($$('#screen .shopSec').length === 5 && catalog.shopCats.length === 5, 'shop has 5 category sections');
+  ok(!!$('.shop3') && !!$('.catDots') && $$('.catDot').length === 5, 'category scroller + dot nav');
+  const shopTxt = $('.shop3').textContent;
+  ok(!shopTxt.includes('EMOTES') && !shopTxt.includes('ÉPICO') && !shopTxt.includes('NOVO') && !shopTxt.includes('TRAJE'), 'no emotes / épico / novo / traje written in shop');
+  ok($$('.s3card.bundle').length === 5, 'shop shows 5 bundle cards (one per category)');
+  ok($$('.catBlings canvas').length === 12, 'every back bling previewed riding a hero');
+  ok($$('.s3card.hero').length === 9 && $$('.s3card.skin').length === 0, '9 hero cards, skins listed separately (none yet)');
+  ok($$('.catPicks .s3card').length === 30, 'all picks listed by category');
+  ok($$('.s3card.owned .ownBadge').length >= 2 && $$('.s3card.owned').every((c) => !c.querySelector('.c3bar .price')), 'owned overrides the price tag');
+  ok($$('.s3card').every((c) => !c.querySelector('.rarlbl2') && !c.querySelector('.typeTag') && !c.querySelector('.newTag')), 'no rarity/type/new text tags on cards');
 
-  // shop v2 storefront presentation
-  ok(!!$('.shop2bg .s2skyline') && !!$('.shop2bg .s2stars'), 'shop has layered pixel backdrop');
-  ok(!!$('.featBundle') && !!$('.featHero'), 'featured bundle + featured hero strip');
-  ok($$('.featBundle .miniIco').length === 3, 'featured bundle shows included item icons');
-  ok($$('.bcard2').length === 4 && $$('.bcard2').every((b) => b.querySelectorAll('.miniIco').length === 3), 'bundle cards show individual item icons');
-  ok($$('.ecard .eRing').length === 20, 'emote cards use dedicated ring stages');
-  ok($$('.gcard .gBase').length === 60, 'gear cards use pedestal presentation');
-  ok($$('.hcard canvas').length === 20, 'hero cards animate in-grid');
-
-  $$('.fcard2.bundle')[0].click(); await sleep(30);
+  $$('.s3card.bundle')[0].click(); await sleep(30);
   ok($('#screen').textContent.includes('INCLUÍDO'), 'bundle page lists included items');
   ok($$('.inclRow').length === 3, 'bundle page shows 3 included rows');
+  ok($$('.inclRow .price').length === 0, 'bundle contents carry no individual prices (bundle price overrides)');
   ok(!!$('.show2 .shPlatform'), 'bundle showcase has platform');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
 
   // included items open their own showcase from the bundle page
-  $$('.fcard2.bundle')[0].click(); await sleep(30);
+  $$('.s3card.bundle')[0].click(); await sleep(30);
   const inclName = $$('.inclRow .irNm')[0].textContent;
   $$('.inclRow')[0].click(); await sleep(30);
   ok(!!$('.itemName') && $('.itemName').textContent === inclName, 'included item opens its own showcase');
   ok(!!$('.show2'), 'item showcase present');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
-  $$('#screen .fcard2').find((c) => c.textContent.includes('HOMEM DE FERRO')).click(); await sleep(30);
+  $$('#screen .s3card').find((c) => c.textContent.includes('HOMEM DE FERRO')).click(); await sleep(30);
   ok($('.itemName') && $('.itemName').textContent === 'HOMEM DE FERRO', 'item page opens for IRON MAN');
   ok(!!$('.statbars'), 'item page shows stat bars');
   ok(!!$('.itemQuote') && $('.itemQuote').textContent.length > 4, 'item page shows hero quote');
@@ -127,7 +126,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   $$('#screen .btn').find((b) => b.textContent.includes('+5000')).click(); await sleep(30);
   ok($('#coinCount').textContent.replace(/\D/g, '') === '5500', 'dev +5000');
   await toShopGrid();
-  $$('#screen .fcard2').find((c) => c.textContent.includes('HOMEM DE FERRO')).click(); await sleep(30);
+  $$('#screen .s3card').find((c) => c.textContent.includes('HOMEM DE FERRO')).click(); await sleep(30);
   $$('.actions .btn').find((b) => b.textContent.includes('COMPRAR')).click(); await sleep(30);
   ok($('#coinCount').textContent.replace(/\D/g, '') === String(5500 - 1600), 'coins deducted (3,900)');
   $$('.actions .btn').find((b) => b.textContent.includes('ESCOLHER HERÓI')).click(); await sleep(30);
@@ -135,19 +134,17 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // gear + emote showcases use type-specific presentation
   await toShopGrid();
-  $$('#screen .gcard').find((c) => c.textContent.includes('BASTÃO')).click(); await sleep(30);
+  $$('#screen .s3card.gear').find((c) => c.textContent.includes('BASTÃO')).click(); await sleep(30);
   ok(!!$('.show2 .shItem'), 'gear showcase shows large inspectable icon');
   ok(!!$('.show2 .shPlatform'), 'gear showcase has platform');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
-  $$('#screen .ecard')[0].click(); await sleep(30);
-  ok(!!$('.show2 .emotePlay'), 'emote showcase plays the emote animation');
-  ok(catalog.emotes.every((x) => x.anim && x.anim.frames === 6 && typeof x.anim.start === 'number'), 'emotes carry data-driven animation metadata');
-  ok(!!w.__ANIMS && w.__ANIMS['e_dab'] && w.__ANIMS['e_dab'].start === 30 && w.__ANIMS['e_gangnam'].start === 18, 'emote anims registered from catalog data');
+  $$('#screen .s3card.gear').find((c) => c.textContent.includes('ESCUDO ESTRELA')).click(); await sleep(30);
+  ok(!!$('.show2 .shStage') && !$('.show2 .shItem'), 'back bling showcase rides the equipped hero');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
 
   // bundle buy
   await toShopGrid();
-  $$('.fcard2.bundle')[1].click(); await sleep(30);
+  $$('.s3card.bundle')[1].click(); await sleep(30);
   const cBefore = Number($('#coinCount').textContent.replace(/\D/g, ''));
   $$('.actions .btn').find((b) => b.textContent.includes('COMPRAR PACOTE')).click(); await sleep(30);
   ok(Number($('#coinCount').textContent.replace(/\D/g, '')) < cBefore, 'bundle purchase works (coins deducted)');
@@ -155,29 +152,27 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   // locker with combined backbling
   tabBtns()[2].click(); await sleep(30);
   ok(!!$('#screen canvas.hero'), 'locker animated preview');
-  ok($$('.lockerGrid .fcard2').length === 4, 'locker shows only owned outfits (4 after test buys)');
-  ok($('.lkLoadout') && $$('.lkSlot').length === 3, 'loadout row shows equipped cosmetics');
+  ok($$('.lk2Grid .s3card:not(.empty)').length === 4, 'locker hero rack shows only owned base heroes (4 after test buys)');
+  ok($$('.lk2Slot').length === 3 && $$('.lk2Slot')[0].textContent.includes('HOMEM DE FERRO'), 'equipped loadout visible in 3 customization slots');
   ok(!!$('.lkSearch') && $$('.lkF').length === 7, 'locker search + 7 rarity filters');
   $('.lkSearch').value = 'aranha'; $('.lkSearch').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(20);
-  ok($$('.lockerGrid .fcard2').length >= 1 && $$('.lockerGrid .fcard2').every((c) => c.textContent.toLowerCase().includes('aranha')), 'locker search filters');
+  ok($$('.lk2Grid .s3card:not(.empty)').length >= 1 && $$('.lk2Grid .s3card:not(.empty)').every((c) => c.textContent.toLowerCase().includes('aranha')), 'locker search filters');
   $('.lkSearch').value = ''; $('.lkSearch').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(20);
-  const catBling = $$('.lkCat').find((c) => c.textContent === 'BACK BLING');
-  catBling.click(); await sleep(30);
-  $$('.lockerGrid .fcard2').find((c) => c.textContent.includes('ASAS DE ANJO')).click(); await sleep(30);
-  ok($$('.lockerGrid .fcard2').some((c) => c.classList.contains('equipped')), 'glider equipped (combines on hero)');
-  ok($('.lkLoadout').textContent.includes('ASAS DE ANJO'), 'loadout shows equipped back bling');
+  $$('.lk2Slot')[1].click(); await sleep(30);
+  ok($$('.lk2Grid .s3card').length === 2, 'bling rack lists owned bling + empty slot');
+  $$('.lk2Grid .s3card').find((c) => c.textContent.includes('ESCUDO ESTRELA')).click(); await sleep(30);
+  ok($$('.lk2Grid .s3card').some((c) => c.classList.contains('equipped')), 'glider equipped (combines on hero)');
+  ok($$('.lk2Slot')[1].textContent.includes('ESCUDO ESTRELA'), 'bling slot shows equipped accessory');
+  $$('.lk2Slot')[0].click(); await sleep(30);
+  ok($$('.lk2Grid .s3card:not(.empty)').length === 4 && $$('.lk2Grid .s3card:not(.empty)').some((c) => c.textContent.includes('HOMEM DE FERRO')), 'hero rack lists owned base heroes (skins live inside them)');
+  ok($$('.lk2Grid .skinChip').length === 0, 'no owned skins yet - chips appear with their hero when owned');
 
   // tasks categories + level
   tabBtns()[3].click(); await sleep(30);
   ok($('.levelPanel') && $('.levelPanel').textContent.includes('LV'), 'tasks shows stored level');
   ok(['COMBATE', 'ECONOMIA', 'ESTILO'].every((c) => $('#screen').textContent.includes(c)), 'task categories shown');
-  tabBtns()[2].click(); await sleep(30);
-  $$('#screen .animChips .chip').find((c) => c.textContent === 'EMOTE ▾').click(); await sleep(30);
-  const pk = $$('.animChips.picker .chip');
-  ok(pk.length === 2, 'emote picker lists owned emotes (DAB+GROOVE)');
-  pk[1].click(); await sleep(30);
   tabBtns()[3].click(); await sleep(30);
-  ok($('#screen').textContent.includes('1/1'), 'emote task 1/1');
+  ok($('#screen').textContent.includes('2/2'), 'loadout task 2/2 after two equips');
   const claim = $$('#screen .btn').find((b) => b.textContent === 'RESGATAR' && !b.disabled);
   ok(!!claim, 'claim enabled');
   if (claim) { const cb2 = Number($('#coinCount').textContent.replace(/\D/g, '')); claim.click(); await sleep(30); ok(Number($('#coinCount').textContent.replace(/\D/g, '')) > cb2, 'task claimed (reward)'); }

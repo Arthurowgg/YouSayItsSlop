@@ -1,1147 +1,1144 @@
 {
- "game": "MARVEL PIXEL ROYALE",
- "rarities": {
-  "common": {
-   "label": "COMUM",
-   "color": "#9aa7b8"
-  },
-  "uncommon": {
-   "label": "INCOMUM",
-   "color": "#5fd35f"
-  },
-  "rare": {
-   "label": "RARO",
-   "color": "#3fb6ff"
-  },
-  "epic": {
-   "label": "ÉPICO",
-   "color": "#c65cff"
-  },
-  "legendary": {
-   "label": "LENDÁRIO",
-   "color": "#ffb02e"
-  },
-  "marvel": {
-   "label": "MARVEL",
-   "color": "#ff3d5a"
-  }
- },
- "heroes": [
-  {
-   "id": "spiderman",
-   "name": "HOMEM-ARANHA",
-   "art": "assets/spr/spiderman.png",
-   "rarity": "marvel",
-   "price": 1500,
-   "desc": "O amigão pixel da vizinhança. Thwip!",
-   "quote": "Seu amigão pixel da vizinhança."
-  },
-  {
-   "id": "spiderman_classic",
-   "name": "ARANHA CLÁSSICO",
-   "art": "assets/spr/spiderman_classic.png",
-   "rarity": "epic",
-   "price": 1200,
-   "desc": "O visual vermelho-e-azul de sempre.",
-   "quote": "Traje clássico. Responsabilidade clássica."
-  },
-  {
-   "id": "miles",
-   "name": "MILES",
-   "art": "assets/spr/miles.png",
-   "rarity": "epic",
-   "price": 1200,
-   "desc": "Aranha de traje preto com golpe veneno.",
-   "quote": "Tá. Só mais um balanço."
-  },
-  {
-   "id": "gwen",
-   "name": "SPIDER-GWEN",
-   "art": "assets/spr/gwen.png",
-   "rarity": "epic",
-   "price": 1200,
-   "desc": "Heroína encapuzada de outra dimensão.",
-   "quote": "Você não ia entender. É uma coisa de dimensão."
-  },
-  {
-   "id": "venom",
-   "name": "VENOM",
-   "art": "assets/spr/venom.png",
-   "rarity": "epic",
-   "price": 1100,
-   "desc": "Nós somos Venom. Principalmente famintos.",
-   "quote": "Nós terminamos de conversar."
-  },
-  {
-   "id": "ironman",
-   "name": "HOMEM DE FERRO",
-   "art": "assets/spr/ironman.png",
-   "rarity": "legendary",
-   "price": 1600,
-   "desc": "Bilionário. Gênio. Filantropo. Pixel.",
-   "quote": "Energia a 100%. Tente me acompanhar."
-  },
-  {
-   "id": "capamerica",
-   "name": "CAPITÃO AMÉRICA",
-   "art": "assets/spr/capamerica.png",
-   "rarity": "legendary",
-   "price": 1500,
-   "desc": "Posso fazer isso o dia todo.",
-   "quote": "Posso fazer isso o dia todo."
-  },
-  {
-   "id": "thor",
-   "name": "THOR",
-   "art": "assets/spr/thor.png",
-   "rarity": "legendary",
-   "price": 1600,
-   "desc": "O Deus do Trovão. Traga um guarda-chuva.",
-   "quote": "Traga-me aquele horizonte!"
-  },
-  {
-   "id": "hulk",
-   "name": "HULK",
-   "art": "assets/spr/hulk.png",
-   "rarity": "marvel",
-   "price": 1700,
-   "desc": "HULK ESMAGA (o botão do lobby).",
-   "quote": "Menu insignificante. HULK ESMAGA."
-  },
-  {
-   "id": "wolverine",
-   "name": "WOLVERINE",
-   "art": "assets/spr/wolverine.png",
-   "rarity": "epic",
-   "price": 1400,
-   "desc": "Amigo. Foi um dia longo.",
-   "quote": "Amigo, eu não entro na fila."
-  },
-  {
-   "id": "blackwidow",
-   "name": "VIÚVA NEGRA",
-   "art": "assets/spr/blackwidow.png",
-   "rarity": "rare",
-   "price": 800,
-   "desc": "A melhor espiã do Quarto Vermelho.",
-   "quote": "Vermelho no meu registro. Você está somando."
-  },
-  {
-   "id": "hawkeye",
-   "name": "GAVIÃO ARQUEIRO",
-   "art": "assets/spr/hawkeye.png",
-   "rarity": "rare",
-   "price": 800,
-   "desc": "O vento está bom. Eu estou melhor.",
-   "quote": "O vento está bom. Eu estou melhor."
-  },
-  {
-   "id": "drstrange",
-   "name": "DOUTOR ESTRANHO",
-   "art": "assets/spr/drstrange.png",
-   "rarity": "legendary",
-   "price": 1500,
-   "desc": "Mestre das artes místicas de pixel.",
-   "quote": "Dormammu, vim para negociar."
-  },
-  {
-   "id": "scarletwitch",
-   "name": "FEITICEIRA ESCARLATE",
-   "art": "assets/spr/scarletwitch.png",
-   "rarity": "epic",
-   "price": 1300,
-   "desc": "Caos em forma de coroa.",
-   "quote": "Você não tem ideia do que eu posso fazer."
-  },
-  {
-   "id": "scarletwitch_azure",
-   "name": "FEITICEIRA AZURE",
-   "art": "assets/spr/scarletwitch_azure.png",
-   "rarity": "epic",
-   "price": 1300,
-   "desc": "Caos, mas com estilo.",
-   "quote": "Caos, mas com estilo."
-  },
-  {
-   "id": "blackpanther",
-   "name": "PANTERA NEGRA",
-   "art": "assets/spr/blackpanther.png",
-   "rarity": "epic",
-   "price": 1400,
-   "desc": "O rei de Wakanda em vibranium.",
-   "quote": "Wakanda para sempre."
-  },
-  {
-   "id": "captainmarvel",
-   "name": "CAPITÃ MARVEL",
-   "art": "assets/spr/captainmarvel.png",
-   "rarity": "marvel",
-   "price": 1600,
-   "desc": "Poder estelar nível binário.",
-   "quote": "Mais alto. Mais longe. Mais rápido."
-  },
-  {
-   "id": "captainmarvel_classic",
-   "name": "CAPITÃ MARVEL CLÁSSICA",
-   "art": "assets/spr/captainmarvel_classic.png",
-   "rarity": "epic",
-   "price": 1300,
-   "desc": "Visual estrelado vintage.",
-   "quote": "O problema estrelado original."
-  },
-  {
-   "id": "antman",
-   "name": "HOMEM-FORMIGA",
-   "art": "assets/spr/antman.png",
-   "rarity": "rare",
-   "price": 900,
-   "desc": "Tamanho não incluído.",
-   "quote": "Não é tamanho, é timing."
-  },
-  {
-   "id": "antman_unmasked",
-   "name": "HOMEM-FORMIGA SEM MÁSCARA",
-   "art": "assets/spr/antman_unmasked.png",
-   "rarity": "rare",
-   "price": 900,
-   "desc": "É o Scott. Ele está bem.",
-   "quote": "É o Scott. Quase reformado."
-  }
- ],
- "bundles": [
-  {
-   "id": "b_spiderverse",
-   "name": "PACOTE ARANHAVERSO",
-   "rarity": "marvel",
-   "price": 2000,
-   "desc": "Toda a turma da teia mais uma carona cósmica pra casa.",
-   "items": [
-    "miles",
-    "gwen",
-    "glider_cosmic"
-   ]
-  },
-  {
-   "id": "b_asgard",
-   "name": "PACOTE DE ASGARD",
-   "rarity": "legendary",
-   "price": 2800,
-   "desc": "Trovão, um eco digno de martelo e descida com plumas.",
-   "items": [
-    "thor",
-    "pick_hammer",
-    "glider_wings"
-   ]
-  },
-  {
-   "id": "b_shadow",
-   "name": "PACOTE OPERAÇÃO SOMBRIA",
-   "rarity": "epic",
-   "price": 2200,
-   "desc": "Dois espiões e uma bandeira marcada por garras. Em silêncio.",
-   "items": [
-    "blackpanther",
-    "blackwidow",
-    "glider_claws"
-   ]
-  },
-  {
-   "id": "b_cosmic",
-   "name": "PACOTE LENDAS CÓSMICAS",
-   "rarity": "marvel",
-   "price": 2600,
-   "desc": "Poder estelar, feitiçaria e uma foice forjada no vazio.",
-   "items": [
-    "captainmarvel",
-    "drstrange",
-    "pick_scythe"
-   ]
-  }
- ],
- "picks": [
-  {
-   "id": "pick_axe",
-   "name": "BASTÃO S.H.I.E.L.D.",
-   "art": "assets/spr/pick_axe.png",
-   "rarity": "uncommon",
-   "price": 0,
-   "desc": "Bastão de treino padrão."
-  },
-  {
-   "id": "pick_ice",
-   "name": "CUTELLO JOTUN",
-   "art": "assets/spr/pick_ice.png",
-   "rarity": "rare",
-   "price": 600,
-   "desc": "Aço de gigante de gelo. Quebra blocos e dentes."
-  },
-  {
-   "id": "pick_scythe",
-   "name": "FOICE DO VAZIO",
-   "art": "assets/spr/pick_scythe.png",
-   "rarity": "epic",
-   "price": 800,
-   "desc": "Colhe loot dramaticamente."
-  },
-  {
-   "id": "pick_hammer",
-   "name": "ECO DE MJOLNIR",
-   "art": "assets/spr/pick_hammer.png",
-   "rarity": "legendary",
-   "price": 1200,
-   "desc": "Um eco digno do original."
-  },
-  {
-   "id": "pick_plasma",
-   "name": "PICARETA DE PLASMA",
-   "desc": "Lâmina de plasma verde instável.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_plasma.png"
-  },
-  {
-   "id": "pick_web",
-   "name": "PICARETA DE TEIA",
-   "desc": "Rede e azul. Thwip em cada golpe.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/pick_web.png"
-  },
-  {
-   "id": "pick_storm",
-   "name": "PICARETA TEMPESTADE",
-   "desc": "Troveja a cada colheita.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/pick_storm.png"
-  },
-  {
-   "id": "pick_shadow",
-   "name": "PICARETA SOMBRA",
-   "desc": "Quase invisível no escuro.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_shadow.png"
-  },
-  {
-   "id": "pick_quantum",
-   "name": "PICARETA QUÂNTICA",
-   "desc": "Existe em 3 lugares ao mesmo tempo.",
-   "rarity": "marvel",
-   "price": 1500,
-   "art": "assets/spr/pick_quantum.png"
-  },
-  {
-   "id": "pick_magma",
-   "name": "PICARETA MAGMA",
-   "desc": "Ainda derretendo.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/pick_magma.png"
-  },
-  {
-   "id": "pick_h_spider",
-   "name": "PICARETA TEIA",
-   "desc": "Thwip a cada golpe.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/pick_h_spider.png"
-  },
-  {
-   "id": "pick_h_classic",
-   "name": "PICARETA CLÁSSICA",
-   "desc": "Vermelha e azul como nos quadrinhos.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/pick_h_classic.png"
-  },
-  {
-   "id": "pick_h_miles",
-   "name": "PICARETA VENENO",
-   "desc": "Choque vermelho a cada colheita.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_h_miles.png"
-  },
-  {
-   "id": "pick_h_gwen",
-   "name": "PICARETA ZEN",
-   "desc": "Leve como outra dimensão.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_h_gwen.png"
-  },
-  {
-   "id": "pick_h_venom",
-   "name": "PICARETA SIMBIONTE",
-   "desc": "Nós somos a picareta.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/pick_h_venom.png"
-  },
-  {
-   "id": "pick_h_iron",
-   "name": "PICARETA REPULSOR",
-   "desc": "Recarga por arco reator.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_h_iron.png"
-  },
-  {
-   "id": "pick_h_cap",
-   "name": "PICARETA ESTRELAR",
-   "desc": "Aguenta o dia todo.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_h_cap.png"
-  },
-  {
-   "id": "pick_h_thor",
-   "name": "PICARETA DO TROVÃO",
-   "desc": "Forjada em Nidavellir.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/pick_h_thor.png"
-  },
-  {
-   "id": "pick_h_hulk",
-   "name": "PICARETA GAMA",
-   "desc": "ESMAGA minérios.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_h_hulk.png"
-  },
-  {
-   "id": "pick_h_wolverine",
-   "name": "PICARETA DE ADAMANTIUM",
-   "desc": "Nunca precisa afiar.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/pick_h_wolverine.png"
-  },
-  {
-   "id": "pick_h_widow",
-   "name": "PICARETA DA VIÚVA",
-   "desc": "Ferrão elétrico embutido.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/pick_h_widow.png"
-  },
-  {
-   "id": "pick_h_hawkeye",
-   "name": "PICARETA ARQUEIRO",
-   "desc": "Mira perfeita, sempre.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/pick_h_hawkeye.png"
-  },
-  {
-   "id": "pick_h_strange",
-   "name": "PICARETA MÍSTICA",
-   "desc": "Corta o próprio espaço.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/pick_h_strange.png"
-  },
-  {
-   "id": "pick_h_wanda",
-   "name": "PICARETA CAOS",
-   "desc": "Realidade opcional.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/pick_h_wanda.png"
-  },
-  {
-   "id": "pick_h_wanda_azure",
-   "name": "PICARETA CAOS AZURE",
-   "desc": "Caos em tom frio.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_h_wanda_azure.png"
-  },
-  {
-   "id": "pick_h_panther",
-   "name": "PICARETA DE VIBRANIUM",
-   "desc": "Absorve o impacto.",
-   "rarity": "marvel",
-   "price": 1500,
-   "art": "assets/spr/pick_h_panther.png"
-  },
-  {
-   "id": "pick_h_marvel",
-   "name": "PICARETA FÓTON",
-   "desc": "Brilha no escuro cósmico.",
-   "rarity": "marvel",
-   "price": 1500,
-   "art": "assets/spr/pick_h_marvel.png"
-  },
-  {
-   "id": "pick_h_marvel_classic",
-   "name": "PICARETA ESTELAR CLÁSSICA",
-   "desc": "Vintage e binária.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_h_marvel_classic.png"
-  },
-  {
-   "id": "pick_h_antman",
-   "name": "PICARETA PIM",
-   "desc": "Tamanho ajustável.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/pick_h_antman.png"
-  },
-  {
-   "id": "pick_h_antman_unmasked",
-   "name": "PICARETA DO SCOTT",
-   "desc": "Improvisada, mas funciona.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/pick_h_antman_unmasked.png"
-  }
- ],
- "gliders": [
-  {
-   "id": "glider_shield",
-   "name": "ESCUDO ESTELAR",
-   "art": "assets/spr/glider_shield.png",
-   "rarity": "epic",
-   "price": 1000,
-   "desc": "Redondo. Icônico. Quase indestrutível."
-  },
-  {
-   "id": "glider_wings",
-   "name": "ASAS DE ANJO",
-   "art": "assets/spr/glider_wings.png",
-   "rarity": "legendary",
-   "price": 1200,
-   "desc": "Descida com plumas."
-  },
-  {
-   "id": "glider_cosmic",
-   "name": "CAPA CÓSMICA",
-   "art": "assets/spr/glider_cosmic.png",
-   "rarity": "epic",
-   "price": 900,
-   "desc": "Vista o céu noturno."
-  },
-  {
-   "id": "glider_claws",
-   "name": "BANDEIRA DO PANTERA",
-   "art": "assets/spr/glider_claws.png",
-   "rarity": "rare",
-   "price": 700,
-   "desc": "Bandeira de guerra marcada por garras."
-  },
-  {
-   "id": "glider_portal",
-   "name": "PORTAL MÍSTICO",
-   "desc": "Um atalho por outra dimensão.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_portal.png"
-  },
-  {
-   "id": "glider_webwings",
-   "name": "ASAS DE TEIA",
-   "desc": "Plane como uma aranha.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/glider_webwings.png"
-  },
-  {
-   "id": "glider_storm",
-   "name": "NUVEM DE TEMPESTADE",
-   "desc": "Chove só em você.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/glider_storm.png"
-  },
-  {
-   "id": "glider_panther",
-   "name": "SOMBRA DO PANTERA",
-   "desc": "Desce em silêncio.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_panther.png"
-  },
-  {
-   "id": "glider_holo",
-   "name": "CUBO HOLO",
-   "desc": "Flutuação assistida por holograma.",
-   "rarity": "marvel",
-   "price": 1500,
-   "art": "assets/spr/glider_holo.png"
-  },
-  {
-   "id": "glider_valkyrie",
-   "name": "ELMO ALADO",
-   "desc": "Digno de Valhalla.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/glider_valkyrie.png"
-  },
-  {
-   "id": "glider_h_spider",
-   "name": "PLANADOR DE TEIA",
-   "desc": "Paraquedas que balança em teia.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/glider_h_spider.png"
-  },
-  {
-   "id": "glider_h_classic",
-   "name": "TEIA CLÁSSICA",
-   "desc": "Descida vintage.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/glider_h_classic.png"
-  },
-  {
-   "id": "glider_h_miles",
-   "name": "MANTO VENENO",
-   "desc": "Capa elétrica.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_miles.png"
-  },
-  {
-   "id": "glider_h_gwen",
-   "name": "CAPUZ DIMENSIONAL",
-   "desc": "Desliza entre mundos.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_gwen.png"
-  },
-  {
-   "id": "glider_h_venom",
-   "name": "MANTO SIMBIONTE",
-   "desc": "Tentáculos seguram você.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/glider_h_venom.png"
-  },
-  {
-   "id": "glider_h_iron",
-   "name": "PROPULSORES MARK VII",
-   "desc": "Pouso com repulsores.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_iron.png"
-  },
-  {
-   "id": "glider_h_cap",
-   "name": "PARAQUEDAS ESTRELADO",
-   "desc": "Listras e estrelas.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_cap.png"
-  },
-  {
-   "id": "glider_h_thor",
-   "name": "ARCO DE BIFROST",
-   "desc": "Desce no arco-íris.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/glider_h_thor.png"
-  },
-  {
-   "id": "glider_h_hulk",
-   "name": "NUVEM GAMA",
-   "desc": "Queda sísmica.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_hulk.png"
-  },
-  {
-   "id": "glider_h_wolverine",
-   "name": "ASAS DE GARRA",
-   "desc": "Lâminas que planam.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_wolverine.png"
-  },
-  {
-   "id": "glider_h_widow",
-   "name": "MANTO DA ESPIÃ",
-   "desc": "Queda silenciosa.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/glider_h_widow.png"
-  },
-  {
-   "id": "glider_h_hawkeye",
-   "name": "ASAS DE FLECHA",
-   "desc": "Penas de flecha.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/glider_h_hawkeye.png"
-  },
-  {
-   "id": "glider_h_strange",
-   "name": "MANTO DE LEVITAÇÃO",
-   "desc": "Ele escolhe o caminho.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/glider_h_strange.png"
-  },
-  {
-   "id": "glider_h_wanda",
-   "name": "AURORA DE CAOS",
-   "desc": "Brilho escarlate.",
-   "rarity": "legendary",
-   "price": 1200,
-   "art": "assets/spr/glider_h_wanda.png"
-  },
-  {
-   "id": "glider_h_wanda_azure",
-   "name": "AURORA AZURE",
-   "desc": "Brilho frio.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_wanda_azure.png"
-  },
-  {
-   "id": "glider_h_panther",
-   "name": "JATO DE WAKANDA",
-   "desc": "Tecnologia de vibranium.",
-   "rarity": "marvel",
-   "price": 1500,
-   "art": "assets/spr/glider_h_panther.png"
-  },
-  {
-   "id": "glider_h_marvel",
-   "name": "RASTRO FÓTON",
-   "desc": "Deixa luz dourada.",
-   "rarity": "marvel",
-   "price": 1500,
-   "art": "assets/spr/glider_h_marvel.png"
-  },
-  {
-   "id": "glider_h_marvel_classic",
-   "name": "RASTRO ESTELAR",
-   "desc": "Clássico cósmico.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_marvel_classic.png"
-  },
-  {
-   "id": "glider_h_antman",
-   "name": "ASAS DE FORMIGA",
-   "desc": "Voo em escala.",
-   "rarity": "epic",
-   "price": 800,
-   "art": "assets/spr/glider_h_antman.png"
-  },
-  {
-   "id": "glider_h_antman_unmasked",
-   "name": "HELICÓPTERO MINI",
-   "desc": "Hélices pequenas.",
-   "rarity": "rare",
-   "price": 500,
-   "art": "assets/spr/glider_h_antman_unmasked.png"
-  }
- ],
- "emotes": [
-  {
-   "id": "emote_dab",
-   "name": "O DAB",
-   "art": "assets/spr/emote_dab.png",
-   "rarity": "common",
-   "price": 0,
-   "desc": "Clássico certificado.",
-   "anim": {
-    "start": 30,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": null,
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_groove",
-   "name": "GROOVE DISCO",
-   "art": "assets/spr/emote_groove.png",
-   "rarity": "common",
-   "price": 0,
-   "desc": "Sábado à noite, toda noite.",
-   "anim": {
-    "start": 72,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": [
-    "notes"
-   ],
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_hype",
-   "name": "SALTO ANIMADO",
-   "art": "assets/spr/emote_hype.png",
-   "rarity": "uncommon",
-   "price": 250,
-   "desc": "BORA!",
-   "anim": {
-    "start": 60,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": [
-    "notes"
-   ],
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_runningman",
-   "name": "HOMEM CORRENDO",
-   "art": "assets/spr/emote_runningman.png",
-   "rarity": "uncommon",
-   "price": 300,
-   "desc": "Indo a lugar nenhum, bem rápido.",
-   "anim": {
-    "start": 48,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": null,
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_heart",
-   "name": "GESTO DE CORAÇÃO",
-   "art": "assets/spr/emote_heart.png",
-   "rarity": "rare",
-   "price": 300,
-   "desc": "Para os fãs.",
-   "anim": {
-    "start": 66,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": [
-    "notes"
-   ],
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_floss",
-   "name": "A FLOSS",
-   "art": "assets/spr/emote_floss.png",
-   "rarity": "rare",
-   "price": 400,
-   "desc": "Pra lá e pra trás. Para sempre.",
-   "anim": {
-    "start": 24,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": null,
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_robot",
-   "name": "O ROBÔ",
-   "art": "assets/spr/emote_robot.png",
-   "rarity": "rare",
-   "price": 400,
-   "desc": "Bip. Bop. Bap.",
-   "anim": {
-    "start": 42,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": null,
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_macarena",
-   "name": "MACARENA",
-   "art": "assets/spr/emote_macarena.png",
-   "rarity": "rare",
-   "price": 400,
-   "desc": "Você sabe os passos.",
-   "anim": {
-    "start": 54,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": [
-    "notes"
-   ],
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_gangnam",
-   "name": "MONTARIA GANGNAM",
-   "art": "assets/spr/emote_gangnam.png",
-   "rarity": "epic",
-   "price": 500,
-   "desc": "Estilo pixel de Gangnam.",
-   "anim": {
-    "start": 18,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": [
-    "notes"
-   ],
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  },
-  {
-   "id": "emote_moonwalk",
-   "name": "PASSO LUNAR",
-   "art": "assets/spr/emote_moonwalk.png",
-   "rarity": "epic",
-   "price": 600,
-   "desc": "Suave. Para trás. Icônico.",
-   "anim": {
-    "start": 36,
-    "frames": 6,
-    "fps": 9,
-    "loop": true
-   },
-   "chars": "all",
-   "sfx": null,
-   "fx": null,
-   "preview": {
-    "scale": 7,
-    "iconScale": 2
-   }
-  }
- ],
- "modes": [
-  {
-   "id": "mode_1v1",
-   "name": "1V1",
-   "tile": "assets/spr/mode_1v1.png",
-   "players": 2,
-   "mult": 1.5,
-   "available": true,
-   "map": "carrier",
-   "desc": "Duelo direto numa arena fechada. Só você, o rival e a glória."
-  },
-  {
-   "id": "mode_domination",
-   "name": "DOMINATION",
-   "tile": "assets/spr/mode_domination.png",
-   "players": 8,
-   "mult": 2,
-   "available": false,
-   "map": "wakanda",
-   "desc": "Capture e segure os pontos do mapa contra todos. Em breve na temporada."
-  }
- ],
- "maps": [
-  {
-   "id": "brooklyn",
-   "name": "TELHADOS DO BROOKLYN",
-   "art": "assets/maps/map_brooklyn.png"
-  },
-  {
-   "id": "wakanda",
-   "name": "BOSQUE DE WAKANDA",
-   "art": "assets/maps/map_wakanda.png"
-  },
-  {
-   "id": "asgard",
-   "name": "PONTE BIFROST",
-   "art": "assets/maps/map_asgard.png"
-  },
-  {
-   "id": "kitchen",
-   "name": "COZINHA DO INFERNO",
-   "art": "assets/maps/map_kitchen.png"
-  },
-  {
-   "id": "carrier",
-   "name": "HELITRANSPORTE S.H.I.E.L.D.",
-   "art": "assets/maps/map_carrier.png"
-  }
- ],
- "styles": [
-  {
-   "id": "default",
-   "name": "PADRÃO",
-   "filter": "none"
-  },
-  {
-   "id": "crimson",
-   "name": "CARMIM",
-   "filter": "hue-rotate(-28deg) saturate(1.5)"
-  },
-  {
-   "id": "gold",
-   "name": "DOURADO",
-   "filter": "sepia(1) saturate(3) hue-rotate(-18deg)"
-  },
-  {
-   "id": "void",
-   "name": "VAZIO",
-   "filter": "hue-rotate(160deg) saturate(1.2) brightness(.9)"
-  },
-  {
-   "id": "noir",
-   "name": "NOIR",
-   "filter": "grayscale(1) contrast(1.2)"
-  },
-  {
-   "id": "frost",
-   "name": "GEADA",
-   "filter": "hue-rotate(190deg) saturate(.8) brightness(1.15)"
-  }
- ],
- "taskCats": [
-  {
-   "id": "COMBAT",
-   "label": "COMBATE",
-   "color": "#ff3d5a"
-  },
-  {
-   "id": "ECONOMY",
-   "label": "ECONOMIA",
-   "color": "#ffd23c"
-  },
-  {
-   "id": "STYLE",
-   "label": "ESTILO",
-   "color": "#c65cff"
-  }
- ],
- "tasks": [
-  {
-   "id": "d_play",
-   "type": "daily",
-   "cat": "COMBAT",
-   "metric": "matches",
-   "count": 3,
-   "coins": 100,
-   "xp": 40,
-   "desc": "Jogue 3 partidas"
-  },
-  {
-   "id": "d_win",
-   "type": "daily",
-   "cat": "COMBAT",
-   "metric": "wins",
-   "count": 1,
-   "coins": 150,
-   "xp": 60,
-   "desc": "Vença uma partida"
-  },
-  {
-   "id": "w_play",
-   "type": "weekly",
-   "cat": "COMBAT",
-   "metric": "matches",
-   "count": 10,
-   "coins": 400,
-   "xp": 150,
-   "desc": "Jogue 10 partidas"
-  },
-  {
-   "id": "w_win",
-   "type": "weekly",
-   "cat": "COMBAT",
-   "metric": "wins",
-   "count": 3,
-   "coins": 450,
-   "xp": 180,
-   "desc": "Vença 3 partidas"
-  },
-  {
-   "id": "d_buy",
-   "type": "daily",
-   "cat": "ECONOMY",
-   "metric": "purchases",
-   "count": 1,
-   "coins": 75,
-   "xp": 20,
-   "desc": "Compre 1 item da loja"
-  },
-  {
-   "id": "w_buy",
-   "type": "weekly",
-   "cat": "ECONOMY",
-   "metric": "purchases",
-   "count": 3,
-   "coins": 200,
-   "xp": 80,
-   "desc": "Compre 3 itens"
-  },
-  {
-   "id": "d_load",
-   "type": "daily",
-   "cat": "STYLE",
-   "metric": "equips",
-   "count": 2,
-   "coins": 50,
-   "xp": 15,
-   "desc": "Troque seu loadout 2 vezes"
-  },
-  {
-   "id": "d_emote",
-   "type": "daily",
-   "cat": "STYLE",
-   "metric": "emotes",
-   "count": 1,
-   "coins": 25,
-   "xp": 10,
-   "desc": "Use um emote no lobby"
-  }
- ]
+  "game": "MARVEL PIXEL ROYALE",
+  "rarities": {
+    "common": {
+      "label": "COMUM",
+      "color": "#9aa7b8"
+    },
+    "uncommon": {
+      "label": "INCOMUM",
+      "color": "#5fd35f"
+    },
+    "rare": {
+      "label": "RARO",
+      "color": "#3fb6ff"
+    },
+    "epic": {
+      "label": "ÉPICO",
+      "color": "#c65cff"
+    },
+    "legendary": {
+      "label": "LENDÁRIO",
+      "color": "#ffb02e"
+    },
+    "marvel": {
+      "label": "MARVEL",
+      "color": "#ff3d5a"
+    }
+  },
+  "heroes": [
+    {
+      "id": "spiderman",
+      "name": "HOMEM-ARANHA",
+      "art": "assets/spr/spiderman.png",
+      "rarity": "marvel",
+      "price": 1500,
+      "desc": "O amigão pixel da vizinhança. Thwip!",
+      "quote": "Seu amigão pixel da vizinhança.",
+      "skins": [],
+      "ability": {
+        "id": "web_shot",
+        "name": "TEIA PRENSANTE",
+        "desc": "Dispara teia que prende e puxa o alvo.",
+        "passive": {
+          "id": "danger_sense",
+          "name": "SENTIDO DE PERIGO",
+          "desc": "Avisa ataques iminentes por um breve instante."
+        }
+      },
+      "size": "M"
+    },
+    {
+      "id": "venom",
+      "name": "VENOM",
+      "art": "assets/spr/venom.png",
+      "rarity": "epic",
+      "price": 1100,
+      "desc": "Nós somos Venom. Principalmente famintos.",
+      "quote": "Nós terminamos de conversar.",
+      "skins": [],
+      "ability": {
+        "id": "symbiote_lunge",
+        "name": "BOTE SIMBIONTE",
+        "desc": "Avançada curta e pesada com mordida de simbionte."
+      },
+      "size": "L"
+    },
+    {
+      "id": "ironman",
+      "name": "HOMEM DE FERRO",
+      "art": "assets/spr/ironman.png",
+      "rarity": "legendary",
+      "price": 1600,
+      "desc": "Bilionário. Gênio. Filantropo. Pixel.",
+      "quote": "Energia a 100%. Tente me acompanhar.",
+      "skins": [],
+      "ability": {
+        "id": "repulsor_blast",
+        "name": "RAJO REPULSOR",
+        "desc": "Carga curta e tiro de energia de longo alcance."
+      },
+      "size": "M"
+    },
+    {
+      "id": "capamerica",
+      "name": "CAPITÃO AMÉRICA",
+      "art": "assets/spr/capamerica.png",
+      "rarity": "legendary",
+      "price": 1500,
+      "desc": "Posso fazer isso o dia todo.",
+      "quote": "Posso fazer isso o dia todo.",
+      "skins": [],
+      "ability": {
+        "id": "shield_throw",
+        "name": "ARREMESSO RICOCHETE",
+        "desc": "Escudo vai, bate e volta na mão."
+      },
+      "size": "M"
+    },
+    {
+      "id": "hulk",
+      "name": "HULK",
+      "art": "assets/spr/hulk.png",
+      "rarity": "marvel",
+      "price": 1700,
+      "desc": "HULK ESMAGA (o botão do lobby).",
+      "quote": "Menu insignificante. HULK ESMAGA.",
+      "skins": [],
+      "ability": {
+        "id": "ground_smash",
+        "name": "ESMAGAR DO SOLO",
+        "desc": "Salto e impacto que gera onda de choque."
+      },
+      "size": "L"
+    },
+    {
+      "id": "wolverine",
+      "name": "WOLVERINE",
+      "art": "assets/spr/wolverine.png",
+      "rarity": "epic",
+      "price": 1400,
+      "desc": "Amigo. Foi um dia longo.",
+      "quote": "Amigo, eu não entro na fila.",
+      "skins": [],
+      "ability": {
+        "id": "claw_dash",
+        "name": "DASH DE GARRAS",
+        "desc": "Investida rápida que corta por onde passa."
+      },
+      "size": "M"
+    },
+    {
+      "id": "drstrange",
+      "name": "DOUTOR ESTRANHO",
+      "art": "assets/spr/drstrange.png",
+      "rarity": "legendary",
+      "price": 1500,
+      "desc": "Mestre das artes místicas de pixel.",
+      "quote": "Dormammu, vim para negociar.",
+      "skins": [],
+      "ability": {
+        "id": "mystic_portal",
+        "name": "PORTAL MÍSTICO",
+        "desc": "Abre portal e reposiciona em um instante."
+      },
+      "size": "M"
+    },
+    {
+      "id": "blackpanther",
+      "name": "PANTERA NEGRA",
+      "art": "assets/spr/blackpanther.png",
+      "rarity": "epic",
+      "price": 1400,
+      "desc": "O rei de Wakanda em vibranium.",
+      "quote": "Wakanda para sempre.",
+      "skins": [],
+      "ability": {
+        "id": "shadow_pounce",
+        "name": "BOTE DA SOMBRA",
+        "desc": "Salto curto e certeiro com garras de vibranium."
+      },
+      "size": "M"
+    },
+    {
+      "id": "antman",
+      "name": "HOMEM-FORMIGA",
+      "art": "assets/spr/antman.png",
+      "rarity": "rare",
+      "price": 900,
+      "desc": "Tamanho não incluído.",
+      "quote": "Não é tamanho, é timing.",
+      "skins": [],
+      "ability": {
+        "id": "shrink",
+        "name": "ENCOLHER",
+        "desc": "Fica pequeno: hitbox menor e movimento mais rápido."
+      },
+      "size": "S"
+    }
+  ],
+  "bundles": [
+    {
+      "id": "b_spiderverse",
+      "name": "PACOTE ARANHAVERSO",
+      "rarity": "marvel",
+      "price": 1900,
+      "desc": "O Amigão da Vizinhança e o plano de teias completo — bling de teia incluído.",
+      "items": [
+        "spiderman",
+        "bling_webdrone",
+        "pick_web"
+      ]
+    },
+    {
+      "id": "b_avengers",
+      "name": "PACOTE VINGADORES",
+      "rarity": "marvel",
+      "price": 2900,
+      "desc": "Capitão e Homem de Ferro prontos pro lobby, com o escudo do Capitão nas costas.",
+      "items": [
+        "capamerica",
+        "ironman",
+        "bling_shield"
+      ]
+    },
+    {
+      "id": "b_mutants",
+      "name": "PACOTE MUTANTE",
+      "rarity": "epic",
+      "price": 1800,
+      "desc": "Wolverine com as asas de garra e a garra de adamantium. Dia longo, lobby curto.",
+      "items": [
+        "wolverine",
+        "bling_claws",
+        "pick_h_wolverine"
+      ]
+    },
+    {
+      "id": "b_shadow",
+      "name": "PACOTE SOMBRA DE WAKANDA",
+      "rarity": "epic",
+      "price": 1900,
+      "desc": "Pantera Negra com a sombra do pantera e o golpe de vibranium.",
+      "items": [
+        "blackpanther",
+        "bling_dagger",
+        "pick_h_panther"
+      ]
+    },
+    {
+      "id": "b_mystic",
+      "name": "PACOTE ARTES MÍSTICAS",
+      "rarity": "legendary",
+      "price": 2000,
+      "desc": "Doutor Estranho, o portal místico e a lâmina mística. A realidade agradece.",
+      "items": [
+        "drstrange",
+        "bling_relic",
+        "pick_h_strange"
+      ]
+    }
+  ],
+  "picks": [
+    {
+      "id": "pick_axe",
+      "name": "BASTÃO S.H.I.E.L.D.",
+      "art": "assets/spr/pick_axe.png",
+      "rarity": "uncommon",
+      "price": 0,
+      "desc": "Bastão de treino padrão."
+    },
+    {
+      "id": "pick_ice",
+      "name": "CUTELO JOTUN",
+      "art": "assets/spr/pick_ice.png",
+      "rarity": "rare",
+      "price": 600,
+      "desc": "Aço de gigante de gelo. Quebra blocos e dentes."
+    },
+    {
+      "id": "pick_scythe",
+      "name": "FOICE DO VAZIO",
+      "art": "assets/spr/pick_scythe.png",
+      "rarity": "epic",
+      "price": 800,
+      "desc": "Colhe loot dramaticamente."
+    },
+    {
+      "id": "pick_hammer",
+      "name": "ECO DE MJOLNIR",
+      "art": "assets/spr/pick_hammer.png",
+      "rarity": "legendary",
+      "price": 1200,
+      "desc": "Um eco digno do original."
+    },
+    {
+      "id": "pick_plasma",
+      "name": "LÂMINA DE PLASMA",
+      "desc": "Lâmina de plasma verde instável.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_plasma.png"
+    },
+    {
+      "id": "pick_web",
+      "name": "FIO DE TEIA",
+      "desc": "Rede e azul. Thwip em cada golpe.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_web.png"
+    },
+    {
+      "id": "pick_storm",
+      "name": "OLHO DA TEMPESTADE",
+      "desc": "Troveja a cada colheita.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_storm.png"
+    },
+    {
+      "id": "pick_shadow",
+      "name": "PRESA DA SOMBRA",
+      "desc": "Quase invisível no escuro.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_shadow.png"
+    },
+    {
+      "id": "pick_quantum",
+      "name": "CORTE QUÂNTICO",
+      "desc": "Existe em 3 lugares ao mesmo tempo.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/pick_quantum.png"
+    },
+    {
+      "id": "pick_magma",
+      "name": "NÚCLEO DE MAGMA",
+      "desc": "Ainda derretendo.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_magma.png"
+    },
+    {
+      "id": "pick_h_spider",
+      "name": "PRESAS DE TEIA",
+      "desc": "Thwip a cada golpe.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_spider.png"
+    },
+    {
+      "id": "pick_h_classic",
+      "name": "GOLPE CLÁSSICO",
+      "desc": "Vermelha e azul como nos quadrinhos.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_classic.png"
+    },
+    {
+      "id": "pick_h_miles",
+      "name": "CHOQUE VENENO",
+      "desc": "Choque vermelho a cada colheita.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_miles.png"
+    },
+    {
+      "id": "pick_h_gwen",
+      "name": "TOQUE ZEN",
+      "desc": "Leve como outra dimensão.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_gwen.png"
+    },
+    {
+      "id": "pick_h_venom",
+      "name": "FOME SIMBIONTE",
+      "desc": "Nós somos a picareta.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_venom.png"
+    },
+    {
+      "id": "pick_h_iron",
+      "name": "PUNHO REPULSOR",
+      "desc": "Recarga por arco reator.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_iron.png"
+    },
+    {
+      "id": "pick_h_cap",
+      "name": "IMPACTO ESTELAR",
+      "desc": "Aguenta o dia todo.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_cap.png"
+    },
+    {
+      "id": "pick_h_thor",
+      "name": "TROVÃO DE NIDAVELLIR",
+      "desc": "Forjada em Nidavellir.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_thor.png"
+    },
+    {
+      "id": "pick_h_hulk",
+      "name": "PULSO GAMA",
+      "desc": "ESMAGA minérios.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_hulk.png"
+    },
+    {
+      "id": "pick_h_wolverine",
+      "name": "GARRA DE ADAMANTIUM",
+      "desc": "Nunca precisa afiar.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_wolverine.png"
+    },
+    {
+      "id": "pick_h_widow",
+      "name": "FERRÃO DA VIÚVA",
+      "desc": "Ferrão elétrico embutido.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_widow.png"
+    },
+    {
+      "id": "pick_h_hawkeye",
+      "name": "PONTA DE FLECHA",
+      "desc": "Mira perfeita, sempre.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_hawkeye.png"
+    },
+    {
+      "id": "pick_h_strange",
+      "name": "LÂMINA MÍSTICA",
+      "desc": "Corta o próprio espaço.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_strange.png"
+    },
+    {
+      "id": "pick_h_wanda",
+      "name": "HEX DE CAOS",
+      "desc": "Realidade opcional.",
+      "rarity": "legendary",
+      "price": 1200,
+      "art": "assets/spr/pick_h_wanda.png"
+    },
+    {
+      "id": "pick_h_wanda_azure",
+      "name": "HEX AZURE",
+      "desc": "Caos em tom frio.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_wanda_azure.png"
+    },
+    {
+      "id": "pick_h_panther",
+      "name": "GOLPE DE VIBRANIUM",
+      "desc": "Absorve o impacto.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/pick_h_panther.png"
+    },
+    {
+      "id": "pick_h_marvel",
+      "name": "PUNHO FÓTON",
+      "desc": "Brilha no escuro cósmico.",
+      "rarity": "marvel",
+      "price": 1500,
+      "art": "assets/spr/pick_h_marvel.png"
+    },
+    {
+      "id": "pick_h_marvel_classic",
+      "name": "GOLPE ESTELAR",
+      "desc": "Vintage e binária.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_marvel_classic.png"
+    },
+    {
+      "id": "pick_h_antman",
+      "name": "LASER PIM",
+      "desc": "Tamanho ajustável.",
+      "rarity": "epic",
+      "price": 800,
+      "art": "assets/spr/pick_h_antman.png"
+    },
+    {
+      "id": "pick_h_antman_unmasked",
+      "name": "CHAVE DE FENDA DO SCOTT",
+      "desc": "Improvisada, mas funciona.",
+      "rarity": "rare",
+      "price": 500,
+      "art": "assets/spr/pick_h_antman_unmasked.png"
+    }
+  ],
+  "gliders": [
+    {
+      "id": "bling_webdrone",
+      "name": "DRONE-ARANHA",
+      "type": "glider",
+      "rarity": "rare",
+      "price": 1200,
+      "art": "assets/spr/bling_webdrone.png",
+      "anim": "assets/anim/bling_webdrone.png",
+      "attach": {
+        "dx": 0,
+        "dy": 6,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 6,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 6,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_cocoon",
+      "name": "CASULO SIMBIONTE",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_cocoon.png",
+      "anim": "assets/anim/bling_cocoon.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_gamma",
+      "name": "TANQUE GAMA",
+      "type": "glider",
+      "rarity": "rare",
+      "price": 1200,
+      "art": "assets/spr/bling_gamma.png",
+      "anim": "assets/anim/bling_gamma.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_shield",
+      "name": "ESCUDO ESTRELA",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_shield.png",
+      "anim": "assets/anim/bling_shield.png",
+      "attach": {
+        "dx": -2,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": -2,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": -2,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_reactor",
+      "name": "REATOR DE BOLSO",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_reactor.png",
+      "anim": "assets/anim/bling_reactor.png",
+      "attach": {
+        "dx": 0,
+        "dy": 7,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 7,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 7,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_claws",
+      "name": "BAINHA DE ADAMANTIUM",
+      "type": "glider",
+      "rarity": "rare",
+      "price": 1200,
+      "art": "assets/spr/bling_claws.png",
+      "anim": "assets/anim/bling_claws.png",
+      "attach": {
+        "dx": 1,
+        "dy": 9,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 1,
+            "dy": 9,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 1,
+            "dy": 9,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_capsules",
+      "name": "CÁPSULAS PYM",
+      "type": "glider",
+      "rarity": "rare",
+      "price": 1200,
+      "art": "assets/spr/bling_capsules.png",
+      "anim": "assets/anim/bling_capsules.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_dagger",
+      "name": "ADAGA DE VIBRANIUM",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_dagger.png",
+      "anim": "assets/anim/bling_dagger.png",
+      "attach": {
+        "dx": 1,
+        "dy": 9,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 1,
+            "dy": 9,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 1,
+            "dy": 9,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_relic",
+      "name": "RELICÁRIO MÍSTICO",
+      "type": "glider",
+      "rarity": "legendary",
+      "price": 2000,
+      "art": "assets/spr/bling_relic.png",
+      "anim": "assets/anim/bling_relic.png",
+      "attach": {
+        "dx": 0,
+        "dy": 7,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 7,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 7,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_tacpack",
+      "name": "MOCHILA TÁTICA",
+      "type": "glider",
+      "rarity": "common",
+      "price": 800,
+      "art": "assets/spr/bling_tacpack.png",
+      "anim": "assets/anim/bling_tacpack.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_wings",
+      "name": "ASAS DE AÇO",
+      "type": "glider",
+      "rarity": "legendary",
+      "price": 2000,
+      "art": "assets/spr/bling_wings.png",
+      "anim": "assets/anim/bling_wings.png",
+      "attach": {
+        "dx": 0,
+        "dy": 4,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 4,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 4,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_holo",
+      "name": "MANTO HOLOGRÁFICO",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_holo.png",
+      "anim": "assets/anim/bling_holo.png",
+      "attach": {
+        "dx": 0,
+        "dy": 5,
+        "s": 1,
+        "layer": "front",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 5,
+            "s": 0.5,
+            "layer": "front"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 5,
+            "s": 1,
+            "layer": "front"
+          }
+        }
+      }
+    }
+  ],
+  "modes": [
+    {
+      "id": "mode_1v1",
+      "name": "1V1",
+      "tile": "assets/spr/mode_1v1.png",
+      "players": 2,
+      "mult": 1.5,
+      "available": true,
+      "map": "carrier",
+      "desc": "Duelo direto numa arena fechada. Só você, o rival e a glória."
+    },
+    {
+      "id": "mode_domination",
+      "name": "DOMINATION",
+      "tile": "assets/spr/mode_domination.png",
+      "players": 8,
+      "mult": 2,
+      "available": false,
+      "map": "wakanda",
+      "desc": "Capture e segure os pontos do mapa contra todos. Em breve na temporada."
+    }
+  ],
+  "maps": [
+    {
+      "id": "brooklyn",
+      "name": "TELHADOS DO BROOKLYN",
+      "art": "assets/maps/map_brooklyn.png"
+    },
+    {
+      "id": "wakanda",
+      "name": "BOSQUE DE WAKANDA",
+      "art": "assets/maps/map_wakanda.png"
+    },
+    {
+      "id": "asgard",
+      "name": "PONTE BIFROST",
+      "art": "assets/maps/map_asgard.png"
+    },
+    {
+      "id": "kitchen",
+      "name": "COZINHA DO INFERNO",
+      "art": "assets/maps/map_kitchen.png"
+    },
+    {
+      "id": "carrier",
+      "name": "HELITRANSPORTE S.H.I.E.L.D.",
+      "art": "assets/maps/map_carrier.png"
+    }
+  ],
+  "styles": [
+    {
+      "id": "default",
+      "name": "PADRÃO",
+      "filter": "none"
+    },
+    {
+      "id": "crimson",
+      "name": "CARMIM",
+      "filter": "hue-rotate(-28deg) saturate(1.5)"
+    },
+    {
+      "id": "gold",
+      "name": "DOURADO",
+      "filter": "sepia(1) saturate(3) hue-rotate(-18deg)"
+    },
+    {
+      "id": "void",
+      "name": "VAZIO",
+      "filter": "hue-rotate(160deg) saturate(1.2) brightness(.9)"
+    },
+    {
+      "id": "noir",
+      "name": "NOIR",
+      "filter": "grayscale(1) contrast(1.2)"
+    },
+    {
+      "id": "frost",
+      "name": "GEADA",
+      "filter": "hue-rotate(190deg) saturate(.8) brightness(1.15)"
+    }
+  ],
+  "taskCats": [
+    {
+      "id": "COMBAT",
+      "label": "COMBATE",
+      "color": "#ff3d5a"
+    },
+    {
+      "id": "ECONOMY",
+      "label": "ECONOMIA",
+      "color": "#ffd23c"
+    },
+    {
+      "id": "STYLE",
+      "label": "ESTILO",
+      "color": "#c65cff"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "d_play",
+      "type": "daily",
+      "cat": "COMBAT",
+      "metric": "matches",
+      "count": 3,
+      "coins": 100,
+      "xp": 40,
+      "desc": "Jogue 3 partidas"
+    },
+    {
+      "id": "d_win",
+      "type": "daily",
+      "cat": "COMBAT",
+      "metric": "wins",
+      "count": 1,
+      "coins": 150,
+      "xp": 60,
+      "desc": "Vença uma partida"
+    },
+    {
+      "id": "w_play",
+      "type": "weekly",
+      "cat": "COMBAT",
+      "metric": "matches",
+      "count": 10,
+      "coins": 400,
+      "xp": 150,
+      "desc": "Jogue 10 partidas"
+    },
+    {
+      "id": "w_win",
+      "type": "weekly",
+      "cat": "COMBAT",
+      "metric": "wins",
+      "count": 3,
+      "coins": 450,
+      "xp": 180,
+      "desc": "Vença 3 partidas"
+    },
+    {
+      "id": "d_buy",
+      "type": "daily",
+      "cat": "ECONOMY",
+      "metric": "purchases",
+      "count": 1,
+      "coins": 75,
+      "xp": 20,
+      "desc": "Compre 1 item da loja"
+    },
+    {
+      "id": "w_buy",
+      "type": "weekly",
+      "cat": "ECONOMY",
+      "metric": "purchases",
+      "count": 3,
+      "coins": 200,
+      "xp": 80,
+      "desc": "Compre 3 itens"
+    },
+    {
+      "id": "d_load",
+      "type": "daily",
+      "cat": "STYLE",
+      "metric": "equips",
+      "count": 2,
+      "coins": 50,
+      "xp": 15,
+      "desc": "Troque seu loadout 2 vezes"
+    }
+  ],
+  "shopCats": [
+    {
+      "id": "aranhaverso",
+      "name": "ARANHAVERSO",
+      "tag": "Teias e simbiontes",
+      "bundle": "b_spiderverse",
+      "gliders": [
+        "bling_webdrone",
+        "bling_cocoon"
+      ],
+      "picks": [
+        "pick_web",
+        "pick_h_spider",
+        "pick_h_classic",
+        "pick_h_miles",
+        "pick_h_gwen",
+        "pick_h_venom"
+      ],
+      "families": [
+        {
+          "hero": "spiderman",
+          "skins": []
+        },
+        {
+          "hero": "venom",
+          "skins": []
+        }
+      ]
+    },
+    {
+      "id": "vingadores",
+      "name": "VINGADORES",
+      "tag": "Os mais poderosos do lobby",
+      "bundle": "b_avengers",
+      "gliders": [
+        "bling_shield",
+        "bling_reactor",
+        "bling_wings",
+        "bling_tacpack"
+      ],
+      "picks": [
+        "pick_axe",
+        "pick_plasma",
+        "pick_h_cap",
+        "pick_h_iron",
+        "pick_h_hulk",
+        "pick_h_antman",
+        "pick_h_antman_unmasked",
+        "pick_h_thor",
+        "pick_h_marvel",
+        "pick_h_marvel_classic"
+      ],
+      "families": [
+        {
+          "hero": "capamerica",
+          "skins": []
+        },
+        {
+          "hero": "ironman",
+          "skins": []
+        },
+        {
+          "hero": "hulk",
+          "skins": []
+        },
+        {
+          "hero": "antman",
+          "skins": []
+        }
+      ]
+    },
+    {
+      "id": "mutantes",
+      "name": "MUTANTES",
+      "tag": "O gene X pixelado",
+      "bundle": "b_mutants",
+      "gliders": [
+        "bling_claws"
+      ],
+      "picks": [
+        "pick_h_wolverine",
+        "pick_h_wanda",
+        "pick_h_wanda_azure"
+      ],
+      "families": [
+        {
+          "hero": "wolverine",
+          "skins": []
+        }
+      ]
+    },
+    {
+      "id": "sombria",
+      "name": "OPERAÇÃO SOMBRIA",
+      "tag": "Vibranium e silêncio",
+      "bundle": "b_shadow",
+      "gliders": [
+        "bling_dagger",
+        "bling_capsules"
+      ],
+      "picks": [
+        "pick_shadow",
+        "pick_h_panther",
+        "pick_h_widow",
+        "pick_h_hawkeye"
+      ],
+      "families": [
+        {
+          "hero": "blackpanther",
+          "skins": []
+        }
+      ]
+    },
+    {
+      "id": "mistica",
+      "name": "ARTES MÍSTICAS",
+      "tag": "Portais e relíquias",
+      "bundle": "b_mystic",
+      "gliders": [
+        "bling_relic",
+        "bling_holo",
+        "bling_gamma"
+      ],
+      "picks": [
+        "pick_quantum",
+        "pick_magma",
+        "pick_h_strange",
+        "pick_scythe",
+        "pick_hammer",
+        "pick_ice",
+        "pick_storm"
+      ],
+      "families": [
+        {
+          "hero": "drstrange",
+          "skins": []
+        }
+      ]
+    }
+  ]
 }

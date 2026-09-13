@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Asset validation & debug report for the cosmetic sprite system.
 
-Audits EVERY cosmetic in the catalog (heroes, picks, gliders, emotes) plus
+Audits EVERY cosmetic in the catalog (heroes, picks, gliders) plus
 every animation strip, and reports per asset:
   type, file, frame count, frame dims, bounding box, pivot/ground line,
   transparency status (border must be empty), fill ratio, fragment count.
@@ -84,7 +84,14 @@ def audit_icon(path, kind, max_frags=3):
        f'fill {fill:.2f} frags {len(big)}')
 
 
-def audit_strip(path, hid, frames=78):
+SEGMENTS = [  # (name, first, last, kind) over the 24-frame universal strip
+    ('idle', 0, 5, 'ground'), ('walk', 6, 11, 'ground'),
+    ('attack', 12, 17, 'ground'), ('ability', 18, 23, 'free'),
+]
+GROUND_TOL = {'idle': 1, 'walk': 2, 'attack': 3}
+
+
+def audit_strip(path, hid, frames=24):
     if not os.path.exists(path):
         bad(f'strip {hid}: missing')
         return None
@@ -95,9 +102,12 @@ def audit_strip(path, hid, frames=78):
         bad(f'strip {hid}: height {h} != 48')
         return None
     if w != 48 * frames:
-        bad(f'strip {hid}: width {w} != {48*frames} ({w//48} frames)')
+        bad(f'strip {hid}: width {w} != {48 * frames} ({w // 48} frames)')
         frames = w // 48
-    feet, tops, counts = [], [], []
+    semi = int(((a > 0) & (a < 255)).sum())
+    if semi:
+        bad(f'strip {hid}: {semi} semi-transparent pixels (pixel art must be binary alpha)')
+    feet, tops, counts = {}, {}, []
     for f in range(frames):
         fa = a[:, f * 48:(f + 1) * 48]
         m = fa > 24
@@ -105,28 +115,85 @@ def audit_strip(path, hid, frames=78):
             bad(f'strip {hid}: frame {f} empty ({m.sum()} px)')
             continue
         ys, xs = np.where(m)
-        feet.append(ys.max())
-        tops.append(ys.min())
-        counts.append(m.sum())
-    if feet and (max(feet) - min(feet) > 1):
-        bad(f'strip {hid}: ground line drifts {min(feet)}..{max(feet)} (flicker)')
-    # raised hands/fx may rise above the head; >6 means mis-extracted frames
-    if tops and (max(tops) - min(tops) > 6):
-        bad(f'strip {hid}: frame content drifts {min(tops)}..{max(tops)} (mis-crop)')
-    ok(f'strip  {hid:22s} {w}x{h} frames {frames} feet {min(feet)}-{max(feet)} '
-       f'tops {min(tops)}-{max(tops)} px/frame {int(sum(counts)/len(counts))}')
+        feet[f] = int(ys.max())
+        tops[f] = int(ys.min())
+        counts.append(int(m.sum()))
+    med_px = int(np.median(counts))
+    med_h = int(np.median([feet[f] - tops[f] for f in feet]))
+    UPRIGHT = set(range(0, 24))
+    for f in sorted(feet):
+        h_f = feet[f] - tops[f]
+        px_f = int((a[:, f * 48:(f + 1) * 48] > 24).sum())
+        if px_f < 0.35 * med_px:
+            bad(f'strip {hid}: frame {f} too sparse ({px_f} px vs median {med_px}) - partial/garbage cell')
+        if f in UPRIGHT and h_f < 0.45 * med_h:
+            bad(f'strip {hid}: frame {f} stunted (h {h_f} vs median {med_h}) - cut pose')
+    widths = {}
+    for f in sorted(feet):
+        fa = a[:, f * 48:(f + 1) * 48]
+        ys, xs = np.where(fa > 24)
+        widths[f] = int(xs.max() - xs.min() + 1)
+        rgbf = np.array(im.convert('RGBA'))[:, f * 48:(f + 1) * 48]
+        op = rgbf[:, :, 3] > 24
+        ch = rgbf[:, :, :3].astype(np.int16)
+        neutral = (ch.max(axis=2) - ch.min(axis=2)) <= 24
+        lum = ch.mean(axis=2)
+        res = int((op & neutral & (lum > 96) & (lum < 240)).sum())
+        if op.sum() and res > 0.15 * op.sum():
+            bad(f'strip {hid}: frame {f} has backdrop-checker residue ({res} px)')
+    med_w = int(np.median(list(widths.values())))
+    for f in sorted(feet):
+        if f in UPRIGHT and (widths[f] < 0.5 * med_w or widths[f] > 1.7 * med_w):
+            bad(f'strip {hid}: frame {f} width {widths[f]} vs median {med_w} - sliced/merged pose')
+    ground = max(feet[f] for f in range(0, 6) if f in feet)
+    for name, lo, hi, kind in SEGMENTS:
+        seg_f = [feet[f] for f in range(lo, hi + 1) if f in feet]
+        seg_t = [tops[f] for f in range(lo, hi + 1) if f in feet]
+        if not seg_f:
+            bad(f'strip {hid}: {name} has no readable frames')
+            continue
+        if kind == 'ground':
+            tol = GROUND_TOL[name]
+            if max(seg_f) - min(seg_f) > tol:
+                bad(f'strip {hid}: {name} ground drifts {min(seg_f)}..{max(seg_f)} (flicker)')
+            if max(seg_f) > ground + 1:
+                bad(f'strip {hid}: {name} sinks below baseline ({max(seg_f)} > {ground})')
+        elif kind == 'air':
+            if max(seg_f) > ground - 3:
+                bad(f'strip {hid}: {name} not airborne (feet {max(seg_f)} vs ground {ground})')
+        if name in ('idle', 'walk', 'sense') and max(seg_t) - min(seg_t) > 8:
+            bad(f'strip {hid}: {name} head-top drifts {min(seg_t)}..{max(seg_t)} (mis-crop)')
+    # walk must ACTUALLY walk and loop: consecutive silhouette changes are
+    # all significant and the wrap-around step matches them (no pause frame).
+    def sil(f):
+        return (a[:, f * 48:(f + 1) * 48] > 24).astype(np.int16)
+    diffs = [int(np.abs(sil(f) - sil(f + 1)).sum()) for f in range(6, 11)]
+    wrap = int(np.abs(sil(11) - sil(6)).sum())
+    med = int(np.median(diffs)) if diffs else 0
+    if med < 40:
+        bad(f'strip {hid}: walk frames barely change (median diff {med}) - not walking')
+    if wrap > 3 * max(med, 40):
+        bad(f'strip {hid}: walk loop break (wrap diff {wrap} vs median {med})')
+    if len({sil(f).tobytes() for f in range(6, 12)}) < 5:
+        bad(f'strip {hid}: walk has duplicate frames (pause in cycle)')
+    ok(f'strip  {hid:22s} {w}x{h} frames {frames} ground {ground} feet {min(feet.values())}-{max(feet.values())} '
+       f'tops {min(tops.values())}-{max(tops.values())} px/frame {int(sum(counts) / len(counts))}')
     return a
 
 
-def sheet(a, name, frames=18, scale=3):
-    """contact sheet of the first N frames for visual frame-by-frame review"""
+def sheet(a, name, frames=24, scale=3, per_row=12):
+    """contact sheet (rows of per_row frames) for frame-by-frame visual review"""
     rgba = np.dstack([a, np.full(a.shape[:2], 255, np.uint8)]) if a.ndim == 2 else a
     n = min(frames, rgba.shape[1] // 48)
-    out = Image.new('RGBA', (n * 48 * scale, 48 * scale), (24, 26, 34, 255))
+    rows = (n + per_row - 1) // per_row
+    out = Image.new('RGBA', (per_row * 48 * scale, rows * 48 * scale), (24, 26, 34, 255))
     for f in range(n):
-        fr = Image.fromarray(rgba[:, f * 48:(f + 1) * 48]).convert('RGBA').resize((48 * scale, 48 * scale), Image.NEAREST)
-        out.paste(fr, (f * 48 * scale, 0), fr)
-    out.save(f'/tmp/va_{name}.png')
+        fr = Image.fromarray(rgba[:, f * 48:(f + 1) * 48]).convert('RGBA').resize(
+            (48 * scale, 48 * scale), Image.NEAREST)
+        out.paste(fr, ((f % per_row) * 48 * scale, (f // per_row) * 48 * scale), fr)
+    outdir = os.path.join(ROOT, '.shot')
+    os.makedirs(outdir, exist_ok=True)
+    out.save(os.path.join(outdir, f'va_{name}.png'))
 
 
 def main():
@@ -138,7 +205,7 @@ def main():
         audit_icon(os.path.join(PUB, p['art']), 'pick')
     for g in cat['gliders']:
         audit_icon(os.path.join(PUB, g['art']), 'glider')
-    for e in cat['emotes']:
+    for e in cat.get('emotes', []):
         audit_icon(os.path.join(PUB, e['art']), 'emote')
         if not e.get('anim') or not e['anim'].get('frames'):
             bad(f"emote {e['id']}: missing animation metadata")
@@ -146,12 +213,12 @@ def main():
     print('== animation strips ==')
     for h in cat['heroes']:
         a = audit_strip(os.path.join(PUB, 'assets', 'anim', h['id'] + '.png'), h['id'])
-        if a is not None and h['id'] in ('spiderman', 'ironman', 'hulk', 'gwen'):
+        if a is not None:
             sheet(np.array(Image.open(os.path.join(PUB, 'assets', 'anim', h['id'] + '.png')).convert('RGBA')), h['id'])
 
     print('== emote metadata (generic system) ==')
     seen = set()
-    for e in cat['emotes']:
+    for e in cat.get('emotes', []):
         a = e.get('anim', {})
         key = (a.get('start'), a.get('frames'))
         if key in seen:

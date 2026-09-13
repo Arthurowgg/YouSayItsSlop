@@ -1,33 +1,32 @@
 #!/usr/bin/env bash
-# Slices magenta-background sprite sheets into transparent chunky PNG sprites.
-# Cell maps were derived by visual inspection of each generated sheet.
+# Full asset pipeline: slice the AI sheets (art_ai/) into every game asset.
+#   1. shop icons   : picks / gliders / emote icons   (make_shop_icons.py)
+#   2. hero icons + 78-frame animation strips         (make_ai2_assets.py, make_ai_assets.py)
+#   3. UI-only pixel icons (coin, settings)           (make_sprites.py)
+#   4. audit everything                               (validate_assets.py)
+# Needs pillow + numpy + scipy in .venv (created on first run).
 set -euo pipefail
 cd "$(dirname "$0")/.."
-RAW=art_raw
-OUT=public/assets/spr
-mkdir -p "$OUT"
 
-# cell <sheet> <cols> <rows> <col> <row> <name>
-cell() {
-  local f="$RAW/$1" cols=$2 rows=$3 c=$4 r=$5 name=$6
-  [ -f "$f" ] || { echo "  (skip missing $f)"; return 0; }
-  local w h cw ch x y
-  read -r w h < <(identify -format "%w %h\n" "$f")
-  cw=$((w / cols)); ch=$((h / rows)); x=$((c * cw)); y=$((r * ch))
-  convert "$f" -crop "${cw}x${ch}+${x}+${y}" +repage \
-    -fuzz 24% -transparent "rgb(255,0,255)" \
-    -trim +repage -filter point -resize 120x120 \
-    -gravity center -background none -extent 128x128 "$OUT/$name.png"
-  echo "  -> $name.png"
-}
-
-# Hero/emote icons are NO LONGER sliced from RAW sheets here:
-# fuzz-magenta keying left semi-transparent halos. All isolated icons are
-# now baked deterministically by tools/make_heroes.py (96px, true alpha).
-
-echo "[bg] skyline"
-if [ -f "$RAW/skyline.png" ]; then
-  convert "$RAW/skyline.png" -filter point -resize 384x216 public/assets/skyline.png
-  echo "  -> skyline.png"
+PY=.venv/bin/python
+if [ ! -x "$PY" ]; then
+  echo "[venv] creating .venv (pillow numpy scipy)"
+  python3 -m venv .venv
+  "$PY" -m pip install -q --upgrade pip
+  "$PY" -m pip install -q pillow numpy scipy
 fi
-echo "done."
+
+echo "== [1/4] shop icons (picks / gliders / emotes) =="
+"$PY" tools/make_shop_icons.py
+
+echo "== [2/4] hero icons + animation strips =="
+"$PY" tools/make_ai2_assets.py
+"$PY" tools/make_ai_assets.py
+
+echo "== [3/4] UI pixel icons (coin / settings) =="
+"$PY" tools/make_sprites.py
+
+echo "== [4/4] audit =="
+"$PY" tools/validate_assets.py
+
+echo "all assets rebuilt from art_ai sheets."
