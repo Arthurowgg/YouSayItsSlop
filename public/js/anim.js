@@ -72,12 +72,15 @@ export function preloadHero(id) {
   return entry.p;
 }
 
+// back-bling carry offsets in frame px (native 32px sprites drawn behind
+// the hero); anything unmapped rides centred on the back.
 const GLIDER_OFF = {
-  glider_wings: { dx: 0, dy: -2 }, glider_shield: { dx: -11, dy: 0 },
-  glider_cosmic: { dx: 0, dy: -2 }, glider_claws: { dx: 10, dy: -4 },
-  glider_portal: { dx: 0, dy: -3 }, glider_webwings: { dx: 0, dy: -2 },
-  glider_storm: { dx: 0, dy: -4 }, glider_panther: { dx: 0, dy: -2 },
-  glider_holo: { dx: -10, dy: -2 }, glider_valkyrie: { dx: 0, dy: -4 },
+  glider_wings: { dx: 0, dy: 8 }, glider_shield: { dx: -8, dy: 10 },
+  glider_cosmic: { dx: 0, dy: 8 }, glider_claws: { dx: 8, dy: 9 },
+  glider_portal: { dx: 8, dy: 9 }, glider_webwings: { dx: 0, dy: 7 },
+  glider_storm: { dx: -9, dy: 9 }, glider_panther: { dx: 0, dy: 9 },
+  glider_cosmic: { dx: -9, dy: 10 },
+  glider_holo: { dx: -7, dy: 9 }, glider_valkyrie: { dx: 0, dy: 7 },
 };
 
 // ---- the single global ticker ----
@@ -165,8 +168,13 @@ export class Animator {
           const Img = (typeof window !== 'undefined' && window.Image) ? window.Image : Image;
           const img = new Img();
           img.onload = () => { entry.img = img; entry.ready = true; res(img); };
-          img.onerror = () => { entry.ready = true; res(null); };
-          img.src = `assets/spr/${gliderId}.png`;
+          img.onerror = () => {           // fall back to the shop icon
+            const fb = new Img();
+            fb.onload = () => { entry.img = fb; entry.ready = true; res(fb); };
+            fb.onerror = () => { entry.ready = true; res(null); };
+            fb.src = `assets/spr/${gliderId}.png`;
+          };
+          img.src = `assets/anim/${gliderId}.png`;
         });
         cache.set('g:' + gliderId, entry);
         entry.p.then((img) => { if (!this.dead) this.applyGlider(img, gliderId); });
@@ -179,6 +187,7 @@ export class Animator {
     this.gimg = img;
     this.gid = gliderId;
     this.gsingle = img.width === img.height;
+    this.gnative = img.width <= 40;   // purpose-built back-bling sprite
     this.dirty = true;
   }
 
@@ -230,9 +239,15 @@ export class Animator {
     // one source frame, drawn 1:1 on the integer grid: no transforms, no bleed
     const src = Math.min(A.start + f, this.frames - 1) * this.res;
     if (this.gimg) {
-      const off = GLIDER_OFF[this.gid] || { dx: 0, dy: 0 };
+      const off = GLIDER_OFF[this.gid] || { dx: 0, dy: 8 };
       const sway = [0, -1, 0, 1][f % 4];
-      if (this.gsingle) {
+      if (this.gnative) {
+        // native-size back bling, integer-upscaled behind the hero
+        const gw = this.gimg.width, gh = this.gimg.height;
+        c.drawImage(this.gimg, 0, 0, gw, gh,
+          Math.round((FRAME - gw) / 2 + off.dx) * S, (off.dy + sway) * S,
+          gw * S, gh * S);
+      } else if (this.gsingle) {
         c.drawImage(this.gimg, 0, 0, this.gimg.width, this.gimg.height,
           off.dx * S, (off.dy + sway) * S - 4 * S, FRAME * S, FRAME * S);
       } else {

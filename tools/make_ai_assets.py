@@ -277,7 +277,7 @@ def sheet_ratio(rows, want=TARGET_H):
     return max(2, int(round(np.median(hs) / want)))
 
 
-def scale_px(px, ratio):
+def scale_px(px, ratio, pal=None):
     """Area-average (premultiplied BOX) downscale + hard alpha.
 
     The sheets are fine-grained pixel art (1px line work): NEAREST decimation
@@ -300,6 +300,8 @@ def scale_px(px, ratio):
     rgb[m] = np.clip(out[:, :, :3][m] / al[m][:, None], 0, 255).astype(np.uint8)
     sil = al > 0.45
     if m.sum():
+        if pal is not None:
+            rgb = _quantize(rgb, sil, pal)
         rgb = _restore_contour(rgb, px, sil, ratio)
     res = np.dstack([rgb, np.where(sil, 255, 0).astype(np.uint8)])
     return res
@@ -349,7 +351,25 @@ def _restore_contour(rgb, src, sil, ratio):
     return rgb
 
 
-def _squeeze(px, nw, nh):
+def _quantize(rgb, sil, pal):
+    """Snap every pixel to the hero's own flat colours: the game draws these
+    frames at 5-7x, so half-blended BOX pixels read as blur. Flat palette
+    pixels = crisp pixel art. Palette holds only masked source colours, so
+    near neighbours (charcoal suit vs navy backdrop) can never swap."""
+    d = ((rgb.astype(np.float32)[:, :, None, :] - pal[None, None, :, :]) ** 2).sum(axis=3)
+    out = rgb.copy()
+    out[sil] = pal[np.argmin(d, axis=2)][sil]
+    return out
+
+
+def hero_palette(cuts, n=14):
+    """Top exact colours across all of a hero's source poses (masked only)."""
+    px = np.concatenate([c[c[:, :, 3] > 128][:, :3] for c in cuts if (c[:, :, 3] > 128).any()])
+    keys, counts = np.unique(px, axis=0, return_counts=True)
+    return keys[np.argsort(-counts)[:n]].astype(np.float32)
+
+
+def _squeeze(px, nw, nh, pal=None):
     """Pre-multiplied BOX resize to an exact size (gentle squash, no cuts)."""
     arr = px.astype(np.float32)
     a = arr[:, :, 3:4] / 255.0
@@ -362,10 +382,13 @@ def _squeeze(px, nw, nh):
     rgb = np.zeros((nh, nw, 3), np.uint8)
     m = al > 1e-3
     rgb[m] = np.clip(out[:, :, :3][m] / al[m][:, None], 0, 255).astype(np.uint8)
-    return np.dstack([rgb, np.where(al > 0.45, 255, 0).astype(np.uint8)])
+    sil = al > 0.45
+    if pal is not None and m.sum():
+        rgb = _quantize(rgb, sil, pal)
+    return np.dstack([rgb, np.where(sil, 255, 0).astype(np.uint8)])
 
 
-def place(px, dx=0, dy=0, mirror=False, ground=GROUND, canvas=FRAME):
+def place(px, dx=0, dy=0, mirror=False, ground=GROUND, canvas=FRAME, pal=None):
     """Mirror / ground / centre a scaled frame onto the 48px canvas."""
     if mirror:
         px = px[:, ::-1]
@@ -377,9 +400,9 @@ def place(px, dx=0, dy=0, mirror=False, ground=GROUND, canvas=FRAME):
     if px.shape[1] > 64:
         px = _anchor_crop(px, canvas)
     if px.shape[1] > canvas:
-        px = _squeeze(px, canvas, px.shape[0])
+        px = _squeeze(px, canvas, px.shape[0], pal)
     if px.shape[0] > canvas:
-        px = _squeeze(px, px.shape[1], canvas)
+        px = _squeeze(px, px.shape[1], canvas, pal)
     h, w = px.shape[:2]
     out = np.zeros((canvas, canvas, 4), np.uint8)
     y0 = ground - h + 1 + dy
@@ -440,27 +463,29 @@ class HeroArt:
         self.k_rgb = rgb
         self.k_ratio = sheet_ratio(rows)
         self.k = [cut(rgb, s) for s in rows[0]]
+        cuts = [c for r in (self.grid or []) for c in r] + self.k
+        self.pal = hero_palette(cuts)
 
     def pose(self, key):
         """Scaled (not yet placed) frame pixels for a pose key."""
         if key.startswith('W') and self.grid and len(self.grid) > 1:
             walk = self.grid[1]
             i = min(int(key[1:] or 0), len(walk) - 1)
-            return scale_px(walk[i], self.grid_ratio)
+            return scale_px(walk[i], self.grid_ratio, self.pal)
         if key == 'I':
             if self.grid:
-                return scale_px(self.grid[0][0], self.grid_ratio)
-            return scale_px(self.k[0], self.k_ratio)
+                return scale_px(self.grid[0][0], self.grid_ratio, self.pal)
+            return scale_px(self.k[0], self.k_ratio, self.pal)
         if key == 'S':
-            return scale_px(self.k[3], self.k_ratio)
+            return scale_px(self.k[3], self.k_ratio, self.pal)
         if key == 'C':
-            return scale_px(self.k[1], self.k_ratio)
+            return scale_px(self.k[1], self.k_ratio, self.pal)
         if key == 'F':
-            return scale_px(self.k[2], self.k_ratio)
+            return scale_px(self.k[2], self.k_ratio, self.pal)
         if key == 'L':
             if self.grid and len(self.grid) > 2 and len(self.grid[2]) > 1:
-                return scale_px(self.grid[2][1], self.grid_ratio)
-            return scale_px(self.k[1], self.k_ratio)
+                return scale_px(self.grid[2][1], self.grid_ratio, self.pal)
+            return scale_px(self.k[1], self.k_ratio, self.pal)
         raise KeyError(key)
 
     def walk_loop(self):
@@ -487,15 +512,18 @@ class HeroArt:
             atk = resample(self.grid[2], 4)
             pow_ = resample(self.grid[3], 4)
             for px in idle:
-                fr.append(place(scale_px(px, self.grid_ratio)))
+                fr.append(place(scale_px(px, self.grid_ratio, self.pal), pal=self.pal))
             for i, px in enumerate(walk):
-                fr.append(place(scale_px(px, self.grid_ratio), dy=WALK_BOB[i]))
+                fr.append(place(scale_px(px, self.grid_ratio, self.pal),
+                                dy=WALK_BOB[i], pal=self.pal))
             for px in atk:
-                fr.append(place(scale_px(px, self.grid_ratio)))
+                fr.append(place(scale_px(px, self.grid_ratio, self.pal), pal=self.pal))
             for i, px in enumerate(pow_):
-                fr.append(place(scale_px(px, self.grid_ratio), dy=POWER_HOP[i]))
+                fr.append(place(scale_px(px, self.grid_ratio, self.pal),
+                                dy=POWER_HOP[i], pal=self.pal))
         else:  # pose-sheet heroes: synthesise the cycles from K poses
-            g = lambda k, dx=0, dy=0, m=0: place(self.pose(k), dx, dy, m)
+            g = lambda k, dx=0, dy=0, m=0: place(self.pose(k), dx, dy, m,
+                                                 pal=self.pal)
             fr += [g('I'), g('S'), g('I'), g('S')]
             fr += [g('C', 0, WALK_BOB[0]), g('C', 0, WALK_BOB[1]),
                    g('S', 0, WALK_BOB[2]), g('C', 0, WALK_BOB[3], 1),
@@ -510,7 +538,7 @@ class HeroArt:
         for key, dx, dy, m in RECIPES[em]:
             if key.startswith('W') and not self.grid:
                 key = 'C'                      # pose-sheet moonwalk: stride sway
-            out.append(place(self.pose(key), dx, dy, m))
+            out.append(place(self.pose(key), dx, dy, m, pal=self.pal))
         return out
 
     def strip(self):
@@ -526,8 +554,38 @@ class HeroArt:
         ys, xs = np.where(a)
         h = ys.max() - ys.min() + 1
         ratio = max(1, -(-h // ICON_MAX))      # ceil
-        px = scale_px(px, ratio) if ratio > 1 else px
-        return place(px, ground=93, canvas=ICON_CANVAS)
+        px = scale_px(px, ratio, self.pal) if ratio > 1 else px
+        return place(px, ground=93, canvas=ICON_CANVAS, pal=self.pal)
+
+
+def build_backblings():
+    """32px back-bling sprites for the in-game animator (the 96px shop icons
+    are far too big to sit on a 48px hero). Cropped from the shop icon,
+    BOX-downscaled /4 with the same flat-palette + contour treatment."""
+    cat = json.load(open(os.path.join(PUB, 'data', 'catalog.json')))
+    n = 0
+    for g in cat['gliders']:
+        gid = g['id']
+        src = os.path.join(SPR, gid + '.png')
+        if not os.path.exists(src):
+            continue
+        ic = np.array(Image.open(src).convert('RGBA'))
+        a = ic[:, :, 3] > 24
+        if a.sum() < 16:
+            continue
+        ys, xs = np.where(a)
+        crop = ic[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+        pal = hero_palette([crop], n=12)
+        small = scale_px(crop, 3, pal)
+        h, w = small.shape[:2]
+        if h > 32 or w > 32:
+            small = _squeeze(small, min(w, 32), min(h, 32), pal)
+            h, w = small.shape[:2]
+        out = np.zeros((32, 32, 4), np.uint8)
+        out[(32 - h) // 2:(32 - h) // 2 + h, (32 - w) // 2:(32 - w) // 2 + w] = small
+        Image.fromarray(out, 'RGBA').save(os.path.join(ANIM, gid + '.png'))
+        n += 1
+    print('done: %d back-bling sprites (32px).' % n)
 
 
 def contact(strip, hid, scale=2, per=26):
@@ -564,6 +622,7 @@ def main():
             hid, g, art.grid_ratio if art.grid else '-', art.k_ratio))
         if args.contact:
             contact(strip, hid)
+    build_backblings()
     if args.contact:  # icon contact sheet
         os.makedirs(SHOT, exist_ok=True)
         cols = 5
