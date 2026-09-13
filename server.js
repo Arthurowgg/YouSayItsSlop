@@ -44,7 +44,7 @@ function sanitize(input) {
   if ('coins' in input) out.coins = Math.max(0, Math.min(999999999, num(input.coins, d.coins ?? 500)));
   if ('level' in input) out.level = Math.max(1, Math.min(999, num(input.level, d.level ?? 1)));
   if ('xp' in input) out.xp = Math.max(0, num(input.xp, d.xp ?? 0));
-  for (const k of ['owned', 'picks', 'gliders', 'emotes']) {
+  for (const k of ['owned', 'picks', 'blings']) {
     if (Array.isArray(input[k])) out[k] = input[k].filter((x) => typeof x === 'string').slice(0, 500);
   }
   if (input.equipped && typeof input.equipped === 'object') {
@@ -98,13 +98,19 @@ const server = http.createServer((req, res) => {
   }
   if (p === '/api/ping') return send(res, 200, JSON.stringify({ ok: true, t: Date.now() }), 'application/json');
 
-  // expose read-only data (catalog) for static fallbacks
+  // read-only game data (catalog / anim.json): public/data first, then the
+  // repo-level data/ folder for tooling output
   if (p.startsWith('/data/')) {
-    const f = path.normalize(path.join(DATA, p.slice(6)));
-    if (!f.startsWith(DATA)) return send(res, 403, 'no');
-    return fs.readFile(f, (err, buf) =>
-      err ? send(res, 404, 'no') : send(res, 200, buf, MIME[path.extname(f)] || 'application/octet-stream')
-    );
+    const rel = path.normalize(p.slice(6));
+    const candidates = [path.join(ROOT, 'data', rel), path.join(DATA, rel)];
+    for (const f of candidates) {
+      if (!f.startsWith(ROOT) && !f.startsWith(DATA)) continue;
+      try {
+        const buf = fs.readFileSync(f);
+        return send(res, 200, buf, MIME[path.extname(f)] || 'application/octet-stream');
+      } catch { /* try the next root */ }
+    }
+    return send(res, 404, 'no');
   }
 
   // static

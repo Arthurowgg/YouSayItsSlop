@@ -1,197 +1,224 @@
-// AnimationManager v6: one shared clock, many sprites.
+// AnimationManager v7 — crisp, data-driven sprite animator.
 //
-// Architecture (replaces the v5 "one rAF loop per canvas" design, which ran
-// 20+ independent loops in the shop grid and let them drift/jank):
-//   * a single global ticker (one requestAnimationFrame) drives every live
-//     Animator in registration order — no fighting loops, one FPS cap, one
-//     place to pause/step for debugging;
-//   * each canvas gets a device-pixel-correct backing store (integer device
-//     scale), so pixels stay even on HiDPI / fractional-DPR screens and all
-//     drawing is integer-only nearest-neighbour (crisp, no shimmer, no bleed);
-//   * sprites whose canvas is off-screen are culled via IntersectionObserver
-//     (they keep their state, they just don't draw);
-//   * frame advance uses clamped time accumulation — returning from a
-//     throttled/background tab can never fast-forward or jump frames;
-//   * sheets are decoded once and cached; a re-render attaches them
-//     synchronously, so UI updates never flash a blank canvas.
+// What changed from v6 (the build that looked "bugado" on screen):
+//   * frames are 112px (not 48px) and can be any size declared by
+//     data/anim.json, so the art is NEVER downscaled by the browser below
+//     its own pixel grid: the canvas backing store is always frames x
+//     integer device scale and CSS size is derived from it — crisp at any
+//     zoom, on any DPR, with zero resampling of the source art;
+//   * the animation table (start/count/fps/loop) comes from the built
+//     sheets, so a hero with 4 frames and a hero with 6 frames both work;
+//   * `crop` lets a card show one region of the frame (portrait cards fill
+//     their box without stretching the whole 112px frame);
+//   * back blings are drawn from PRE-BAKED integer sizes and only integer
+//     offsets are used, so the accessory keeps the same pixel grid as the
+//     hero — no half-pixel blur, no giant bling on a small hero.
 //
-// Strip layout (36 frames of 48px) - see docs/SPRITE_SPEC.md.
-export const FRAME = 48;
-export const STRIP_FRAMES = 24;
-export const ANIMS = {
-  idle:    { start: 0,  count: 6, fps: 4,  loop: true  },
-  walk:    { start: 6,  count: 6, fps: 9,  loop: true  },
-  attack:  { start: 12, count: 6, fps: 10, loop: false },
-  ability: { start: 18, count: 6, fps: 8,  loop: false }
+// One rAF ticker drives every live Animator; off-screen canvases are culled.
+export const SHEET_FRAME = 112;         // default frame size (see anim.json)
+const DEFAULT_FPS_CAP = 60;
+
+// fallback table used when data/anim.json has no entry for a hero
+const FALLBACK = {
+  frames: { idle: 4, walk: 4, attack: 4, ability: 4 },
+  anims: {
+    idle: { start: 0, count: 4, fps: 3, loop: true },
+    walk: { start: 4, count: 4, fps: 7, loop: true },
+    attack: { start: 8, count: 4, fps: 9, loop: false },
+    ability: { start: 12, count: 4, fps: 7, loop: false },
+  },
 };
-let FPS_CAP = 60;
-export function setFpsCap(n) { FPS_CAP = Math.max(10, n | 0) || 60; }
+
+let PACKS = {};                          // heroId -> {frames, anims, scale}
+let FRAME = SHEET_FRAME;
+let FPS_CAP = DEFAULT_FPS_CAP;
+
+export function configureSheets(json) {
+  if (!json || typeof json !== 'object') return;
+  PACKS = json;
+  for (const k of Object.keys(json)) {
+    const s = json[k] && json[k].frame;
+    if (s && Number.isFinite(s) && s >= 32) { FRAME = s; break; }
+  }
+}
+export const animPack = (id) => PACKS[id] || FALLBACK;
+export const frameSize = () => FRAME;
+
+export function setFpsCap(n) { FPS_CAP = Math.max(10, n | 0) || DEFAULT_FPS_CAP; }
 
 let ANIM_DEBUG = false;
 export function setAnimDebug(v) { ANIM_DEBUG = !!v; }
 export function getAnimDebug() { return ANIM_DEBUG; }
 
-// live registry powers the frame-step debugger (`,` pause / `.` step)
 const LIVE = [];
-export function debugPause() { const a = LIVE[LIVE.length - 1]; if (a) a.paused = !a.paused; if (a) a.dirty = true; return !!a && a.paused; }
-export function debugStep(d = 1) { const a = LIVE[LIVE.length - 1]; if (a) a.step(d); }
+export function debugPause() { const a = LIVE[LIVE.length - 1]; if (a) { a.paused = !a.paused; a.dirty = true; } return !!a && a.paused; }
+export function debugStep(d = 1) { LIVE.forEach((a) => a.step(d)); }
 
-// ---- asset preload + fallback registry ----
-// Decoded sheets are cached so a re-render (UI update, tab switch, item
-// change) attaches the Image synchronously: no blank frame, no load flicker.
-const cache = new Map(); // id -> { img, ready, p }
-export function preloadHero(id) {
-  const c = cache.get(id);
-  if (c) return c.ready ? Promise.resolve(c.img) : c.p;
+// ---- decoded-sheet cache (one decode per hero, shared by every canvas) ----
+const cache = new Map();
+function loadImage(src, allowFail = true) {
+  const hit = cache.get(src);
+  if (hit) return hit.ready ? Promise.resolve(hit.img) : hit.p;
   const entry = { img: null, ready: false, p: null };
   entry.p = new Promise((res) => {
-    const Img = (typeof window !== 'undefined' && window.Image) ? window.Image : Image;
+    const Img = (typeof window !== 'undefined' && window.Image) || Image;
     const img = new Img();
     img.onload = () => { entry.img = img; entry.ready = true; res(img); };
-    img.onerror = () => { entry.ready = true; res(null); }; // clean fallback: stay empty
-    img.src = `assets/anim/${id}.png`;
+    img.onerror = () => { entry.ready = true; res(allowFail ? null : img); };
+    img.src = src;
   });
-  cache.set(id, entry);
+  cache.set(src, entry);
   return entry.p;
 }
+export const preloadHero = (heroId) => loadImage(`assets/anim/${heroId}.png`);
+export const preloadImg = (src) => loadImage(src);
+export function cachedImage(src) { const c = cache.get(src); return c && c.ready ? c.img : null; }
 
-// Back-bling attachment metadata, configured once from catalog.json
-// (attach: {dx, dy, s, layer}) - fitted by data, never hard-coded here.
+// ---- back-bling attachment (configured from catalog.json) ----
 let BLING_META = {};
-export function configureBling(meta) { BLING_META = meta || {}; }
-export const blingMeta = (id) => BLING_META[id] || { dx: 0, dy: 8, s: 1, layer: 'behind' };
+export function configureBling(map) { BLING_META = map || {}; }
+const DEFAULT_ATTACH = { dx: 0, dy: 4, layer: 'behind', perHero: null };
+export function blingMeta(id, heroId) {
+  const base = { ...DEFAULT_ATTACH, ...(BLING_META[id] || {}) };
+  const per = base.perHero && heroId ? base.perHero[heroId] : null;
+  return per ? { ...base, ...per } : base;
+}
+
+// hero size class -> bake size for a bling of size class S/M/L
+const BLING_PX = {
+  S: { S: 16, M: 24, L: 32 },
+  M: { S: 16, M: 24, L: 32 },
+  L: { S: 24, M: 32, L: 32 },
+};
+export function blingPixels(heroSize, blingSize) {
+  const row = BLING_PX[heroSize] || BLING_PX.M;
+  return row[blingSize] || 24;
+}
+export const blingSrc = (id, n) => `assets/bling/${id}_${n}.png`;
 
 // ---- the single global ticker ----
 const TICK = { set: new Set(), raf: 0, last: 0 };
 function tick(t) {
   TICK.raf = requestAnimationFrame(tick);
-  // clamp dt: after tab throttling we resume gently instead of fast-forwarding
-  const dt = Math.min(100, t - (TICK.last || t));
+  const dt = Math.min(100, t - (TICK.last || t));   // clamp: no fast-forward after a stall
   TICK.last = t;
   for (const a of TICK.set) a._update(dt);
 }
 function wake() { if (!TICK.raf && typeof requestAnimationFrame !== 'undefined') TICK.raf = requestAnimationFrame(tick); }
 
 export class Animator {
-  constructor(canvas, scale = 5) {
+  /** @param canvas   a <canvas>
+   *  @param scale    integer CSS px per sprite px
+   *  @param opts     {crop:{x,y,w,h}} region of the frame to show */
+  constructor(canvas, scale = 4, opts = {}) {
     this.cv = canvas;
-    this.scale = scale;
-    // device-pixel-correct integer backing store: even pixels on any DPR.
-    // The CSS size is derived from the backing store (not the other way
-    // round) so backing px == device px exactly, even on fractional DPR
-    // (1.25/1.5) - otherwise the browser resamples the canvas = blurry.
+    this.scale = Math.max(1, Math.round(scale));
+    this.crop = opts.crop || null;
     const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
-    this.ds = Math.max(1, Math.round(scale * dpr));
-    canvas.width = FRAME * this.ds;
-    canvas.height = FRAME * this.ds;
-    const css = FRAME * this.ds / dpr;
-    canvas.style.width = css + 'px';
-    canvas.style.height = css + 'px';
+    this.ds = Math.max(1, Math.round(this.scale * dpr));   // device px per sprite px
     this.ctx = canvas.getContext && canvas.getContext('2d');
-    if (!this.ctx) { this.dead = true; return; } // no 2d context: stay inert
+    if (!this.ctx) { this.dead = true; return; }
     this.ctx.imageSmoothingEnabled = false;
+    this.applyCrop();
 
     this.img = null;
-    this.gimg = null;
-    this.gid = null;
-    this.res = FRAME;
-    this.frames = STRIP_FRAMES;
+    this.hid = null;
+    this.frames = 1;
     this.anim = 'idle';
     this.frame = 0;
     this.acc = 0;
     this.dead = false;
     this.paused = false;
-    this.dirty = true;   // draw once even before the animation advances
+    this.dirty = true;
     this.onEnd = null;
     this.visible = true;
+    this.bling = null;
+    this.blingImg = null;
+    this.heroSize = 'M';
 
-    // cull offscreen canvases: state keeps advancing nowhere, drawing stops
     if (typeof IntersectionObserver !== 'undefined') {
       this.io = new IntersectionObserver((es) => {
         const v = !!es[es.length - 1].isIntersecting;
         if (v && !this.visible) this.dirty = true;
         this.visible = v;
-      });
+      }, { rootMargin: '80px' });
       this.io.observe(canvas);
     }
-
     TICK.set.add(this);
     LIVE.push(this);
     wake();
   }
 
-  applyImg(img, heroId) {
-    if (!img) { this.missing = true; return; } // fallback: render nothing, no crash
-    this.img = img;
+  setCrop(crop) { this.crop = crop || null; this.applyCrop(); }
+  applyCrop() {
+    const c = this.crop;
+    const w = c ? c.w : FRAME, h = c ? c.h : FRAME;
+    this.boxW = w; this.boxH = h;
+    this.cv.width = w * this.ds;
+    this.cv.height = h * this.ds;
+    const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+    this.cv.style.width = (w * this.ds / dpr) + 'px';
+    this.cv.style.height = (h * this.ds / dpr) + 'px';
+    if (this.ctx) this.ctx.imageSmoothingEnabled = false;
+    this.dirty = true;
+  }
+
+  pack() { return animPack(this.hid); }
+  anims() { return this.pack().anims || FALLBACK.anims; }
+  table(name) { const a = this.anims(); return a[name] || a.idle || FALLBACK.anims.idle; }
+
+  /** load a hero sheet (+ optional back bling) */
+  load(heroId, opts = {}) {
     this.hid = heroId;
-    this.res = img.height;
-    this.frames = Math.max(1, Math.round(img.width / img.height));
-    this.frame = 0;
-    this.acc = 0;
+    this.heroSize = opts.heroSize || 'M';
+    this.frames = this.pack().frames ? Object.values(this.pack().frames).reduce((s, n) => s + n, 0) : 16;
+    const img = cachedImage(`assets/anim/${heroId}.png`);
+    if (img) this._setImg(img);
+    else preloadHero(heroId).then((i) => { if (!this.dead) this._setImg(i); });
+    this.setBling(opts.bling || null, opts.blingSize || 'M');
+  }
+
+  _setImg(img) {
+    if (!img) { this.missing = true; this.dirty = true; return; }
+    this.missing = false;
+    this.img = img;
+    this.srcFrame = Math.round(img.height);
+    this.srcFrames = Math.max(1, Math.round(img.width / img.height));
     this.dirty = true;
     this.cv.classList.add('ready');
   }
 
-  load(heroId, gliderId) {
-    // synchronous when the sheet is already decoded — re-renders never flash
-    const c = cache.get(heroId);
-    if (c && c.ready) this.applyImg(c.img, heroId);
-    else preloadHero(heroId).then((img) => { if (!this.dead) this.applyImg(img, heroId); });
-    if (gliderId) {
-      const g = cache.get('g:' + gliderId);
-      if (g && g.ready) this.applyGlider(g.img, gliderId);
-      else {
-        const entry = { img: null, ready: false, p: null };
-        entry.p = new Promise((res) => {
-          const Img = (typeof window !== 'undefined' && window.Image) ? window.Image : Image;
-          const img = new Img();
-          img.onload = () => { entry.img = img; entry.ready = true; res(img); };
-          img.onerror = () => {           // fall back to the shop icon
-            const fb = new Img();
-            fb.onload = () => { entry.img = fb; entry.ready = true; res(fb); };
-            fb.onerror = () => { entry.ready = true; res(null); };
-            fb.src = `assets/spr/${gliderId}.png`;
-          };
-          img.src = `assets/anim/${gliderId}.png`;
-        });
-        cache.set('g:' + gliderId, entry);
-        entry.p.then((img) => { if (!this.dead) this.applyGlider(img, gliderId); });
-      }
-    } else { this.gimg = null; this.gid = null; }
-  }
-
-  applyGlider(img, gliderId) {
-    if (!img) return;
-    this.gimg = img;
-    this.gid = gliderId;
-    this.gsingle = img.width === img.height;
-    this.gnative = img.width <= 40;   // purpose-built back-bling sprite
-    this.gmeta = blingMeta(gliderId);
-    this.dirty = true;
+  setBling(id, blingSize = 'M') {
+    this.bling = id || null;
+    this.blingImg = null;
+    if (!this.bling) { this.dirty = true; return; }
+    const src = blingSrc(this.bling, blingPixels(this.heroSize, blingSize));
+    const img = cachedImage(src);
+    if (img) { this.blingImg = img; this.dirty = true; return; }
+    preloadImg(src).then((i) => { if (!this.dead && i) { this.blingImg = i; this.dirty = true; } });
   }
 
   setAnim(a, onEnd) {
     if (onEnd !== undefined) this.onEnd = onEnd;
-    // unknown state -> idle, never a dead strip
-    const name = ANIMS[a] ? a : 'idle';
+    const name = this.anims()[a] ? a : 'idle';
     if (this.anim !== name) { this.anim = name; this.frame = 0; this.acc = 0; this.dirty = true; }
   }
 
   step(d = 1) {
-    const A = ANIMS[this.anim] || ANIMS.idle;
+    const A = this.table(this.anim);
     this.frame = (this.frame + d + A.count) % A.count;
-    this.dirty = true; // redraw on next tick even while paused
+    this.dirty = true;
   }
 
   _update(dt) {
-    if (this.dead || !this.img || !this.visible) return;
-    const A = ANIMS[this.anim] || ANIMS.idle;
-    if (!this.paused) {
-      const minMs = Math.max(1000 / A.fps, 1000 / FPS_CAP);
+    if (this.dead || !this.visible) return;
+    const A = this.table(this.anim);
+    if (!this.paused && this.img) {
+      const stepMs = Math.max(1000 / (A.fps || 6), 1000 / FPS_CAP);
       this.acc += dt;
       let steps = 0;
-      while (this.acc >= minMs && steps < 4) { // never spiral after a stall
-        this.acc -= minMs;
+      while (this.acc >= stepMs && steps < 4) {
+        this.acc -= stepMs;
         steps++;
         this.frame++;
         if (this.frame >= A.count) {
@@ -199,11 +226,12 @@ export class Animator {
           else {
             this.frame = A.count - 1;
             const cb = this.onEnd; this.onEnd = null;
-            if (cb) cb(); else this.anim = 'idle'; // one-shots settle back to idle
+            if (cb) cb(); else this.anim = 'idle';
+            this.dirty = true;
           }
         }
       }
-      if (this.acc > minMs) this.acc = minMs; // drop backlog
+      if (this.acc > stepMs) this.acc = stepMs;
       this.dirty = true;
     }
     if (!this.dirty) return;
@@ -213,43 +241,39 @@ export class Animator {
 
   _draw() {
     const c = this.ctx, S = this.ds;
-    const W = this.cv.width, H = this.cv.height;
-    c.clearRect(0, 0, W, H);
-    const A = ANIMS[this.anim] || ANIMS.idle;
-    const f = this.frame;
-    // one source frame, drawn 1:1 on the integer grid: no transforms, no bleed
-    const src = Math.min(A.start + f, this.frames - 1) * this.res;
-    const drawBling = (front) => {
-      const m = this.gmeta || { dx: 0, dy: 8, s: 1, layer: 'behind' };
-      if ((m.layer === 'front') !== front) return;
-      const sway = [0, -1, 0, 1][f % 4];
-      const sc = m.s === 0.5 ? 0.5 : m.s === 2 ? 2 : 1;
-      if (this.gnative) {
-        // native-size back bling, integer-upscaled at its attach point
-        const gw = this.gimg.width * sc, gh = this.gimg.height * sc;
-        c.drawImage(this.gimg, 0, 0, this.gimg.width, this.gimg.height,
-          Math.round((FRAME - gw) / 2 + m.dx) * S, (m.dy + sway) * S,
-          gw * S, gh * S);
-      } else if (this.gsingle) {
-        c.drawImage(this.gimg, 0, 0, this.gimg.width, this.gimg.height,
-          m.dx * S, (m.dy + sway) * S - 4 * S, FRAME * S, FRAME * S);
-      } else {
-        const gr = this.gimg.height, gw = Math.round(this.gimg.width / gr);
-        const gf = gw > 1 ? (Math.floor(f / 2) % gw) : 0;
-        c.drawImage(this.gimg, gf * gr, 0, gr, gr, m.dx * S, (m.dy + sway) * S, FRAME * S, FRAME * S);
-      }
-    };
-    if (this.gimg) drawBling(false);
-    c.drawImage(this.img, src, 0, this.res, this.res, 0, 0, FRAME * S, FRAME * S);
-    if (this.gimg) drawBling(true);
-    if (ANIM_DEBUG) {
-      const u = S;
-      c.strokeStyle = 'rgba(0,255,120,.9)'; c.lineWidth = Math.max(1, u * 0.4);
-      c.beginPath(); c.moveTo(0, 44 * u); c.lineTo(48 * u, 44 * u); c.stroke();
-      c.strokeStyle = 'rgba(255,80,80,.9)'; c.strokeRect(6 * u, 2 * u, 36 * u, 42 * u);
-      c.fillStyle = '#7dffb0'; c.font = `${3 * u}px monospace`;
-      c.fillText(`${this.anim} f${f}/${A.count} ${A.fps}fps src${src / this.res} ${this.res}px${this.paused ? ' ||' : ''}`, 1 * u, 5 * u);
-    }
+    c.clearRect(0, 0, this.cv.width, this.cv.height);
+    if (!this.img) { if (ANIM_DEBUG) this._debug(); return; }
+    const A = this.table(this.anim);
+    const idx = A.start + Math.min(this.frame, A.count - 1);
+    const src = Math.min(idx, this.srcFrames - 1) * this.srcFrame;
+    const crop = this.crop || { x: 0, y: 0, w: FRAME, h: FRAME };
+
+    // back bling behind the body, then the body, then front-layer bling
+    if (this.blingImg) this._drawBling(false, crop, S);
+    c.drawImage(this.img, src + crop.x, crop.y, crop.w, crop.h, 0, 0, crop.w * S, crop.h * S);
+    if (this.blingImg) this._drawBling(true, crop, S);
+    if (ANIM_DEBUG) this._debug();
+  }
+
+  _drawBling(front, crop, S) {
+    const m = blingMeta(this.bling, this.hid);
+    if ((m.layer === 'front') !== front) return;
+    const sway = [0, -1, 0, 1][this.frame % 4] | 0;
+    const w = this.blingImg.width, h = this.blingImg.height;
+    // anchor: middle of the hero's back, in FRAME coordinates (never CSS px)
+    const anchorY = Math.round(FRAME * 0.34);
+    const fx = Math.round((FRAME - w) / 2) + (m.dx | 0);
+    const fy = anchorY - Math.round(h / 2) + (m.dy | 0) + sway;
+    this.ctx.drawImage(this.blingImg, 0, 0, w, h,
+      (fx - crop.x) * S, (fy - crop.y) * S, w * S, h * S);
+  }
+
+  _debug() {
+    const c = this.ctx, S = this.ds, A = this.table(this.anim);
+    c.strokeStyle = 'rgba(0,255,120,.9)'; c.lineWidth = Math.max(1, S * 0.4);
+    c.beginPath(); c.moveTo(0, (this.boxH - 6) * S); c.lineTo(this.boxW * S, (this.boxH - 6) * S); c.stroke();
+    c.fillStyle = '#7dffb0'; c.font = `${3 * S}px monospace`;
+    c.fillText(`${this.hid || '-'} ${this.anim} f${this.frame}/${A.count} ${A.fps}fps ${this.srcFrame || '?'}px${this.paused ? ' ||' : ''}`, 1 * S, 5 * S);
   }
 
   destroy() {
@@ -260,4 +284,4 @@ export class Animator {
   }
 }
 
-if (typeof window !== 'undefined') window.__ANIMS = ANIMS; // debug/validation hook
+if (typeof window !== 'undefined') window.__ANIMS = { FALLBACK, PACKS: () => PACKS };

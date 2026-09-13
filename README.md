@@ -9,124 +9,95 @@ so it can grow into the real game later.
 > trademark of Epic Games. Using them in a public release requires licenses. Keep this
 > repo private until then.
 
-## Run it from GitHub (no server needed)
-
-The client is static-first: when `/api` is absent it falls back to `localStorage` and the
-static catalog, so the repo itself can host the game.
-
-- **CDN mirror (works today):**
-  `https://cdn.jsdelivr.net/gh/Arthurowgg/YouSayItsSlop@arena/01a09264-yousayitsslop/public/index.html`
-  (jsdelivr serves the files straight from this branch; pin `@<commit>` for immutable links.)
-- **GitHub Pages:** `.github/workflows/deploy-pages.yml` deploys `public/` on push.
-  Enabling Pages requires one owner click (Settings → Pages → Source: *GitHub Actions*)
-  because the automation token has no Pages-admin scope; once enabled, every push deploys
-  to `https://arthurowgg.github.io/YouSayItsSlop/` automatically.
-
-## Run it locally
+## Run it
 
 ```bash
 npm start          # serves http://0.0.0.0:8080 (static menu + JSON API)
-npm run smoke      # headless runtime test: bundles the ES modules, clicks through every tab (21 assertions)
-npm run assets     # rebuild ALL assets from the art_ai sheets + audit
+npm run smoke      # headless runtime test: bundles the ES modules, clicks every tab
+npm run assets     # rebuild ALL assets from the sheets in art2/ + art_ai/ and audit
 ```
 
-No runtime dependencies — the server is Node's built-in `http` module. The client also
-falls back to `localStorage` when the API is unreachable.
+The client is static-first: when `/api` is absent it falls back to `localStorage` and the
+static catalog, so the repo itself can host the game.
 
 ## Tabs
 
 | Tab | What it does |
 | --- | --- |
-| **PLAY** | Cinematic mode-select (PLAY v2): layered night-city scene (sky gradient, twinkling stars, drifting pixel skyline, fog banks, rising embers, mode-tinted glow) with a floating mode emblem as focal point; mode-card stack with exactly two modes — **1V1** (available, selected emphasis, pixel preview + description + meta) and **DOMINATION** (selectable for preview but `EM BREVE`, PLAY stays disabled); NEXT-MAP chip with reroll for 1v1; huge skewed yellow PLAY with hover/pressed/disabled states. |
-| **SHOP** | Pixel storefront: night-city backdrop (skyline, stars, rarity glows), featured bundle/hero strip, type-specific cards (animated hero cells, emote ring stages, gear pedestals), dedicated bundle cards with per-item icons, and a showcase page per item (rarity aura, platform, ground shadow, animations). |
-| **LOCKER** | Animated preview + styles (CSS filter recolors); select hero, relic, back bling, emote. Locked items point to the shop. |
-| **TASKS** | Stored **LEVEL + XP bar** up top, daily/weekly tasks with progress bars and claimable coin rewards (no cooldown in test mode). |
-| **DEV** | Test-only currency lab: base **500** coins, +100/+500/+5000, SET BASE 500, x2, NO-COOLDOWN / UNLOCK-ALL flags, task re-arm, save wipe, raw save viewer. |
+| **JOGAR** | Cinematic mode-select (night-city scene, embers, floating emblem) with 1V1 (available) and DOMINATION (preview only, `EM BREVE`), plus a NEXT-MAP chip with reroll. |
+| **LOJA** | One section per category, **each with its own colour**, item cards that animate in every time the category comes into view, the bundle sitting **next to** the featured hero and the other items underneath. No separator lines, no category numbers, no item counters, no type/rarity text — and no forced packs: every item is bought separately. |
+| **ARMÁRIO** | Animated stage + racks (HERÓI / BACK BLING / RELÍQUIAS) that list **icons** — the character only appears on the stage. Slots, search, rarity dots, "sem back bling" option. |
+| **TAREFAS** | Stored LEVEL + XP bar, daily/weekly tasks with progress bars and claimable coins (no cooldown in test mode). |
+| **DEV** | Currency lab: base 500 coins, +100/+500/+5000, x2, flags, task re-arm, save wipe, raw save viewer. |
 
-Top bar: names-only tabs that never scroll, coins pill, **settings** gear (sound / particles /
-scanlines). Light pixel UI font (VT323), Press Start 2P only for accents. Performance:
-no full re-render on state change, ~30fps particle canvas, static backgrounds, no blend modes.
-
-## Architecture (ready for the real game)
-
-> **All character art** (hero icons, 78-frame animation strips, pick / glider /
-> emote icons) is sliced from the committed AI sheets in `art_ai/` — see
-> *Art pipeline* below. Only UI chrome (coin, settings glyphs, maps, mode
-> tiles) is painted by code.
+## Architecture
 
 ```
 server.js            zero-dep static + API server (binds 0.0.0.0, PORT env)
-  GET  /api/catalog  -> data/catalog.json (heroes, gear, modes, maps, styles, tasks, rarities)
-  GET  /api/state    -> save (404 when fresh)
-  POST /api/state    -> sanitized save (coins/level/owned/equipped/stats/tasks/dev)
-  DELETE /api/state  -> wipe
-data/catalog.json    all game data — add items here, UI renders them automatically
-data/save.json       your save (git-ignored)
+  GET  /api/catalog  -> public/data/catalog.json (heroes, blings, picks, modes, maps, tasks)
+  GET  /data/*       -> read-only JSON built by the tools (anim.json)
+  GET  /api/state    -> save (404 when fresh)   POST/DELETE manage it
+public/data/catalog.json  all game data — add items here, the UI renders them
+public/data/anim.json     per-hero animation tables (frame size, counts, fps, loops)
+data/save.json            your save (git-ignored)
 public/
   index.html         shell (topbar, tabs, HUD, screen mount)
-  style.css          pixel design system + all animations
+  style.css          pixel design system + shop/locker animations
   js/main.js         boot, name-only tab router, HUD, settings modal
-  js/store.js        save-state store (server-backed, localStorage fallback), economy, tasks, inventory
-  js/screens.js      renderers: play mode-select / shop spotlight / locker / tasks(level) / dev
-  js/anim.js         48px sprite-strip animator, 100% frame-based (no runtime
-                     transforms): idle/walk/attack/power + data-driven emotes
-  js/match.js        simulated match: RANDOM map at start -> results -> rewards
-  js/fx.js           lightweight particle canvas + WebAudio 8-bit sfx + confetti
+  js/screens.js      renderers: play / shop (by category) / locker / tasks / dev
+  js/anim.js         Animator v7: data-driven 112px strips, integer scaling,
+                     pre-baked back blings, one rAF ticker, no resampling
+  js/store.js        save-state store (server-backed, localStorage fallback)
+  js/match.js        simulated match: random map -> results -> rewards
+  js/fx.js           particle canvas + WebAudio sfx + confetti
   js/util.js         DOM/helpers + procedural coin fallback
-  assets/spr/*.png   96x96 cosmetic icons: heroes/emotes/picks/gliders sliced
-                     from the AI sheets; coin + settings glyphs hand-painted
-  assets/anim/*.png  in-game hero strips: 78 frames of 48px (idle/walk/
-                     attack/power + 10 emote loops), sliced from AI sheets
+  assets/spr/*.png   96x96 icons: heroes / back blings / relics / modes / UI
+  assets/anim/*.png  in-game strips: N frames of 112px (idle/walk/attack/ability)
+  assets/bling/*.png back blings pre-baked at 16/24/32px (drawn 1:1 in game)
   assets/maps/*.png  five 480x268 side-view 2D battle maps
 tools/
-  build_assets.sh    ONE-STOP pipeline: venv bootstrap -> shop icons ->
-                     hero icons + strips -> UI icons -> audit
-  make_shop_icons.py slices emote/pick/glider sheets into clean transparent
-                     96x96 icons (bg flood-key, nearest-neighbor downscale)
-  make_ai_assets.py  slices grid_/anim_ hero sheets: edge-extract -> seam &
-                     shadow removal -> cell sprites -> integer downscale ->
-                     grounded 48px frames + choreographed emote dance loops
-  make_sprites.py    hand-painted UI icons only (coin, settings glyphs)
-  validate_assets.py audits every cosmetic icon + strip (transparency, crops,
-                     ground-line stability per anim segment, emote metadata);
-                     exits 1 on problems
-  make_maps.py       paints the five 2D maps
-  make_mode_icons.py paints the 1v1 / domination mode tiles
+  build_assets.sh    ONE-STOP pipeline: art2 sheets -> art_ai sheets -> audit
+  sprites_lib.py     extraction library (silhouette, blob frames, majority downscale)
+  build_sprites.py   art2/hero_<id>.png (4 rows x 6 poses, flat magenta) -> strips
+  build_legacy.py    art_ai/grid_*.png + anim_*.png -> strips for the rest
+  validate_assets.py audits strips, icons, blings and the catalog (exit 1 on problems)
   smoke_test.js      jsdom end-to-end click-through (npm run smoke)
 ```
 
-Save format (`data/save.json`): `{ coins, level, xp, owned[], picks[], gliders[], emotes[],
-equipped{hero,style,pick,glider,emote}, stats{matches,wins,purchases,equips,emotes},
-tasks{}, dev{noCooldown,unlockAll} }` — a real backend can swap in behind the same API.
+Save format (`data/save.json`): `{ coins, level, xp, owned[], picks[], blings[],
+equipped{hero,style,pick,bling}, stats{}, tasks{}, dev{} }` — a real backend can swap in
+behind the same API. Old saves that still carry gliders/emotes are cleaned on load.
 
-## Art pipeline
+## Systems removed / renamed in this build
 
-Every character asset in the game comes from the AI-generated sprite sheets
-committed in `art_ai/` (16-bit chibi style, one sheet set per hero):
+* **gliders** (and emotes) are gone from the whole game — catalog, store, UI and assets;
+* **skins** are no longer a category: a hero's alternate looks live inside its own card
+  (both in the shop and in the locker);
+* the shop lost the separator lines, the item counters and the group labels;
+* relics (pickaxes) are now **one per hero**, nine in total;
+* back blings are **exactly 12**, each with a size class (S/M/L) and per-hero attach
+  offsets so they fit small and huge heroes alike (Hulk's gear is scaled up, Ant-Man's
+  down) — and every bling is pre-baked at 16/24/32px, so it is never stretched.
 
-| sheet | content | becomes |
-| --- | --- | --- |
-| `grid_<hero>.png` | 4 rows: idle / walk / attack / power poses | strip frames 0-17 + hero icon |
-| `anim_<hero>.png` | 4 key poses (stand, stride, jump-flex, variant) | emote dance poses + strips for heroes without a grid sheet |
-| `emotes_a/b.png` | 10 themed emote poses | `spr/emote_*.png` shop icons |
-| `picks*_sheet.png` | pickaxe sets | `spr/pick_*.png` |
-| `gliders*_sheet.png` | glider sets | `spr/glider_*.png` |
+## Art pipeline (v3)
+
+One generated image per hero = one single style for all of its frames (the old pipeline
+mixed poses from different sheets, which is why some frames did not fit their hero).
+
+| input | becomes |
+| --- | --- |
+| `art2/hero_<id>.png` (4 rows x 6 poses, flat magenta #FF00FF) | `assets/anim/<id>.png` + portrait + `data/anim.json` entry |
+| `art_ai/grid_*.png`, `art_ai/anim_*.png` | same outputs for heroes without an `art2` sheet |
+| `assets/spr/bling_*.png` | `assets/bling/<id>_{16,24,32}.png` (integer bakes) |
+| `art2/picks.png` | one relic icon per hero |
 
 `tools/build_assets.sh` runs the whole chain (creates `.venv` with
-pillow/numpy/scipy on first run):
+pillow/numpy/scipy on first run) and ends with `validate_assets.py`.
 
-1. `make_shop_icons.py` — flood-keys the flat navy backdrops / plates and
-   slices picks, gliders and emote icons at integer downscale ratios;
-2. `make_ai_assets.py` — extracts the line art (gradient -> close -> fill),
-   strips grid seams, ground shadows and detached-fx fragments, slices every
-   pose on the sheet grid, downscales with NEAREST at one ratio per sheet,
-   grounds all core frames on a shared feet line and choreographs the 10
-   emote loops per hero from their own poses (integer bob / hop / mirror /
-   sway — zero repainting, zero runtime transforms);
-3. `make_sprites.py` — the few hand-painted UI glyphs (coin, settings);
-4. `validate_assets.py` — fails the build on halos, crops, fragment counts,
-   wrong frame counts or ground-line flicker.
-
-Heroes without a grid sheet (style variants, Hawkeye, Strange, Wanda,
-Panther, Captain Marvel, Ant-Man) get their cycles synthesised from their
-4-key-pose `anim_` sheet, so all 20 heroes ship AI art end to end.
+Extraction is done by **connected blobs + projection bands**, never by fixed cell
+division, so a pose that overflows its imaginary cell is not chopped in half (the
+"cropped hulk" bug), dark heroes survive a dark backdrop (silhouette pass: closing +
+hole fill, so a black symbiote on a navy sheet is recovered), sheet separator rules and
+dust fragments are erased, and every sprite is downscaled by one integer factor with
+majority voting — 1px outlines survive and nothing gets blurred. The game then draws the
+strips 1:1 on integer-scaled canvases, which is why they stay crisp on screen.

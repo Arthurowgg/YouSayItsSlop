@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Full asset pipeline: slice the AI sheets (art_ai/) into every game asset.
-#   1. shop icons   : picks / gliders / emote icons   (make_shop_icons.py)
-#   2. hero icons + 78-frame animation strips         (make_ai2_assets.py, make_ai_assets.py)
-#   3. UI-only pixel icons (coin, settings)           (make_sprites.py)
-#   4. audit everything                               (validate_assets.py)
-# Needs pillow + numpy + scipy in .venv (created on first run).
+# Full asset pipeline (v3): every game sprite is rebuilt from the sheets and
+# audited. Needs pillow + numpy + scipy in .venv (created on first run).
+#
+#   1. build_sprites.py  art2/hero_<id>.png (4 rows x 6 poses, flat magenta)
+#                        -> 112px animation strips + portraits + blings + relics
+#   2. build_legacy.py   art_ai/grid_*.png / anim_*.png
+#                        -> same outputs for heroes without an art2 sheet
+#   3. validate_assets.py audits strips, icons, blings and the catalog
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -16,17 +18,17 @@ if [ ! -x "$PY" ]; then
   "$PY" -m pip install -q pillow numpy scipy
 fi
 
-echo "== [1/4] shop icons (picks / gliders / emotes) =="
-"$PY" tools/make_shop_icons.py
+echo "== [1/3] art2 sheets -> strips / portraits / blings / relics =="
+if compgen -G "art2/hero_*.png" > /dev/null; then
+  "$PY" tools/build_sprites.py all
+else
+  echo "  (no art2/hero_*.png yet - using the art_ai sheets)"
+fi
 
-echo "== [2/4] hero icons + animation strips =="
-"$PY" tools/make_ai2_assets.py
-"$PY" tools/make_ai_assets.py
+echo "== [2/3] art_ai sheets -> strips for the remaining heroes =="
+"$PY" tools/build_legacy.py
 
-echo "== [3/4] UI pixel icons (coin / settings) =="
-"$PY" tools/make_sprites.py
-
-echo "== [4/4] audit =="
+echo "== [3/3] audit =="
 "$PY" tools/validate_assets.py
 
-echo "all assets rebuilt from art_ai sheets."
+echo "all assets rebuilt."

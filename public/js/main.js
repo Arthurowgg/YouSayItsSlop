@@ -2,7 +2,7 @@
 import { el, fmt, coinDataURL } from './util.js';
 import { store } from './store.js';
 import { startParticles, setParticlesEnabled, setVolume, setHoverEnabled, sfx, toggleMute, isMuted } from './fx.js';
-import { setFpsCap, debugPause, debugStep, configureBling } from './anim.js';
+import { setFpsCap, debugPause, debugStep, configureBling, configureSheets } from './anim.js';
 import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast, modal, shopHome } from './screens.js';
 import { setAnimDebug, getAnimDebug } from './anim.js';
 import { bus } from './bus.js';
@@ -257,7 +257,13 @@ const storeMod = { defaultSave: null };
 
 async function boot() {
   await store.load();
-  configureBling(Object.fromEntries((store.catalog.gliders || []).map((g) => [g.id, g.attach || {}])));
+  // back bling attach data (dx/dy/layer/per-hero) comes from the catalog
+  configureBling(Object.fromEntries((store.catalog.blings || []).map((b) => [b.id, b.attach || {}])));
+  // per-hero animation tables (frame count/fps/loop) come from the built sheets
+  try {
+    const r = await fetch('data/anim.json');
+    if (r.ok) configureSheets(await r.json());
+  } catch { /* keep the fallback table */ }
 
   const ci = document.getElementById('coinIcon');
   ci.addEventListener('error', () => { ci.src = coinDataURL(18); }, { once: true });
