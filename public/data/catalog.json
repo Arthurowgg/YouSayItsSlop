@@ -34,34 +34,18 @@
       "rarity": "marvel",
       "price": 1500,
       "desc": "O amigão pixel da vizinhança. Thwip!",
-      "quote": "Seu amigão pixel da vizinhança."
-    },
-    {
-      "id": "spiderman_classic",
-      "name": "ARANHA CLÁSSICO",
-      "art": "assets/spr/spiderman_classic.png",
-      "rarity": "epic",
-      "price": 1200,
-      "desc": "O visual vermelho-e-azul de sempre.",
-      "quote": "Traje clássico. Responsabilidade clássica."
-    },
-    {
-      "id": "miles",
-      "name": "MILES",
-      "art": "assets/spr/miles.png",
-      "rarity": "epic",
-      "price": 1200,
-      "desc": "Aranha de traje preto com golpe veneno.",
-      "quote": "Tá. Só mais um balanço."
-    },
-    {
-      "id": "gwen",
-      "name": "SPIDER-GWEN",
-      "art": "assets/spr/gwen.png",
-      "rarity": "epic",
-      "price": 1200,
-      "desc": "Heroína encapuzada de outra dimensão.",
-      "quote": "Você não ia entender. É uma coisa de dimensão."
+      "quote": "Seu amigão pixel da vizinhança.",
+      "skins": [],
+      "ability": {
+        "id": "web_shot",
+        "name": "TEIA PRENSANTE",
+        "desc": "Dispara teia que prende e puxa o alvo.",
+        "passive": {
+          "id": "danger_sense",
+          "name": "SENTIDO DE PERIGO",
+          "desc": "Avisa ataques iminentes por um breve instante."
+        }
+      }
     },
     {
       "id": "venom",
@@ -70,7 +54,13 @@
       "rarity": "epic",
       "price": 1100,
       "desc": "Nós somos Venom. Principalmente famintos.",
-      "quote": "Nós terminamos de conversar."
+      "quote": "Nós terminamos de conversar.",
+      "skins": [],
+      "ability": {
+        "id": "symbiote_lunge",
+        "name": "BOTE SIMBIONTE",
+        "desc": "Avançada curta e pesada com mordida de simbionte."
+      }
     },
     {
       "id": "ironman",
@@ -79,7 +69,13 @@
       "rarity": "legendary",
       "price": 1600,
       "desc": "Bilionário. Gênio. Filantropo. Pixel.",
-      "quote": "Energia a 100%. Tente me acompanhar."
+      "quote": "Energia a 100%. Tente me acompanhar.",
+      "skins": [],
+      "ability": {
+        "id": "repulsor_blast",
+        "name": "RAJO REPULSOR",
+        "desc": "Carga curta e tiro de energia de longo alcance."
+      }
     },
     {
       "id": "capamerica",
@@ -88,16 +84,13 @@
       "rarity": "legendary",
       "price": 1500,
       "desc": "Posso fazer isso o dia todo.",
-      "quote": "Posso fazer isso o dia todo."
-    },
-    {
-      "id": "thor",
-      "name": "THOR",
-      "art": "assets/spr/thor.png",
-      "rarity": "legendary",
-      "price": 1600,
-      "desc": "O Deus do Trovão. Traga um guarda-chuva.",
-      "quote": "Traga-me aquele horizonte!"
+      "quote": "Posso fazer isso o dia todo.",
+      "skins": [],
+      "ability": {
+        "id": "shield_throw",
+        "name": "ARREMESSO RICOCHETE",
+        "desc": "Escudo vai, bate e volta na mão."
+      }
     },
     {
       "id": "hulk",
@@ -106,7 +99,13 @@
       "rarity": "marvel",
       "price": 1700,
       "desc": "HULK ESMAGA (o botão do lobby).",
-      "quote": "Menu insignificante. HULK ESMAGA."
+      "quote": "Menu insignificante. HULK ESMAGA.",
+      "skins": [],
+      "ability": {
+        "id": "ground_smash",
+        "name": "ESMAGAR DO SOLO",
+        "desc": "Salto e impacto que gera onda de choque."
+      }
     },
     {
       "id": "wolverine",
@@ -115,25 +114,13 @@
       "rarity": "epic",
       "price": 1400,
       "desc": "Amigo. Foi um dia longo.",
-      "quote": "Amigo, eu não entro na fila."
-    },
-    {
-      "id": "blackwidow",
-      "name": "VIÚVA NEGRA",
-      "art": "assets/spr/blackwidow.png",
-      "rarity": "rare",
-      "price": 800,
-      "desc": "A melhor espiã do Quarto Vermelho.",
-      "quote": "Vermelho no meu registro. Você está somando."
-    },
-    {
-      "id": "hawkeye",
-      "name": "GAVIÃO ARQUEIRO",
-      "art": "assets/spr/hawkeye.png",
-      "rarity": "rare",
-      "price": 800,
-      "desc": "O vento está bom. Eu estou melhor.",
-      "quote": "O vento está bom. Eu estou melhor."
+      "quote": "Amigo, eu não entro na fila.",
+      "skins": [],
+      "ability": {
+        "id": "claw_dash",
+        "name": "DASH DE GARRAS",
+        "desc": "Investida rápida que corta por onde passa."
+      }
     },
     {
       "id": "drstrange",
@@ -142,25 +129,13 @@
       "rarity": "legendary",
       "price": 1500,
       "desc": "Mestre das artes místicas de pixel.",
-      "quote": "Dormammu, vim para negociar."
-    },
-    {
-      "id": "scarletwitch",
-      "name": "FEITICEIRA ESCARLATE",
-      "art": "assets/spr/scarletwitch.png",
-      "rarity": "epic",
-      "price": 1300,
-      "desc": "Caos em forma de coroa.",
-      "quote": "Você não tem ideia do que eu posso fazer."
-    },
-    {
-      "id": "scarletwitch_azure",
-      "name": "FEITICEIRA AZURE",
-      "art": "assets/spr/scarletwitch_azure.png",
-      "rarity": "epic",
-      "price": 1300,
-      "desc": "Caos, mas com estilo.",
-      "quote": "Caos, mas com estilo."
+      "quote": "Dormammu, vim para negociar.",
+      "skins": [],
+      "ability": {
+        "id": "mystic_portal",
+        "name": "PORTAL MÍSTICO",
+        "desc": "Abre portal e reposiciona em um instante."
+      }
     },
     {
       "id": "blackpanther",
@@ -169,25 +144,13 @@
       "rarity": "epic",
       "price": 1400,
       "desc": "O rei de Wakanda em vibranium.",
-      "quote": "Wakanda para sempre."
-    },
-    {
-      "id": "captainmarvel",
-      "name": "CAPITÃ MARVEL",
-      "art": "assets/spr/captainmarvel.png",
-      "rarity": "marvel",
-      "price": 1600,
-      "desc": "Poder estelar nível binário.",
-      "quote": "Mais alto. Mais longe. Mais rápido."
-    },
-    {
-      "id": "captainmarvel_classic",
-      "name": "CAPITÃ MARVEL CLÁSSICA",
-      "art": "assets/spr/captainmarvel_classic.png",
-      "rarity": "epic",
-      "price": 1300,
-      "desc": "Visual estrelado vintage.",
-      "quote": "O problema estrelado original."
+      "quote": "Wakanda para sempre.",
+      "skins": [],
+      "ability": {
+        "id": "shadow_pounce",
+        "name": "BOTE DA SOMBRA",
+        "desc": "Salto curto e certeiro com garras de vibranium."
+      }
     },
     {
       "id": "antman",
@@ -196,16 +159,13 @@
       "rarity": "rare",
       "price": 900,
       "desc": "Tamanho não incluído.",
-      "quote": "Não é tamanho, é timing."
-    },
-    {
-      "id": "antman_unmasked",
-      "name": "HOMEM-FORMIGA SEM MÁSCARA",
-      "art": "assets/spr/antman_unmasked.png",
-      "rarity": "rare",
-      "price": 900,
-      "desc": "É o Scott. Ele está bem.",
-      "quote": "É o Scott. Quase reformado."
+      "quote": "Não é tamanho, é timing.",
+      "skins": [],
+      "ability": {
+        "id": "shrink",
+        "name": "ENCOLHER",
+        "desc": "Fica pequeno: hitbox menor e movimento mais rápido."
+      }
     }
   ],
   "bundles": [
@@ -213,48 +173,12 @@
       "id": "b_spiderverse",
       "name": "PACOTE ARANHAVERSO",
       "rarity": "marvel",
-      "price": 2000,
-      "desc": "Toda a turma da teia mais uma carona cósmica pra casa.",
+      "price": 1900,
+      "desc": "O Amigão da Vizinhança e o plano de teias completo — bling de teia incluído.",
       "items": [
-        "miles",
-        "gwen",
-        "glider_cosmic"
-      ]
-    },
-    {
-      "id": "b_asgard",
-      "name": "PACOTE DE ASGARD",
-      "rarity": "legendary",
-      "price": 2800,
-      "desc": "Trovão, um eco digno de martelo e descida com plumas.",
-      "items": [
-        "thor",
-        "pick_hammer",
-        "glider_wings"
-      ]
-    },
-    {
-      "id": "b_shadow",
-      "name": "PACOTE OPERAÇÃO SOMBRIA",
-      "rarity": "epic",
-      "price": 2200,
-      "desc": "Dois espiões e uma bandeira marcada por garras. Em silêncio.",
-      "items": [
-        "blackpanther",
-        "blackwidow",
-        "glider_claws"
-      ]
-    },
-    {
-      "id": "b_cosmic",
-      "name": "PACOTE LENDAS CÓSMICAS",
-      "rarity": "marvel",
-      "price": 2600,
-      "desc": "Poder estelar, feitiçaria e uma foice forjada no vazio.",
-      "items": [
-        "captainmarvel",
-        "drstrange",
-        "pick_scythe"
+        "spiderman",
+        "glider_h_spider",
+        "pick_web"
       ]
     },
     {
@@ -262,7 +186,7 @@
       "name": "PACOTE VINGADORES",
       "rarity": "marvel",
       "price": 2900,
-      "desc": "Capitão, Homem de Ferro e Hulk prontos pro lobby — com o escudo do Capitão nas costas.",
+      "desc": "Capitão e Homem de Ferro prontos pro lobby, com o escudo do Capitão nas costas.",
       "items": [
         "capamerica",
         "ironman",
@@ -273,12 +197,36 @@
       "id": "b_mutants",
       "name": "PACOTE MUTANTE",
       "rarity": "epic",
-      "price": 2100,
-      "desc": "Wolverine e a Feiticeira Escarlate, mais o manto de caos pra descer brilhando.",
+      "price": 1800,
+      "desc": "Wolverine com as asas de garra e a garra de adamantium. Dia longo, lobby curto.",
       "items": [
         "wolverine",
-        "scarletwitch",
-        "glider_h_wanda"
+        "glider_h_wolverine",
+        "pick_h_wolverine"
+      ]
+    },
+    {
+      "id": "b_shadow",
+      "name": "PACOTE SOMBRA DE WAKANDA",
+      "rarity": "epic",
+      "price": 1900,
+      "desc": "Pantera Negra com a sombra do pantera e o golpe de vibranium.",
+      "items": [
+        "blackpanther",
+        "glider_panther",
+        "pick_h_panther"
+      ]
+    },
+    {
+      "id": "b_mystic",
+      "name": "PACOTE ARTES MÍSTICAS",
+      "rarity": "legendary",
+      "price": 2000,
+      "desc": "Doutor Estranho, o portal místico e a lâmina mística. A realidade agradece.",
+      "items": [
+        "drstrange",
+        "glider_portal",
+        "pick_h_strange"
       ]
     }
   ],
@@ -531,7 +479,13 @@
       "art": "assets/spr/glider_shield.png",
       "rarity": "epic",
       "price": 1000,
-      "desc": "Redondo. Icônico. Quase indestrutível."
+      "desc": "Redondo. Icônico. Quase indestrutível.",
+      "attach": {
+        "dx": -8,
+        "dy": 10,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_wings",
@@ -539,7 +493,13 @@
       "art": "assets/spr/glider_wings.png",
       "rarity": "legendary",
       "price": 1200,
-      "desc": "Descida com plumas."
+      "desc": "Descida com plumas.",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_cosmic",
@@ -547,7 +507,13 @@
       "art": "assets/spr/glider_cosmic.png",
       "rarity": "epic",
       "price": 900,
-      "desc": "Vista o céu noturno."
+      "desc": "Vista o céu noturno.",
+      "attach": {
+        "dx": -9,
+        "dy": 10,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_claws",
@@ -555,7 +521,13 @@
       "art": "assets/spr/glider_claws.png",
       "rarity": "rare",
       "price": 700,
-      "desc": "Bandeira de guerra marcada por garras."
+      "desc": "Bandeira de guerra marcada por garras.",
+      "attach": {
+        "dx": 8,
+        "dy": 9,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_portal",
@@ -563,7 +535,13 @@
       "desc": "Um atalho por outra dimensão.",
       "rarity": "epic",
       "price": 800,
-      "art": "assets/spr/glider_portal.png"
+      "art": "assets/spr/glider_portal.png",
+      "attach": {
+        "dx": 8,
+        "dy": 9,
+        "s": 1,
+        "layer": "front"
+      }
     },
     {
       "id": "glider_webwings",
@@ -571,7 +549,13 @@
       "desc": "Plane como uma aranha.",
       "rarity": "rare",
       "price": 500,
-      "art": "assets/spr/glider_webwings.png"
+      "art": "assets/spr/glider_webwings.png",
+      "attach": {
+        "dx": 0,
+        "dy": 7,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_storm",
@@ -579,7 +563,13 @@
       "desc": "Chove só em você.",
       "rarity": "legendary",
       "price": 1200,
-      "art": "assets/spr/glider_storm.png"
+      "art": "assets/spr/glider_storm.png",
+      "attach": {
+        "dx": -9,
+        "dy": 9,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_panther",
@@ -587,7 +577,13 @@
       "desc": "Desce em silêncio.",
       "rarity": "epic",
       "price": 800,
-      "art": "assets/spr/glider_panther.png"
+      "art": "assets/spr/glider_panther.png",
+      "attach": {
+        "dx": 0,
+        "dy": 9,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_holo",
@@ -595,7 +591,13 @@
       "desc": "Flutuação assistida por holograma.",
       "rarity": "marvel",
       "price": 1500,
-      "art": "assets/spr/glider_holo.png"
+      "art": "assets/spr/glider_holo.png",
+      "attach": {
+        "dx": -7,
+        "dy": 9,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_valkyrie",
@@ -603,7 +605,13 @@
       "desc": "Digno de Valhalla.",
       "rarity": "rare",
       "price": 500,
-      "art": "assets/spr/glider_valkyrie.png"
+      "art": "assets/spr/glider_valkyrie.png",
+      "attach": {
+        "dx": 0,
+        "dy": 7,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_spider",
@@ -611,7 +619,13 @@
       "desc": "Paraquedas que balança em teia.",
       "rarity": "rare",
       "price": 500,
-      "art": "assets/spr/glider_h_spider.png"
+      "art": "assets/spr/glider_h_spider.png",
+      "attach": {
+        "dx": 0,
+        "dy": 9,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_classic",
@@ -619,23 +633,13 @@
       "desc": "Descida vintage.",
       "rarity": "rare",
       "price": 500,
-      "art": "assets/spr/glider_h_classic.png"
-    },
-    {
-      "id": "glider_h_miles",
-      "name": "MANTO ELÉTRICO",
-      "desc": "Capa elétrica.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_miles.png"
-    },
-    {
-      "id": "glider_h_gwen",
-      "name": "CAPUZ DIMENSIONAL",
-      "desc": "Desliza entre mundos.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_gwen.png"
+      "art": "assets/spr/glider_h_classic.png",
+      "attach": {
+        "dx": 0,
+        "dy": 9,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_venom",
@@ -643,7 +647,13 @@
       "desc": "Tentáculos seguram você.",
       "rarity": "legendary",
       "price": 1200,
-      "art": "assets/spr/glider_h_venom.png"
+      "art": "assets/spr/glider_h_venom.png",
+      "attach": {
+        "dx": -6,
+        "dy": 10,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_iron",
@@ -651,7 +661,13 @@
       "desc": "Pouso com repulsores.",
       "rarity": "epic",
       "price": 800,
-      "art": "assets/spr/glider_h_iron.png"
+      "art": "assets/spr/glider_h_iron.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_cap",
@@ -659,15 +675,13 @@
       "desc": "Listras e estrelas.",
       "rarity": "epic",
       "price": 800,
-      "art": "assets/spr/glider_h_cap.png"
-    },
-    {
-      "id": "glider_h_thor",
-      "name": "ARCO DE BIFROST",
-      "desc": "Desce no arco-íris.",
-      "rarity": "legendary",
-      "price": 1200,
-      "art": "assets/spr/glider_h_thor.png"
+      "art": "assets/spr/glider_h_cap.png",
+      "attach": {
+        "dx": -8,
+        "dy": 10,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_hulk",
@@ -675,7 +689,13 @@
       "desc": "Queda sísmica.",
       "rarity": "epic",
       "price": 800,
-      "art": "assets/spr/glider_h_hulk.png"
+      "art": "assets/spr/glider_h_hulk.png",
+      "attach": {
+        "dx": 0,
+        "dy": 12,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_wolverine",
@@ -683,23 +703,13 @@
       "desc": "Lâminas que planam.",
       "rarity": "epic",
       "price": 800,
-      "art": "assets/spr/glider_h_wolverine.png"
-    },
-    {
-      "id": "glider_h_widow",
-      "name": "MANTO DA ESPIÃ",
-      "desc": "Queda silenciosa.",
-      "rarity": "rare",
-      "price": 500,
-      "art": "assets/spr/glider_h_widow.png"
-    },
-    {
-      "id": "glider_h_hawkeye",
-      "name": "ASAS DE FLECHA",
-      "desc": "Penas de flecha.",
-      "rarity": "rare",
-      "price": 500,
-      "art": "assets/spr/glider_h_hawkeye.png"
+      "art": "assets/spr/glider_h_wolverine.png",
+      "attach": {
+        "dx": 7,
+        "dy": 9,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_strange",
@@ -707,23 +717,13 @@
       "desc": "Ele escolhe o caminho.",
       "rarity": "legendary",
       "price": 1200,
-      "art": "assets/spr/glider_h_strange.png"
-    },
-    {
-      "id": "glider_h_wanda",
-      "name": "AURORA DE CAOS",
-      "desc": "Brilho escarlate.",
-      "rarity": "legendary",
-      "price": 1200,
-      "art": "assets/spr/glider_h_wanda.png"
-    },
-    {
-      "id": "glider_h_wanda_azure",
-      "name": "AURORA AZURE",
-      "desc": "Brilho frio.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_wanda_azure.png"
+      "art": "assets/spr/glider_h_strange.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "front"
+      }
     },
     {
       "id": "glider_h_panther",
@@ -731,23 +731,13 @@
       "desc": "Tecnologia de vibranium.",
       "rarity": "marvel",
       "price": 1500,
-      "art": "assets/spr/glider_h_panther.png"
-    },
-    {
-      "id": "glider_h_marvel",
-      "name": "RASTRO FÓTON",
-      "desc": "Deixa luz dourada.",
-      "rarity": "marvel",
-      "price": 1500,
-      "art": "assets/spr/glider_h_marvel.png"
-    },
-    {
-      "id": "glider_h_marvel_classic",
-      "name": "RASTRO ESTELAR",
-      "desc": "Clássico cósmico.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_marvel_classic.png"
+      "art": "assets/spr/glider_h_panther.png",
+      "attach": {
+        "dx": -7,
+        "dy": 9,
+        "s": 1,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_antman",
@@ -755,7 +745,13 @@
       "desc": "Voo em escala.",
       "rarity": "epic",
       "price": 800,
-      "art": "assets/spr/glider_h_antman.png"
+      "art": "assets/spr/glider_h_antman.png",
+      "attach": {
+        "dx": 6,
+        "dy": 7,
+        "s": 0.5,
+        "layer": "behind"
+      }
     },
     {
       "id": "glider_h_antman_unmasked",
@@ -763,7 +759,13 @@
       "desc": "Hélices pequenas.",
       "rarity": "rare",
       "price": 500,
-      "art": "assets/spr/glider_h_antman_unmasked.png"
+      "art": "assets/spr/glider_h_antman_unmasked.png",
+      "attach": {
+        "dx": 0,
+        "dy": 6,
+        "s": 0.5,
+        "layer": "behind"
+      }
     }
   ],
   "modes": [
@@ -940,14 +942,12 @@
     {
       "id": "aranhaverso",
       "name": "ARANHAVERSO",
-      "tag": "Teias entre dimensões",
+      "tag": "Teias e simbiontes",
       "bundle": "b_spiderverse",
       "gliders": [
         "glider_webwings",
         "glider_h_spider",
         "glider_h_classic",
-        "glider_h_miles",
-        "glider_h_gwen",
         "glider_h_venom"
       ],
       "picks": [
@@ -961,11 +961,7 @@
       "families": [
         {
           "hero": "spiderman",
-          "skins": [
-            "spiderman_classic",
-            "miles",
-            "gwen"
-          ]
+          "skins": []
         },
         {
           "hero": "venom",
@@ -980,16 +976,26 @@
       "bundle": "b_avengers",
       "gliders": [
         "glider_shield",
+        "glider_wings",
+        "glider_storm",
+        "glider_valkyrie",
         "glider_h_cap",
         "glider_h_iron",
-        "glider_h_hulk"
+        "glider_h_hulk",
+        "glider_h_antman",
+        "glider_h_antman_unmasked"
       ],
       "picks": [
         "pick_axe",
         "pick_plasma",
         "pick_h_cap",
         "pick_h_iron",
-        "pick_h_hulk"
+        "pick_h_hulk",
+        "pick_h_antman",
+        "pick_h_antman_unmasked",
+        "pick_h_thor",
+        "pick_h_marvel",
+        "pick_h_marvel_classic"
       ],
       "families": [
         {
@@ -1003,29 +1009,9 @@
         {
           "hero": "hulk",
           "skins": []
-        }
-      ]
-    },
-    {
-      "id": "asgard",
-      "name": "ASGARD",
-      "tag": "Trovão, plumas e arco-íris",
-      "bundle": "b_asgard",
-      "gliders": [
-        "glider_wings",
-        "glider_valkyrie",
-        "glider_storm",
-        "glider_h_thor"
-      ],
-      "picks": [
-        "pick_hammer",
-        "pick_ice",
-        "pick_storm",
-        "pick_h_thor"
-      ],
-      "families": [
+        },
         {
-          "hero": "thor",
+          "hero": "antman",
           "skins": []
         }
       ]
@@ -1036,12 +1022,9 @@
       "tag": "O gene X pixelado",
       "bundle": "b_mutants",
       "gliders": [
-        "glider_h_wolverine",
-        "glider_h_wanda",
-        "glider_h_wanda_azure"
+        "glider_h_wolverine"
       ],
       "picks": [
-        "pick_scythe",
         "pick_h_wolverine",
         "pick_h_wanda",
         "pick_h_wanda_azure"
@@ -1050,26 +1033,18 @@
         {
           "hero": "wolverine",
           "skins": []
-        },
-        {
-          "hero": "scarletwitch",
-          "skins": [
-            "scarletwitch_azure"
-          ]
         }
       ]
     },
     {
       "id": "sombria",
       "name": "OPERAÇÃO SOMBRIA",
-      "tag": "Espionagem e vibranium",
+      "tag": "Vibranium e silêncio",
       "bundle": "b_shadow",
       "gliders": [
         "glider_claws",
         "glider_panther",
-        "glider_h_panther",
-        "glider_h_widow",
-        "glider_h_hawkeye"
+        "glider_h_panther"
       ],
       "picks": [
         "pick_shadow",
@@ -1081,57 +1056,33 @@
         {
           "hero": "blackpanther",
           "skins": []
-        },
-        {
-          "hero": "blackwidow",
-          "skins": []
-        },
-        {
-          "hero": "hawkeye",
-          "skins": []
         }
       ]
     },
     {
-      "id": "cosmica",
-      "name": "LENDAS CÓSMICAS",
-      "tag": "Poeira estelar e magia",
-      "bundle": "b_cosmic",
+      "id": "mistica",
+      "name": "ARTES MÍSTICAS",
+      "tag": "Portais e relíquias",
+      "bundle": "b_mystic",
       "gliders": [
         "glider_cosmic",
         "glider_portal",
         "glider_holo",
-        "glider_h_strange",
-        "glider_h_marvel",
-        "glider_h_marvel_classic",
-        "glider_h_antman",
-        "glider_h_antman_unmasked"
+        "glider_h_strange"
       ],
       "picks": [
         "pick_quantum",
         "pick_magma",
         "pick_h_strange",
-        "pick_h_marvel",
-        "pick_h_marvel_classic",
-        "pick_h_antman",
-        "pick_h_antman_unmasked"
+        "pick_scythe",
+        "pick_hammer",
+        "pick_ice",
+        "pick_storm"
       ],
       "families": [
         {
-          "hero": "captainmarvel",
-          "skins": [
-            "captainmarvel_classic"
-          ]
-        },
-        {
           "hero": "drstrange",
           "skins": []
-        },
-        {
-          "hero": "antman",
-          "skins": [
-            "antman_unmasked"
-          ]
         }
       ]
     }

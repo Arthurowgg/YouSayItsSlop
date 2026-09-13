@@ -88,13 +88,13 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
 
   // shop v3: category sections with scroll-snap
   await toShopGrid();
-  ok($$('#screen .shopSec').length === 6 && catalog.shopCats.length === 6, 'shop has 6 category sections');
-  ok(!!$('.shop3') && !!$('.catDots') && $$('.catDot').length === 6, 'category scroller + dot nav');
+  ok($$('#screen .shopSec').length === 5 && catalog.shopCats.length === 5, 'shop has 5 category sections');
+  ok(!!$('.shop3') && !!$('.catDots') && $$('.catDot').length === 5, 'category scroller + dot nav');
   const shopTxt = $('.shop3').textContent;
   ok(!shopTxt.includes('EMOTES') && !shopTxt.includes('ÉPICO') && !shopTxt.includes('NOVO') && !shopTxt.includes('TRAJE'), 'no emotes / épico / novo / traje written in shop');
-  ok($$('.s3card.bundle').length === 6, 'shop shows 6 bundle cards (one per category)');
-  ok($$('.catBlings canvas').length === 30, 'every back bling previewed riding a hero');
-  ok($$('.s3card.hero').length === 20 && $$('.s3card.skin').length === 6, 'heroes with separated skin cells');
+  ok($$('.s3card.bundle').length === 5, 'shop shows 5 bundle cards (one per category)');
+  ok($$('.catBlings canvas').length === 21, 'every back bling previewed riding a hero');
+  ok($$('.s3card.hero').length === 9 && $$('.s3card.skin').length === 0, '9 hero cards, skins listed separately (none yet)');
   ok($$('.catPicks .s3card').length === 30, 'all picks listed by category');
   ok($$('.s3card.owned .ownBadge').length >= 2 && $$('.s3card.owned').every((c) => !c.querySelector('.c3bar .price')), 'owned overrides the price tag');
   ok($$('.s3card').every((c) => !c.querySelector('.rarlbl2') && !c.querySelector('.typeTag') && !c.querySelector('.newTag')), 'no rarity/type/new text tags on cards');

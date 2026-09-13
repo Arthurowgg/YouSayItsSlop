@@ -84,7 +84,16 @@ def audit_icon(path, kind, max_frags=3):
        f'fill {fill:.2f} frags {len(big)}')
 
 
-def audit_strip(path, hid, frames=78):
+SEGMENTS = [  # (name, first, last, kind) over the 42-frame universal strip
+    ('idle', 0, 5, 'ground'), ('walk', 6, 11, 'ground'), ('attack', 12, 17, 'ground'),
+    ('ability', 18, 23, 'free'), ('jump', 24, 25, 'air'), ('fall', 26, 27, 'air'),
+    ('land', 28, 29, 'ground'), ('hurt', 30, 31, 'ground'), ('death', 32, 35, 'free'),
+    ('sense', 36, 41, 'ground'),
+]
+GROUND_TOL = {'idle': 1, 'walk': 2, 'attack': 3, 'land': 3, 'hurt': 4, 'sense': 2}
+
+
+def audit_strip(path, hid, frames=42):
     if not os.path.exists(path):
         bad(f'strip {hid}: missing')
         return None
@@ -95,9 +104,12 @@ def audit_strip(path, hid, frames=78):
         bad(f'strip {hid}: height {h} != 48')
         return None
     if w != 48 * frames:
-        bad(f'strip {hid}: width {w} != {48*frames} ({w//48} frames)')
+        bad(f'strip {hid}: width {w} != {48 * frames} ({w // 48} frames)')
         frames = w // 48
-    feet, tops, counts = [], [], []
+    semi = int(((a > 0) & (a < 255)).sum())
+    if semi:
+        bad(f'strip {hid}: {semi} semi-transparent pixels (pixel art must be binary alpha)')
+    feet, tops, counts = {}, {}, []
     for f in range(frames):
         fa = a[:, f * 48:(f + 1) * 48]
         m = fa > 24
@@ -105,42 +117,47 @@ def audit_strip(path, hid, frames=78):
             bad(f'strip {hid}: frame {f} empty ({m.sum()} px)')
             continue
         ys, xs = np.where(m)
-        feet.append(ys.max())
-        tops.append(ys.min())
-        counts.append(m.sum())
-    # core anims (idle/walk/attack/power, frames 0..17) must stand on one
-    # ground line; emote loops (18+) may hop but never sink below it, and
-    # raised arms/jumps may lift their tops further than core frames.
-    cf, ct = feet[:18], tops[:18]
-    ef, et = feet[18:], tops[18:]
-    # idle & attack stand planted; walk strides bob 1px; power may hop.
-    for name, seg, tol in (('idle', feet[0:4], 1), ('walk', feet[4:10], 2),
-                           ('attack', feet[10:14], 1), ('power', feet[14:18], 5)):
-        if seg and max(seg) - min(seg) > tol:
-            bad(f'strip {hid}: {name} ground drifts {min(seg)}..{max(seg)} (flicker)')
-    if ct and (max(ct) - min(ct) > 14):
-        bad(f'strip {hid}: core tops drift {min(ct)}..{max(ct)} (mis-crop)')
-    if ef and cf:
-        if max(ef) - min(ef) > 6:
-            bad(f'strip {hid}: emote feet drift {min(ef)}..{max(ef)} (flicker)')
-        if max(ef) > max(cf) + 1:
-            bad(f'strip {hid}: emote sinks below ground ({max(ef)} > {max(cf)})')
-    if et and (max(et) - min(et) > 20):
-        bad(f'strip {hid}: emote tops drift {min(et)}..{max(et)} (mis-crop)')
-    ok(f'strip  {hid:22s} {w}x{h} frames {frames} feet {min(feet)}-{max(feet)} '
-       f'tops {min(tops)}-{max(tops)} px/frame {int(sum(counts)/len(counts))}')
+        feet[f] = int(ys.max())
+        tops[f] = int(ys.min())
+        counts.append(int(m.sum()))
+    ground = max(feet[f] for f in range(0, 6) if f in feet)
+    for name, lo, hi, kind in SEGMENTS:
+        seg_f = [feet[f] for f in range(lo, hi + 1) if f in feet]
+        seg_t = [tops[f] for f in range(lo, hi + 1) if f in feet]
+        if not seg_f:
+            bad(f'strip {hid}: {name} has no readable frames')
+            continue
+        if kind == 'ground':
+            tol = GROUND_TOL[name]
+            if max(seg_f) - min(seg_f) > tol:
+                bad(f'strip {hid}: {name} ground drifts {min(seg_f)}..{max(seg_f)} (flicker)')
+            if max(seg_f) > ground + 1:
+                bad(f'strip {hid}: {name} sinks below baseline ({max(seg_f)} > {ground})')
+        elif kind == 'air':
+            if max(seg_f) > ground - 3:
+                bad(f'strip {hid}: {name} not airborne (feet {max(seg_f)} vs ground {ground})')
+        if name in ('idle', 'walk', 'sense') and max(seg_t) - min(seg_t) > 8:
+            bad(f'strip {hid}: {name} head-top drifts {min(seg_t)}..{max(seg_t)} (mis-crop)')
+    if tops.get(35, 99) < tops.get(0, 0) + 6:
+        bad(f'strip {hid}: death end pose not lowered (lying down expected)')
+    ok(f'strip  {hid:22s} {w}x{h} frames {frames} ground {ground} feet {min(feet.values())}-{max(feet.values())} '
+       f'tops {min(tops.values())}-{max(tops.values())} px/frame {int(sum(counts) / len(counts))}')
     return a
 
 
-def sheet(a, name, frames=18, scale=3):
-    """contact sheet of the first N frames for visual frame-by-frame review"""
+def sheet(a, name, frames=42, scale=3, per_row=14):
+    """contact sheet (rows of per_row frames) for frame-by-frame visual review"""
     rgba = np.dstack([a, np.full(a.shape[:2], 255, np.uint8)]) if a.ndim == 2 else a
     n = min(frames, rgba.shape[1] // 48)
-    out = Image.new('RGBA', (n * 48 * scale, 48 * scale), (24, 26, 34, 255))
+    rows = (n + per_row - 1) // per_row
+    out = Image.new('RGBA', (per_row * 48 * scale, rows * 48 * scale), (24, 26, 34, 255))
     for f in range(n):
-        fr = Image.fromarray(rgba[:, f * 48:(f + 1) * 48]).convert('RGBA').resize((48 * scale, 48 * scale), Image.NEAREST)
-        out.paste(fr, (f * 48 * scale, 0), fr)
-    out.save(f'/tmp/va_{name}.png')
+        fr = Image.fromarray(rgba[:, f * 48:(f + 1) * 48]).convert('RGBA').resize(
+            (48 * scale, 48 * scale), Image.NEAREST)
+        out.paste(fr, ((f % per_row) * 48 * scale, (f // per_row) * 48 * scale), fr)
+    outdir = os.path.join(ROOT, '.shot')
+    os.makedirs(outdir, exist_ok=True)
+    out.save(os.path.join(outdir, f'va_{name}.png'))
 
 
 def main():
@@ -160,7 +177,7 @@ def main():
     print('== animation strips ==')
     for h in cat['heroes']:
         a = audit_strip(os.path.join(PUB, 'assets', 'anim', h['id'] + '.png'), h['id'])
-        if a is not None and h['id'] in ('spiderman', 'ironman', 'hulk', 'gwen'):
+        if a is not None:
             sheet(np.array(Image.open(os.path.join(PUB, 'assets', 'anim', h['id'] + '.png')).convert('RGBA')), h['id'])
 
     print('== emote metadata (generic system) ==')

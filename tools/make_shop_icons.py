@@ -202,7 +202,13 @@ def finish(cell, name, ratio_hint=None):
     return True
 
 
+import json as _json
+_CAT = _json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public', 'data', 'catalog.json')))
+_KNOWN = set([x['id'] for k in ('heroes', 'picks', 'gliders', 'emotes') for x in _CAT.get(k, [])])
+
+
 def row(sheet, cols, names, ratio_hint=None, rows=1):
+    names = [n if n in _KNOWN else None for n in names]  # pruned roster: skip
     """names laid out left-to-right, top-to-bottom across rows."""
     print('[%s]' % sheet)
     img = load(sheet)

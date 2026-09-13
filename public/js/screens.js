@@ -3,7 +3,7 @@ import { el, fmt, pick, coinDataURL } from './util.js';
 import { store } from './store.js';
 import { sfx, confetti } from './fx.js';
 import { deployMatch } from './match.js';
-import { Animator, preloadHero, GLIDER_OFF } from './anim.js';
+import { Animator, preloadHero, blingMeta } from './anim.js';
 import { bus } from './bus.js';
 
 const C = () => store.catalog;
@@ -60,7 +60,7 @@ function statBars(id) {
 
 function animChips(stageEl) {
   const chips = el('div', { class: 'animChips' });
-  [['idle', 'PARADO'], ['walk', 'ANDAR'], ['attack', 'ATACAR'], ['power', 'PODER']].forEach(([id, label], i) => {
+  [['idle', 'PARADO'], ['walk', 'ANDAR'], ['attack', 'ATACAR'], ['ability', 'ESPECIAL'], ['jump', 'SALTO'], ['hurt', 'DANO']].forEach(([id, label], i) => {
     chips.append(el('button', {
       class: `chip ${i === 0 ? 'sel' : ''}`,
       onclick: (e) => {
@@ -222,7 +222,7 @@ function blingCanvas(heroId, gliderId, S) {
   ctx.imageSmoothingEnabled = false;
   Promise.all([preloadHero(heroId), gliderImg(gliderId)]).then(([h, g]) => {
     if (g && g.width <= 40) {
-      const off = GLIDER_OFF[gliderId] || { dx: 0, dy: 8 };
+      const off = blingMeta(gliderId);
       const gw = g.width, gh = g.height;
       ctx.drawImage(g, 0, 0, gw, gh,
         Math.round((48 - gw) / 2 + off.dx) * S, off.dy * S, gw * S, gh * S);
@@ -330,15 +330,15 @@ function shopCats() {
           el('span', { class: 'catTag' }, cat.tag || '')),
         el('span', { class: 'catCount' }, `${itemCount} ITENS`)));
 
-    const top = el('div', { class: 'catTop' });
+    const group = (label, node) => el('div', { class: 'catGrp' },
+      el('span', { class: 'grpLbl' }, label), node);
+
     if (b) {
-      const bg = cat.gliders.find((g) => (b.items.includes(g))) || b.items.find((i) => i.startsWith('glider'));
-      top.append(bundleCard3(b, firstHero, bg || null));
+      sec.append(group('PACOTE', el('div', { class: 'catBundle' }, bundleCard3(b, firstHero, null))));
     }
     const blings = el('div', { class: 'catBlings' });
-    cat.gliders.forEach((gid) => { const g = C().gliders.find((x) => x.id === gid); if (g) blings.append(blingCard3(g, firstHero)); });
-    top.append(blings);
-    sec.append(top);
+    cat.gliders.forEach((gid) => { const g = C().gliders.find((x) => x.id === gid); if (g) blings.append(blingCard3(g, heroOf().id)); });
+    sec.append(group('BACK BLINGS', blings));
 
     const famRow = el('div', { class: 'catFams' });
     fams.forEach((f) => {
@@ -352,12 +352,12 @@ function shopCats() {
       }
       famRow.append(box);
     });
-    sec.append(famRow);
+    sec.append(group('HERÓIS', famRow));
 
     if (cat.picks && cat.picks.length) {
       const pr = el('div', { class: 'catPicks' });
       cat.picks.forEach((pid) => { const p = C().picks.find((x) => x.id === pid); if (p) pr.append(pickCard3(p)); });
-      sec.append(pr);
+      sec.append(group('RELÍQUIAS', pr));
     }
 
     scroller.append(sec);

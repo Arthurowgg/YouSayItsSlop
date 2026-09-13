@@ -15,17 +15,21 @@
 //   * sheets are decoded once and cached; a re-render attaches them
 //     synchronously, so UI updates never flash a blank canvas.
 //
-// Strip layout (78 frames of 48px): idle[0..3] walk[4..9] attack[10..13]
-// power[14..17]; frames 18+ are legacy emote poses, no longer surfaced.
+// Strip layout (36 frames of 48px) - see docs/SPRITE_SPEC.md.
 export const FRAME = 48;
-export const STRIP_FRAMES = 78;
+export const STRIP_FRAMES = 42;
 export const ANIMS = {
-  idle:   { start: 0,  count: 4, fps: 4,  loop: true },
-  walk:   { start: 4,  count: 6, fps: 9,  loop: true },
-  attack: { start: 10, count: 4, fps: 10, loop: false },
-  power:  { start: 14, count: 4, fps: 8,  loop: false },
+  idle:    { start: 0,  frames: 6, fps: 4,  loop: true  },
+  walk:    { start: 6,  frames: 6, fps: 9,  loop: true  },
+  attack:  { start: 12, frames: 6, fps: 10, loop: false },
+  ability: { start: 18, frames: 6, fps: 8,  loop: false },
+  jump:    { start: 24, frames: 2, fps: 8,  loop: false },
+  fall:    { start: 26, frames: 2, fps: 6,  loop: true  },
+  land:    { start: 28, frames: 2, fps: 10, loop: false },
+  hurt:    { start: 30, frames: 2, fps: 10, loop: false },
+  death:   { start: 32, frames: 4, fps: 6,  loop: false },
+  sense:   { start: 36, frames: 6, fps: 6,  loop: false }
 };
-
 let FPS_CAP = 60;
 export function setFpsCap(n) { FPS_CAP = Math.max(10, n | 0) || 60; }
 
@@ -57,15 +61,11 @@ export function preloadHero(id) {
   return entry.p;
 }
 
-// back-bling carry offsets in frame px (native 32px sprites drawn behind
-// the hero); anything unmapped rides centred on the back.
-export const GLIDER_OFF = {
-  glider_wings: { dx: 0, dy: 8 }, glider_shield: { dx: -8, dy: 10 },
-  glider_cosmic: { dx: -9, dy: 10 }, glider_claws: { dx: 8, dy: 9 },
-  glider_portal: { dx: 8, dy: 9 }, glider_webwings: { dx: 0, dy: 7 },
-  glider_storm: { dx: -9, dy: 9 }, glider_panther: { dx: 0, dy: 9 },
-  glider_holo: { dx: -7, dy: 9 }, glider_valkyrie: { dx: 0, dy: 7 },
-};
+// Back-bling attachment metadata, configured once from catalog.json
+// (attach: {dx, dy, s, layer}) - fitted by data, never hard-coded here.
+let BLING_META = {};
+export function configureBling(meta) { BLING_META = meta || {}; }
+export const blingMeta = (id) => BLING_META[id] || { dx: 0, dy: 8, s: 1, layer: 'behind' };
 
 // ---- the single global ticker ----
 const TICK = { set: new Set(), raf: 0, last: 0 };
@@ -172,6 +172,7 @@ export class Animator {
     this.gid = gliderId;
     this.gsingle = img.width === img.height;
     this.gnative = img.width <= 40;   // purpose-built back-bling sprite
+    this.gmeta = blingMeta(gliderId);
     this.dirty = true;
   }
 
@@ -222,25 +223,29 @@ export class Animator {
     const f = this.frame;
     // one source frame, drawn 1:1 on the integer grid: no transforms, no bleed
     const src = Math.min(A.start + f, this.frames - 1) * this.res;
-    if (this.gimg) {
-      const off = GLIDER_OFF[this.gid] || { dx: 0, dy: 8 };
+    const drawBling = (front) => {
+      const m = this.gmeta || { dx: 0, dy: 8, s: 1, layer: 'behind' };
+      if ((m.layer === 'front') !== front) return;
       const sway = [0, -1, 0, 1][f % 4];
+      const sc = m.s === 0.5 ? 0.5 : m.s === 2 ? 2 : 1;
       if (this.gnative) {
-        // native-size back bling, integer-upscaled behind the hero
-        const gw = this.gimg.width, gh = this.gimg.height;
-        c.drawImage(this.gimg, 0, 0, gw, gh,
-          Math.round((FRAME - gw) / 2 + off.dx) * S, (off.dy + sway) * S,
+        // native-size back bling, integer-upscaled at its attach point
+        const gw = this.gimg.width * sc, gh = this.gimg.height * sc;
+        c.drawImage(this.gimg, 0, 0, this.gimg.width, this.gimg.height,
+          Math.round((FRAME - gw) / 2 + m.dx) * S, (m.dy + sway) * S,
           gw * S, gh * S);
       } else if (this.gsingle) {
         c.drawImage(this.gimg, 0, 0, this.gimg.width, this.gimg.height,
-          off.dx * S, (off.dy + sway) * S - 4 * S, FRAME * S, FRAME * S);
+          m.dx * S, (m.dy + sway) * S - 4 * S, FRAME * S, FRAME * S);
       } else {
         const gr = this.gimg.height, gw = Math.round(this.gimg.width / gr);
         const gf = gw > 1 ? (Math.floor(f / 2) % gw) : 0;
-        c.drawImage(this.gimg, gf * gr, 0, gr, gr, off.dx * S, (off.dy + sway) * S, FRAME * S, FRAME * S);
+        c.drawImage(this.gimg, gf * gr, 0, gr, gr, m.dx * S, (m.dy + sway) * S, FRAME * S, FRAME * S);
       }
-    }
+    };
+    if (this.gimg) drawBling(false);
     c.drawImage(this.img, src, 0, this.res, this.res, 0, 0, FRAME * S, FRAME * S);
+    if (this.gimg) drawBling(true);
     if (ANIM_DEBUG) {
       const u = S;
       c.strokeStyle = 'rgba(0,255,120,.9)'; c.lineWidth = Math.max(1, u * 0.4);

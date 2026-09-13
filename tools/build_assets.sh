@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Full asset pipeline: slice the AI sheets (art_ai/) into every game asset.
 #   1. shop icons   : picks / gliders / emote icons   (make_shop_icons.py)
-#   2. hero icons + 78-frame animation strips         (make_ai_assets.py)
+#   2. hero icons + 78-frame animation strips         (make_ai2_assets.py, make_ai_assets.py)
 #   3. UI-only pixel icons (coin, settings)           (make_sprites.py)
 #   4. audit everything                               (validate_assets.py)
 # Needs pillow + numpy + scipy in .venv (created on first run).
@@ -20,6 +20,7 @@ echo "== [1/4] shop icons (picks / gliders / emotes) =="
 "$PY" tools/make_shop_icons.py
 
 echo "== [2/4] hero icons + animation strips =="
+"$PY" tools/make_ai2_assets.py
 "$PY" tools/make_ai_assets.py
 
 echo "== [3/4] UI pixel icons (coin / settings) =="

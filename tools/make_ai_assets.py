@@ -646,6 +646,8 @@ def build_backblings():
         src = os.path.join(SPR, gid + '.png')
         if not os.path.exists(src):
             continue
+        if os.path.exists(os.path.join(ROOT, 'art2', 'bling_%s.png' % gid.replace('glider_h_', '', 1) if gid.startswith('glider_h_') else '__none__')):
+            continue  # native sprite generated directly by make_ai2_assets.py
         ic = np.array(Image.open(src).convert('RGBA'))
         a = ic[:, :, 3] > 24
         if a.sum() < 16:
@@ -689,6 +691,8 @@ def main():
     os.makedirs(ANIM, exist_ok=True)
     heroes = args.only or HEROES
     for hid in heroes:
+        if os.path.exists(os.path.join(ROOT, 'art2', 'sheet_%s.png' % hid)):
+            continue  # rebuilt by make_ai2_assets.py from purpose-made sheets
         art = HeroArt(hid)
         strip = art.strip()
         Image.fromarray(strip, 'RGBA').save(os.path.join(ANIM, hid + '.png'))

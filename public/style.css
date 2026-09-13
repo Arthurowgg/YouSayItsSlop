@@ -1038,19 +1038,21 @@ body.reduce-motion .p2card.sel .p2tile { animation: none; }
 
 /* ============ SHOP v3: categorias com scroll-snap ============ */
 .shop3wrap { position: relative; height: 100%; min-height: 0; }
-.shop3 { height: 100%; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: thin; scrollbar-color: var(--panel2) transparent; }
+.shop3 { height: 100%; overflow-y: auto; scroll-snap-type: none; scrollbar-width: thin; scrollbar-color: var(--panel2) transparent; }
 .shop3::-webkit-scrollbar { width: 8px; }
 .shop3::-webkit-scrollbar-thumb { background: var(--panel2); border-radius: 4px; }
-.shopSec { min-height: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: flex; flex-direction: column; gap: 12px; padding: 6px 56px 18px 10px; box-sizing: border-box; }
+.shopSec { display: flex; flex-direction: column; gap: 12px; padding: 10px 56px 26px 10px; box-sizing: border-box; border-bottom: 1px solid var(--line); }
+.shopSec:last-child { border-bottom: 0; }
 .catHead { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
 .catTit { display: flex; flex-direction: column; gap: 2px; }
 .catKick { font-size: 12px; letter-spacing: 3px; color: var(--dim); }
 .catName { font-family: var(--pix); font-size: 28px; line-height: 1.1; color: var(--rc, var(--cyan)); text-shadow: 0 3px 0 rgba(0, 0, 0, .55), 0 0 18px color-mix(in srgb, var(--rc, #35e0ff) 45%, transparent); }
 .catTag { font-size: 14px; color: var(--dim); }
 .catCount { font-size: 13px; color: var(--dim); border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px; flex: none; }
-.catTop { display: flex; gap: 14px; align-items: stretch; }
-.catBlings, .catFams, .catPicks { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
-.catBlings { flex: 1; min-width: 0; }
+.catGrp { display: flex; flex-direction: column; gap: 8px; }
+.grpLbl { font-size: 11px; letter-spacing: 2.5px; color: var(--dim); }
+.catBundle { display: flex; }
+.catBlings, .catFams, .catPicks { display: flex; flex-wrap: wrap; gap: 10px; }
 .catFams { gap: 12px; }
 .famBox { display: flex; gap: 8px; align-items: flex-end; flex: none; }
 .skinRow { display: flex; flex-direction: column; gap: 8px; }

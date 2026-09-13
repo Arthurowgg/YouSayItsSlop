@@ -8,7 +8,7 @@ export function defaultSave() {
     coins: COIN_BASE,
     level: 1,
     xp: 0,
-    owned: ['spiderman', 'blackwidow'],
+    owned: ['spiderman', 'blackpanther'],
     picks: ['pick_axe'],
     gliders: [],
     equipped: { hero: 'spiderman', style: 'default', pick: 'pick_axe', glider: null },

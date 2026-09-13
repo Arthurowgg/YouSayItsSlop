@@ -2,7 +2,7 @@
 import { el, fmt, coinDataURL } from './util.js';
 import { store } from './store.js';
 import { startParticles, setParticlesEnabled, setVolume, setHoverEnabled, sfx, toggleMute, isMuted } from './fx.js';
-import { setFpsCap, debugPause, debugStep } from './anim.js';
+import { setFpsCap, debugPause, debugStep, configureBling } from './anim.js';
 import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast, modal, shopHome } from './screens.js';
 import { setAnimDebug, getAnimDebug } from './anim.js';
 import { bus } from './bus.js';
@@ -257,6 +257,7 @@ const storeMod = { defaultSave: null };
 
 async function boot() {
   await store.load();
+  configureBling(Object.fromEntries((store.catalog.gliders || []).map((g) => [g.id, g.attach || {}])));
 
   const ci = document.getElementById('coinIcon');
   ci.addEventListener('error', () => { ci.src = coinDataURL(18); }, { once: true });
