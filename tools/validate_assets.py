@@ -108,11 +108,25 @@ def audit_strip(path, hid, frames=78):
         feet.append(ys.max())
         tops.append(ys.min())
         counts.append(m.sum())
-    if feet and (max(feet) - min(feet) > 1):
-        bad(f'strip {hid}: ground line drifts {min(feet)}..{max(feet)} (flicker)')
-    # raised hands/fx may rise above the head; >6 means mis-extracted frames
-    if tops and (max(tops) - min(tops) > 6):
-        bad(f'strip {hid}: frame content drifts {min(tops)}..{max(tops)} (mis-crop)')
+    # core anims (idle/walk/attack/power, frames 0..17) must stand on one
+    # ground line; emote loops (18+) may hop but never sink below it, and
+    # raised arms/jumps may lift their tops further than core frames.
+    cf, ct = feet[:18], tops[:18]
+    ef, et = feet[18:], tops[18:]
+    # idle & attack stand planted; walk strides bob 1px; power may hop.
+    for name, seg, tol in (('idle', feet[0:4], 1), ('walk', feet[4:10], 2),
+                           ('attack', feet[10:14], 1), ('power', feet[14:18], 5)):
+        if seg and max(seg) - min(seg) > tol:
+            bad(f'strip {hid}: {name} ground drifts {min(seg)}..{max(seg)} (flicker)')
+    if ct and (max(ct) - min(ct) > 10):
+        bad(f'strip {hid}: core tops drift {min(ct)}..{max(ct)} (mis-crop)')
+    if ef and cf:
+        if max(ef) - min(ef) > 6:
+            bad(f'strip {hid}: emote feet drift {min(ef)}..{max(ef)} (flicker)')
+        if max(ef) > max(cf) + 1:
+            bad(f'strip {hid}: emote sinks below ground ({max(ef)} > {max(cf)})')
+    if et and (max(et) - min(et) > 20):
+        bad(f'strip {hid}: emote tops drift {min(et)}..{max(et)} (mis-crop)')
     ok(f'strip  {hid:22s} {w}x{h} frames {frames} feet {min(feet)}-{max(feet)} '
        f'tops {min(tops)}-{max(tops)} px/frame {int(sum(counts)/len(counts))}')
     return a

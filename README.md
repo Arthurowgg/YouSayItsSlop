@@ -27,7 +27,7 @@ static catalog, so the repo itself can host the game.
 ```bash
 npm start          # serves http://0.0.0.0:8080 (static menu + JSON API)
 npm run smoke      # headless runtime test: bundles the ES modules, clicks through every tab (21 assertions)
-npm run assets     # re-slice generated sprite sheets into public/assets/spr/
+npm run assets     # rebuild ALL assets from the art_ai sheets + audit
 ```
 
 No runtime dependencies — the server is Node's built-in `http` module. The client also
@@ -49,6 +49,11 @@ no full re-render on state change, ~30fps particle canvas, static backgrounds, n
 
 ## Architecture (ready for the real game)
 
+> **All character art** (hero icons, 78-frame animation strips, pick / glider /
+> emote icons) is sliced from the committed AI sheets in `art_ai/` — see
+> *Art pipeline* below. Only UI chrome (coin, settings glyphs, maps, mode
+> tiles) is painted by code.
+
 ```
 server.js            zero-dep static + API server (binds 0.0.0.0, PORT env)
   GET  /api/catalog  -> data/catalog.json (heroes, gear, modes, maps, styles, tasks, rarities)
@@ -68,20 +73,25 @@ public/
   js/match.js        simulated match: RANDOM map at start -> results -> rewards
   js/fx.js           lightweight particle canvas + WebAudio 8-bit sfx + confetti
   js/util.js         DOM/helpers + procedural coin fallback
-  assets/spr/*.png   item/mode/coin icons (kept, hand-painted 16x16)
-  assets/anim/*.png  in-game hero animation strips (12 frames of 24x24)
-  assets/maps/*.png  five 192x108 side-view 2D battle maps
+  assets/spr/*.png   96x96 cosmetic icons: heroes/emotes/picks/gliders sliced
+                     from the AI sheets; coin + settings glyphs hand-painted
+  assets/anim/*.png  in-game hero strips: 78 frames of 48px (idle/walk/
+                     attack/power + 10 emote loops), sliced from AI sheets
+  assets/maps/*.png  five 480x268 side-view 2D battle maps
 tools/
-  build_assets.sh    slices magenta-bg AI sheets into transparent bust sprites
-  make_shop_icons.py re-slices emote/pick/glider sheets into clean transparent
+  build_assets.sh    ONE-STOP pipeline: venv bootstrap -> shop icons ->
+                     hero icons + strips -> UI icons -> audit
+  make_shop_icons.py slices emote/pick/glider sheets into clean transparent
                      96x96 icons (bg flood-key, nearest-neighbor downscale)
-  make_sprites.py    deterministic hand-painted 16x16 item icons
-  make_heroes.py     parametric hero strips (idle/walk/attack/power + 10 emote
-                     sequences per hero) and bakes emote icons from a neutral
-                     "dancer" rig so icons == in-game animation
+  make_ai_assets.py  slices grid_/anim_ hero sheets: edge-extract -> seam &
+                     shadow removal -> cell sprites -> integer downscale ->
+                     grounded 48px frames + choreographed emote dance loops
+  make_sprites.py    hand-painted UI icons only (coin, settings glyphs)
   validate_assets.py audits every cosmetic icon + strip (transparency, crops,
-                     ground-line stability, emote metadata); exits 1 on problems
-  make_maps.py       paints the five 2D maps + survival mode icon
+                     ground-line stability per anim segment, emote metadata);
+                     exits 1 on problems
+  make_maps.py       paints the five 2D maps
+  make_mode_icons.py paints the 1v1 / domination mode tiles
   smoke_test.js      jsdom end-to-end click-through (npm run smoke)
 ```
 
@@ -91,7 +101,32 @@ tasks{}, dev{noCooldown,unlockAll} }` — a real backend can swap in behind the 
 
 ## Art pipeline
 
-Hero portraits were generated as 16-bit-style sprite sheets on magenta backgrounds and
-sliced/chroma-keyed by `tools/build_assets.sh` (cell maps are in the script). Item icons,
-mode tiles and the coin are painted pixel-by-pixel by `tools/make_sprites.py` — edit the
-paint functions to restyle them. `art_raw/` (source sheets) is git-ignored.
+Every character asset in the game comes from the AI-generated sprite sheets
+committed in `art_ai/` (16-bit chibi style, one sheet set per hero):
+
+| sheet | content | becomes |
+| --- | --- | --- |
+| `grid_<hero>.png` | 4 rows: idle / walk / attack / power poses | strip frames 0-17 + hero icon |
+| `anim_<hero>.png` | 4 key poses (stand, stride, jump-flex, variant) | emote dance poses + strips for heroes without a grid sheet |
+| `emotes_a/b.png` | 10 themed emote poses | `spr/emote_*.png` shop icons |
+| `picks*_sheet.png` | pickaxe sets | `spr/pick_*.png` |
+| `gliders*_sheet.png` | glider sets | `spr/glider_*.png` |
+
+`tools/build_assets.sh` runs the whole chain (creates `.venv` with
+pillow/numpy/scipy on first run):
+
+1. `make_shop_icons.py` — flood-keys the flat navy backdrops / plates and
+   slices picks, gliders and emote icons at integer downscale ratios;
+2. `make_ai_assets.py` — extracts the line art (gradient -> close -> fill),
+   strips grid seams, ground shadows and detached-fx fragments, slices every
+   pose on the sheet grid, downscales with NEAREST at one ratio per sheet,
+   grounds all core frames on a shared feet line and choreographs the 10
+   emote loops per hero from their own poses (integer bob / hop / mirror /
+   sway — zero repainting, zero runtime transforms);
+3. `make_sprites.py` — the few hand-painted UI glyphs (coin, settings);
+4. `validate_assets.py` — fails the build on halos, crops, fragment counts,
+   wrong frame counts or ground-line flicker.
+
+Heroes without a grid sheet (style variants, Hawkeye, Strange, Wanda,
+Panther, Captain Marvel, Ant-Man) get their cycles synthesised from their
+4-key-pose `anim_` sheet, so all 20 heroes ship AI art end to end.

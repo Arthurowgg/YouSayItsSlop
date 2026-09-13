@@ -79,137 +79,7 @@ def coin():
     cv.star(7.5, 8, 3, (200, 140, 10))
     return cv
 
-# ---------------- pickaxes ----------------
-def pick(kind):
-    cv = C()
-    cv.line(3, 13, 12, 4, BROWN)      # handle
-    cv.line(4, 13, 12, 5, (90, 60, 25))
-    if kind == "axe":
-        cv.rect(10, 1, 4, 3, STEEL); cv.rect(11, 4, 3, 2, STEEL); cv.set(10, 1, WHT)
-    elif kind == "hammer":
-        cv.rect(9, 0, 6, 4, GOLD); cv.rect(9, 0, 6, 1, LITE); cv.set(14, 1, CYAN); cv.set(10, 4, CYAN)
-    elif kind in ("ice", "scythe"):
-        col = ICE if kind == "ice" else PURP
-        edge = WHT if kind == "ice" else PINK
-        # curved head arc
-        for a in range(0, 90, 6):
-            x = 12 + 5 * math.cos(math.radians(a + 90))
-            y = 4 + 5 * math.sin(math.radians(a + 90))
-            cv.line(int(x), int(y), 12, 4, col)
-        cv.set(9, 0, edge); cv.set(7, 1, edge)
-        if kind == "ice":
-            cv.set(5, 2, ICE); cv.set(14, 6, ICE)
-    return cv
-
-# ---------------- gliders / back bling ----------------
-def glider(kind):
-    cv = C()
-    if kind == "wings":
-        for i in range(7):
-            h = 7 - abs(i - 3)
-            cv.vline(6 - i, 8 - h, 8, WHT); cv.vline(9 + i, 8 - h, 8, WHT)
-            cv.set(6 - i, 8 - h, GOLD); cv.set(9 + i, 8 - h, GOLD)
-        cv.rect(7, 6, 2, 4, GOLD)
-    elif kind == "shield":
-        cv.circle(7.5, 7.5, 6.5, RED, fill=True)
-        cv.circle(7.5, 7.5, 4.6, WHT, fill=True)
-        cv.circle(7.5, 7.5, 2.8, BLUE, fill=True)
-        cv.star(7.5, 7.5, 2, WHT)
-    elif kind == "cosmic":
-        for y in range(3, 14):
-            w = 3 + (y - 3) // 2
-            cv.hline(7 - w, 8 + w, y, (60, 20, 110))
-        for (x, y) in [(6, 5), (9, 7), (5, 9), (10, 10), (7, 12)]: cv.set(x, y, WHT)
-        cv.hline(5, 10, 3, PURP)
-    elif kind == "claws":
-        cv.vline(3, 1, 14, BROWN)
-        cv.rect(4, 2, 10, 8, BLK)
-        for i in range(3): cv.line(6 + i * 3, 3, 8 + i * 3, 9, STEEL)
-    return cv
-
-# ---------------- emotes (chibi figure poses) ----------------
-def figure(cv, arms):
-    cv.rect(6, 2, 4, 4, SKIN)              # head
-    cv.hline(6, 9, 2, HAIR)
-    cv.rect(6, 6, 4, 5, JUMP)              # torso
-    cv.vline(6, 11, 14, (50, 60, 90)); cv.vline(9, 11, 14, (50, 60, 90))  # legs
-    for (x0, y0, x1, y1) in arms: cv.line(x0, y0, x1, y1, JUMP)
-
-def emote(kind):
-    cv = C()
-    if kind == "dance":
-        figure(cv, [(6, 7, 3, 4), (9, 7, 12, 10)])
-        cv.set(2, 2, CYAN); cv.set(3, 3, CYAN); cv.set(13, 8, PINK)
-        cv.line(6, 14, 5, 14, (50, 60, 90))
-    elif kind == "salute":
-        figure(cv, [(6, 7, 5, 10), (9, 7, 11, 4), (11, 4, 12, 3)])
-    elif kind == "flex":
-        figure(cv, [(6, 7, 3, 7), (3, 7, 3, 4), (9, 7, 12, 7), (12, 7, 12, 4)])
-        cv.set(3, 3, SKIN); cv.set(12, 3, SKIN)
-    elif kind == "heart":
-        figure(cv, [(6, 7, 4, 3), (9, 7, 11, 3)])
-        for (x, y) in [(6, 1), (8, 1), (5, 2), (7, 2), (9, 2), (6, 3), (8, 3), (7, 4)]: cv.set(x, y, PINK)
-    return cv
-
-# ---------------- mode tiles ----------------
-def mode(kind):
-    cv = C()
-    if kind == "br":
-        cv.circle(7.5, 8, 6.6, PURP)                    # storm ring
-        cv.circle(7.5, 8, 4.5, (40, 140, 90), fill=True)  # island
-        cv.rect(6, 6, 2, 2, (220, 200, 120)); cv.set(9, 9, (30, 90, 60))
-    elif kind == "rumble":
-        for (x, y) in [(2, 5), (3, 8), (2, 11), (4, 6)]: cv.rect(x, y, 2, 3, RED)
-        for (x, y) in [(12, 5), (11, 8), (12, 11), (10, 6)]: cv.rect(x, y, 2, 3, BLUE)
-        for (x, y) in [(7, 6), (8, 8), (7, 10)]: cv.set(x, y, GOLD)
-    elif kind == "stw":
-        cv.rect(5, 5, 6, 6, WOOD); cv.rect(5, 5, 6, 1, BROWN); cv.rect(7, 8, 2, 3, BROWN)
-        cv.vline(7, 2, 4, WOOD); cv.rect(6, 1, 3, 2, CYAN)
-        for (x, y) in [(1, 9), (2, 12), (13, 10), (12, 13)]: cv.rect(x, y, 2, 3, GREEN)
-    elif kind == "creative":
-        cv.rect(3, 10, 10, 3, (120, 90, 60))
-        for (x, y, c) in [(4, 8, RED), (6, 8, BLUE), (8, 8, GREEN), (5, 6, ORNG), (7, 6, PURP), (6, 4, CYAN)]:
-            cv.rect(x, y, 2, 2, c)
-        cv.line(12, 10, 12, 2, STEEL); cv.hline(9, 12, 2, STEEL); cv.vline(9, 2, 4, STEEL)
-    return cv
-
-def emote24(kind):
-    cv = C(24, 24)
-    hx, hy = 9, 3
-    cv.rect(hx, hy, 6, 5, SKIN); cv.hline(hx, hx + 5, hy, HAIR)
-    cv.rect(hx, 8, 6, 6, JUMP)
-    cv.vline(hx + 1, 14, 18, (50, 60, 90)); cv.vline(hx + 4, 14, 18, (50, 60, 90))
-    A = lambda x0, y0, x1, y1: cv.line(x0, y0, x1, y1, JUMP)
-    if kind == "gangnam":
-        A(9, 9, 11, 11); A(14, 9, 12, 11); cv.set(11, 11, SKIN); cv.set(12, 11, SKIN)
-        cv.line(10, 14, 7, 17, (50, 60, 90)); cv.set(5, 5, CYAN); cv.set(18, 4, PINK)
-    elif kind == "floss":
-        A(9, 10, 4, 11); A(14, 10, 19, 9); cv.set(4, 11, SKIN); cv.set(19, 9, SKIN)
-    elif kind == "dab":
-        cv.rect(hx - 1, hy + 1, 6, 5, SKIN); A(9, 8, 4, 4); A(14, 8, 20, 5)
-        cv.set(20, 5, SKIN); cv.set(3, 3, WHT)
-    elif kind == "moonwalk":
-        cv.rect(hx - 1, hy + 1, 6, 5, SKIN); cv.rect(hx - 1, 9, 6, 6, JUMP)
-        cv.line(hx + 1, 15, hx + 4, 18, (50, 60, 90)); cv.line(hx + 4, 14, hx + 6, 18, (50, 60, 90))
-        cv.set(19, 8, WHT); cv.set(20, 10, WHT)
-    elif kind == "robot":
-        A(9, 9, 5, 9); cv.line(5, 9, 5, 5, JUMP); cv.set(5, 4, SKIN)
-        A(14, 10, 19, 10); cv.set(19, 10, SKIN); cv.set(5, 3, CYAN)
-    elif kind == "runningman":
-        cv.line(hx + 1, 14, hx + 4, 14, (50, 60, 90)); cv.line(hx + 4, 14, hx + 4, 18, (50, 60, 90))
-        cv.line(hx + 4, 14, hx + 6, 18, (50, 60, 90)); A(9, 9, 12, 12); A(14, 9, 11, 6)
-    elif kind == "macarena":
-        A(9, 9, 16, 9); A(14, 10, 20, 10); cv.set(16, 9, SKIN); cv.set(20, 10, SKIN)
-    elif kind == "hype":
-        A(9, 8, 6, 3); A(14, 8, 17, 3); cv.vline(hx + 1, 16, 17, (50, 60, 90)); cv.vline(hx + 4, 16, 17, (50, 60, 90))
-        cv.set(11, 1, GOLD)
-    elif kind == "heart":
-        A(9, 8, 10, 4); A(14, 8, 13, 4)
-        for (x, y) in [(10, 0), (13, 0), (9, 1), (12, 1), (14, 1), (10, 2), (13, 2), (11, 2), (12, 2), (11, 3), (12, 3)]: cv.set(x, y, PINK)
-    elif kind == "groove":
-        A(14, 8, 19, 3); cv.set(19, 3, SKIN); cv.set(20, 2, GOLD); A(9, 9, 10, 12)
-    return cv
-
+# ---------------- settings icons ----------------
 def seticon(kind):
     cv = C(24, 24)
     if kind == "video":
@@ -239,61 +109,13 @@ def seticon(kind):
     return cv
 
 def main():
-    print("[paint] hand-drawn sprites")
+    """UI-only icons. ALL character / item art (heroes, picks, gliders,
+    emotes, strips) is sliced from the AI sheets by tools/make_shop_icons.py
+    and tools/make_ai_assets.py - never paint those here."""
+    print("[paint] hand-drawn UI sprites")
     save("coin", coin())
-    save("pick_axe", pick("axe"))
-    save("pick_hammer", pick("hammer"))
-    save("pick_ice", pick("ice"))
-    save("pick_scythe", pick("scythe"))
-    save("glider_wings", glider("wings"))
-    save("glider_shield", glider("shield"))
-    save("glider_cosmic", glider("cosmic"))
-    save("glider_claws", glider("claws"))
-    for k in ["gangnam", "floss", "dab", "moonwalk", "robot", "runningman", "macarena", "hype", "heart", "groove"]:
-        save(f"emote_{k}", emote24(k))
-
-    def set_video():
-        cv = C(24, 24)
-        cv.rect(4, 5, 16, 11, (120, 160, 255)); cv.rect(5, 6, 14, 9, (20, 40, 90))
-        cv.line(7, 12, 10, 9, CYAN); cv.line(10, 9, 13, 13, CYAN); cv.line(13, 13, 17, 8, CYAN)
-        cv.vline(12, 16, 18, (120, 160, 255)); cv.hline(8, 16, 18, (120, 160, 255))
-        return cv
-    def set_audio():
-        cv = C(24, 24)
-        cv.rect(5, 10, 3, 4, WHT); cv.line(8, 10, 11, 7, WHT); cv.line(8, 14, 11, 17, WHT); cv.vline(11, 7, 17, WHT)
-        cv.set(14, 9, CYAN); cv.set(15, 12, CYAN); cv.set(14, 15, CYAN)
-        cv.set(17, 7, CYAN); cv.set(18, 12, CYAN); cv.set(17, 17, CYAN)
-        return cv
-    def set_game():
-        cv = C(24, 24)
-        cv.rect(4, 8, 16, 9, (70, 90, 150)); cv.rect(5, 7, 14, 1, (70, 90, 150)); cv.rect(5, 17, 14, 1, (70, 90, 150))
-        cv.vline(8, 10, 14, WHT); cv.hline(6, 10, 12, WHT)
-        cv.set(15, 11, RED); cv.set(17, 13, GOLD)
-        return cv
-    def set_ui():
-        cv = C(24, 24)
-        cv.hline(5, 19, 7, (90, 110, 170)); cv.hline(5, 19, 12, (90, 110, 170)); cv.hline(5, 19, 17, (90, 110, 170))
-        cv.rect(8, 5, 3, 4, GOLD); cv.rect(14, 10, 3, 4, CYAN); cv.rect(6, 15, 3, 4, PINK)
-        return cv
-    def set_access():
-        cv = C(24, 24)
-        cv.rect(9, 4, 6, 6, WHT)
-        cv.rect(7, 12, 10, 6, WHT); cv.rect(6, 13, 1, 4, WHT); cv.rect(17, 13, 1, 4, WHT)
-        cv.vline(12, 12, 17, (20, 40, 90))
-        return cv
-    def set_data():
-        cv = C(24, 24)
-        cv.rect(5, 5, 14, 14, (70, 110, 200))
-        cv.rect(9, 5, 6, 4, (30, 50, 110)); cv.set(13, 6, WHT)
-        cv.rect(8, 12, 8, 7, WHT); cv.hline(9, 14, 14, (70, 110, 200)); cv.hline(9, 14, 16, (70, 110, 200))
-        cv.set(18, 5, BLK)
-        return cv
     for k in ["video", "audio", "game", "ui", "access", "data"]:
         save(f"set_{k}", seticon(k))
-    save("mode_br", mode("br"))
-    save("mode_rumble", mode("rumble"))
-    save("mode_stw", mode("stw"))
-    save("mode_creative", mode("creative"))
     print("done.")
 
 
