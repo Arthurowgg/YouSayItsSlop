@@ -42,7 +42,7 @@ ANIM = os.path.join(PUB, 'assets', 'anim')
 SHOT = os.path.join(ROOT, '.shot')
 
 FRAME = 48
-GROUND = 46          # feet line inside the 48px frame (1px margin below)
+GROUND = 47          # feet line inside the 48px frame (bottom row)
 TARGET_H = 42        # wanted character height in strip frames
 ICON_CANVAS = 96
 ICON_MAX = 88
@@ -134,7 +134,22 @@ def key_background(rgb):
         bar = (bh <= 12 and bw > 0.4 * w) or (bw <= 12 and bh > 0.4 * h)
         if hollow or bar:
             drop |= comp
-    return art & ~drop
+    art &= ~drop
+
+    # the close/fill steps leave a 1-2px halo of backdrop colour glued to
+    # every silhouette (reads as a blurry fringe once downscaled). The
+    # backdrop is a smooth bilinear gradient between the sheet corners, so
+    # pixels matching that model are backdrop, never art.
+    c00 = rgb[0, 0].astype(float)
+    c01 = rgb[0, -1].astype(float)
+    c10 = rgb[-1, 0].astype(float)
+    c11 = rgb[-1, -1].astype(float)
+    yy, xx = np.mgrid[0:h, 0:w]
+    ty, tx = (yy / max(1, h - 1))[..., None], (xx / max(1, w - 1))[..., None]
+    bg = (c00 * (1 - tx) * (1 - ty) + c01 * tx * (1 - ty) +
+          c10 * (1 - tx) * ty + c11 * tx * ty)
+    halo = art & (np.abs(rgb.astype(float) - bg).max(axis=2) <= 12)
+    return art & ~halo
 
 
 def drop_shadows(art, rgb):
@@ -263,10 +278,31 @@ def sheet_ratio(rows, want=TARGET_H):
 
 
 def scale_px(px, ratio):
+    """Area-average (premultiplied BOX) downscale + hard alpha.
+
+    The sheets are fine-grained pixel art (1px line work): NEAREST decimation
+    would drop outline pixels and read as dotted/blurry. Box filtering keeps
+    every source pixel's contribution; the alpha threshold keeps the
+    silhouette crisp and semi-free.
+    """
     h, w = px.shape[:2]
-    img = Image.fromarray(px, 'RGBA')
-    return np.array(img.resize((max(1, w // ratio), max(1, h // ratio)),
-                               Image.NEAREST))
+    nw, nh = max(1, w // ratio), max(1, h // ratio)
+    arr = px.astype(np.float32)
+    a = arr[:, :, 3:4] / 255.0
+    prem = np.concatenate([arr[:, :, :3] * a, arr[:, :, 3:4]], axis=2)
+    out = np.empty((nh, nw, 4), np.float32)
+    for i in range(4):
+        band = Image.fromarray(prem[:, :, i], 'F').resize((nw, nh), Image.BOX)
+        out[:, :, i] = np.array(band)
+    al = out[:, :, 3] / 255.0
+    rgb = np.zeros((nh, nw, 3), np.uint8)
+    m = al > 1e-3
+    rgb[m] = np.clip(out[:, :, :3][m] / al[m][:, None], 0, 255).astype(np.uint8)
+    sil = al > 0.45
+    if m.sum():
+        rgb = _restore_contour(rgb, px, sil, ratio)
+    res = np.dstack([rgb, np.where(sil, 255, 0).astype(np.uint8)])
+    return res
 
 
 # ----------------------------------------------------------------- frames
@@ -294,6 +330,41 @@ def _anchor_crop(px, limit):
     return px
 
 
+def _restore_contour(rgb, src, sil, ratio):
+    """Silhouette border pixels take the darkest source pixel of their block:
+    a consistent 1px contour instead of patchy blended fringe."""
+    er = ndimage.binary_erosion(sil, structure=np.ones((3, 3)))
+    edge = sil & ~er
+    if not edge.any():
+        return rgb
+    lum = src[:, :, :3].astype(int).sum(axis=2) + (src[:, :, 3] < 128) * 100000
+    ys, xs = np.where(edge)
+    for i, j in zip(ys, xs):
+        blk = lum[j * ratio:(j + 1) * ratio, i * ratio:(i + 1) * ratio]
+        srk = src[j * ratio:(j + 1) * ratio, i * ratio:(i + 1) * ratio, :3]
+        if blk.size == 0:
+            continue
+        k = np.unravel_index(np.argmin(blk), blk.shape)
+        rgb[i, j] = srk[k]
+    return rgb
+
+
+def _squeeze(px, nw, nh):
+    """Pre-multiplied BOX resize to an exact size (gentle squash, no cuts)."""
+    arr = px.astype(np.float32)
+    a = arr[:, :, 3:4] / 255.0
+    prem = np.concatenate([arr[:, :, :3] * a, arr[:, :, 3:4]], axis=2)
+    out = np.empty((nh, nw, 4), np.float32)
+    for i in range(4):
+        band = Image.fromarray(prem[:, :, i], 'F').resize((nw, nh), Image.BOX)
+        out[:, :, i] = np.array(band)
+    al = out[:, :, 3] / 255.0
+    rgb = np.zeros((nh, nw, 3), np.uint8)
+    m = al > 1e-3
+    rgb[m] = np.clip(out[:, :, :3][m] / al[m][:, None], 0, 255).astype(np.uint8)
+    return np.dstack([rgb, np.where(al > 0.45, 255, 0).astype(np.uint8)])
+
+
 def place(px, dx=0, dy=0, mirror=False, ground=GROUND, canvas=FRAME):
     """Mirror / ground / centre a scaled frame onto the 48px canvas."""
     if mirror:
@@ -301,13 +372,20 @@ def place(px, dx=0, dy=0, mirror=False, ground=GROUND, canvas=FRAME):
     a = px[:, :, 3] > 24
     ys, xs = np.where(a)
     px = px[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
-    px = _anchor_crop(px, canvas - 2)
+    # over-long frames: extreme fx (beams) get anchor-cropped; mildly wide
+    # poses get a gentle BOX squeeze so limbs are never sliced flat.
+    if px.shape[1] > 64:
+        px = _anchor_crop(px, canvas)
+    if px.shape[1] > canvas:
+        px = _squeeze(px, canvas, px.shape[0])
+    if px.shape[0] > canvas:
+        px = _squeeze(px, px.shape[1], canvas)
     h, w = px.shape[:2]
     out = np.zeros((canvas, canvas, 4), np.uint8)
     y0 = ground - h + 1 + dy
     x0 = (canvas - w) // 2 + dx
-    y0 = max(1, min(y0, canvas - h - 1))
-    x0 = max(1, min(x0, canvas - w - 1))
+    y0 = max(0, min(y0, canvas - h))
+    x0 = max(0, min(x0, canvas - w))
     out[y0:y0 + h, x0:x0 + w] = px
     return out
 

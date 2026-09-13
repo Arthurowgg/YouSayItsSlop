@@ -95,13 +95,17 @@ export class Animator {
   constructor(canvas, scale = 5) {
     this.cv = canvas;
     this.scale = scale;
-    // device-pixel-correct integer backing store: even pixels on any DPR
+    // device-pixel-correct integer backing store: even pixels on any DPR.
+    // The CSS size is derived from the backing store (not the other way
+    // round) so backing px == device px exactly, even on fractional DPR
+    // (1.25/1.5) - otherwise the browser resamples the canvas = blurry.
     const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
     this.ds = Math.max(1, Math.round(scale * dpr));
     canvas.width = FRAME * this.ds;
     canvas.height = FRAME * this.ds;
-    canvas.style.width = FRAME * scale + 'px';
-    canvas.style.height = FRAME * scale + 'px';
+    const css = FRAME * this.ds / dpr;
+    canvas.style.width = css + 'px';
+    canvas.style.height = css + 'px';
     this.ctx = canvas.getContext && canvas.getContext('2d');
     if (!this.ctx) { this.dead = true; return; } // no 2d context: stay inert
     this.ctx.imageSmoothingEnabled = false;

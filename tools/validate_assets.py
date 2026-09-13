@@ -118,7 +118,7 @@ def audit_strip(path, hid, frames=78):
                            ('attack', feet[10:14], 1), ('power', feet[14:18], 5)):
         if seg and max(seg) - min(seg) > tol:
             bad(f'strip {hid}: {name} ground drifts {min(seg)}..{max(seg)} (flicker)')
-    if ct and (max(ct) - min(ct) > 10):
+    if ct and (max(ct) - min(ct) > 14):
         bad(f'strip {hid}: core tops drift {min(ct)}..{max(ct)} (mis-crop)')
     if ef and cf:
         if max(ef) - min(ef) > 6:

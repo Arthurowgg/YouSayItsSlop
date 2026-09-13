@@ -139,6 +139,42 @@ def key_background(cell):
     return cell
 
 
+def box_down(crop, nw, nh):
+    """Pre-multiplied area-average downscale + hard alpha. The sheets are
+    fine-grained pixel art: NEAREST decimation drops 1px outline pixels and
+    reads as dotted/blurry; BOX keeps every source pixel's contribution and
+    the alpha threshold keeps silhouettes crisp and semi-free."""
+    arr = crop.astype(np.float32)
+    a = arr[:, :, 3:4] / 255.0
+    prem = np.concatenate([arr[:, :, :3] * a, arr[:, :, 3:4]], axis=2)
+    out = np.empty((nh, nw, 4), np.float32)
+    for i in range(4):
+        band = Image.fromarray(prem[:, :, i], 'F').resize((nw, nh), Image.BOX)
+        out[:, :, i] = np.array(band)
+    al = out[:, :, 3] / 255.0
+    rgb = np.zeros((nh, nw, 3), np.uint8)
+    m = al > 1e-3
+    rgb[m] = np.clip(out[:, :, :3][m] / al[m][:, None], 0, 255).astype(np.uint8)
+    sil = al > 0.45
+    if m.sum():
+        # consistent 1px contour on the silhouette border
+        from scipy import ndimage as _nd
+        er = _nd.binary_erosion(sil, structure=np.ones((3, 3)))
+        edge = sil & ~er
+        lum = crop[:, :, :3].astype(int).sum(axis=2) + (crop[:, :, 3] < 128) * 100000
+        ys, xs = np.where(edge)
+        r = max(1, crop.shape[0] // nh)
+        for i, j in zip(ys, xs):
+            y0, x0 = min(j * r, crop.shape[0] - 1), min(i * r, crop.shape[1] - 1)
+            blk = lum[y0:y0 + r, x0:x0 + r]
+            srk = crop[y0:y0 + r, x0:x0 + r, :3]
+            if blk.size == 0:
+                continue
+            k = np.unravel_index(np.argmin(blk), blk.shape)
+            rgb[i, j] = srk[k]
+    return np.dstack([rgb, np.where(sil, 255, 0).astype(np.uint8)])
+
+
 def finish(cell, name, ratio_hint=None):
     a = cell[:, :, 3] > 24
     if a.sum() < 16:
@@ -158,9 +194,9 @@ def finish(cell, name, ratio_hint=None):
             break
     ratio = ratio or 6
     nw, nh = max(1, w // ratio), max(1, h // ratio)
-    img = Image.fromarray(crop).resize((nw, nh), Image.NEAREST)
+    img = Image.fromarray(box_down(crop, nw, nh), 'RGBA')
     out = Image.new('RGBA', (CANVAS, CANVAS), (0, 0, 0, 0))
-    out.paste(img, ((CANVAS - nw) // 2, (CANVAS - nh) // 2))
+    out.paste(img, ((CANVAS - nw) // 2, (CANVAS - nh) // 2), img)
     out.save(os.path.join(OUT, name + '.png'))
     print('  -> %s.png  (%dx%d /%d)' % (name, nw, nh, ratio))
     return True
