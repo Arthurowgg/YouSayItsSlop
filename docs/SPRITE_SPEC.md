@@ -1,105 +1,90 @@
-# SPEC UNIVERSAL DE SPRITES — v1 (round 8)
+# SPEC UNIVERSAL DE SPRITES — v2 (round 9)
 
-Autoridade única para todos os 9 heróis do roster. Qualquer asset novo ou
-rebuild DEVE seguir este documento. O validator (`tools/validate_assets.py`)
-implementa estas regras como checagens executáveis.
+Autoridade única para os 9 heróis do roster. Todo asset novo ou rebuild DEVE
+seguir este documento. `tools/validate_assets.py` implementa estas regras como
+checagens executáveis; `tools/smoke_test.js` cobre UI/fluxos.
 
 ## 1. Roster (fixo, 9 heróis)
 `spiderman, venom, hulk, capamerica, ironman, wolverine, antman, blackpanther, drstrange`
-Sem outros heróis, sem skins duplicando herói base. Pickaxes e sistemas
-compartilhados permanecem.
+Sem outros heróis. Skins ≠ heróis (visual-only, mesma identidade/stats).
+Pickaxes e sistemas compartilhados permanecem. Ícones codificados
+`public/assets/spr/<hero>.png` NUNCA são substituídos por geração.
 
 ## 2. Frame universal
-- Todo frame de gameplay: **48×48 px**, RGBA, alpha binário (0 ou 255 — nunca
-  semi-transparente: sem halo, sem AA, sem blur, sem opacity).
-- Baseline (linha do chão) fixa: **y = 47** para poses apoiadas.
-- Pivot central horizontal: silhueta centrada no frame (bbox centralizada pelo
-  pipeline, nunca pela mão do modelo).
-- Extração **determinística por retângulo fixo**: cell `(row, col)` =
-  `img[r*h//rows : (r+1)*h//rows, c*w//6 : (c+1)*w//6]`. Proibido auto-crop
-  para "adivinhar" limites de frame.
+- Todo frame de gameplay: **48×48 px**, RGBA, **alpha binário** (0 ou 255;
+  nunca semi-transparente: sem halo/AA/blur/opacity).
+- Baseline fixa: **y = 47** para poses apoiadas; pivot horizontal central.
+- Extração **determinística por retângulo fixo**:
+  `cell = sheet[r*h//4 : (r+1)*h//4, c*w//6 : (c+1)*w//6]`.
+  Proibido auto-crop para redefinir limites de frame.
+- Reparo de straddle: se o gerador desenha a pose cruzando a linha de grade,
+  o blob conectado do personagem é atribuído INTEIRO à célula de maior
+  overlap (busca em janela de ±meia célula). O retângulo do frame não muda.
+- Célula ilegível (mascara < 64 px) → frame vizinho válido da mesma animação,
+  com log de build.
 
 ## 3. Strip de animação (1 por herói)
-`public/assets/anim/<hero>.png` = **42 frames** de 48px → 2016×48.
+`public/assets/anim/<hero>.png` = **24 frames** de 48px → **1152×48**.
+Quatro animações de 6 frames, todas na MESMA sheet gerada por herói
+(`art2/hero_<id>.png`, 4 linhas × 6 colunas — 1 imagem garante 1 estilo):
 
-| anim    | start | frames | fps | loop  | uso                        |
-|---------|-------|--------|-----|-------|----------------------------|
-| idle    | 0     | 6      | 4   | loop  | menus, locker, jogo parado |
-| walk    | 6     | 6      | 9   | loop  | locomoção (loop seamless)  |
-| attack  | 12    | 6      | 10  | once  | melee                      |
-| ability | 18    | 6      | 8   | once  | habilidade única do herói  |
-| jump    | 24    | 2      | 8   | once  | subida                     |
-| fall    | 26    | 2      | 6   | loop  | queda                      |
-| land    | 28    | 2      | 10  | once  | aterrissagem               |
-| hurt    | 30    | 2      | 10  | once  | dano                       |
-| death   | 32    | 4      | 6   | once  | eliminação                 |
-| sense   | 36    | 6      | 6   | once  | sentido/reação passiva     |
+| linha sheet | anim    | start | frames | fps | loop   |
+|-------------|---------|-------|--------|-----|--------|
+| 0           | idle    | 0     | 6      | 4   | loop   |
+| 1           | walk    | 6     | 6      | 9   | loop seamless (ciclo real: contact/down/passing/high/opostos) |
+| 2           | attack  | 12    | 6      | 10  | once   |
+| 3           | ability | 18    | 6      | 8   | once   |
 
-Deslocamento vertical aplicado pelo renderer (px, inteiro):
-`jump [-3,-7]`, `fall [-9,-7]`, `land [-2,0]`, `walk ±WALK_BOB`.
+Abilities por slot (design de gameplay + animação): 1 web shot (+ passiva
+danger sense como 10º conceito), 2 symbiote lunge, 3 ground smash,
+4 shield throw, 5 repulsor blast, 6 claw dash, 7 shrink (frames de transição
+desenhados, não scale em runtime), 8 shadow pounce, 9 mystic portal.
 
-## 4. Sheet master por herói (fonte única)
-`art2/sheet_<hero>.png` = **7 linhas × 6 colunas = 42 células iguais**,
-fundidas pelo pipeline a partir de 3 chunks de geração (o gerador de imagem é
-confiável apenas com grades simples; grades 6×6 mistas degeneram):
+### Backdrop das sheets
+O gerador NÃO entrega alpha real. Pede-se transparência; o pipeline aceita
+qualquer backdrop por **keying multi-bucket**: buckets quantizados cumulativos
+que cobrem ≥55% da folha = fundo (cobre cor chapada, checkerboard de falsa
+transparência e gradiente). Sprite = pixels longe de todos os buckets de fundo
+e longe do branco das linhas de grade; maior blob; furos preenchidos.
+Folha **magenta `#ff00ff`** = fallback obrigatório quando o corpo do herói
+confunde com o checker (caso venom/spiderman: preto/cinza = tons do checker).
+Vazamento de key-color dentro do blob = inpaint nearest-neighbour.
 
-| chunk | grade | linhas |
-|-------|-------|--------|
-| `art2/s1_<hero>.png` | 2×6 | idle(6) / walk(6) |
-| `art2/s2_<hero>.png` | 2×6 | attack(6) / ability(6) |
-| `art2/s3_<hero>.png` | 3×6 | jump2+fall2+land2 / hurt2+death4 / sense(6) |
+## 4. Renderização
+- `imageSmoothingEnabled = false` em todo canvas; CSS global
+  `canvas { image-rendering: pixelated }`.
+- Downscale de asset SOMENTE por decimação NEAREST de razão inteira
+  (`scale_px`); BOX/area-average proibido (causa blur no app).
+- Backing store do canvas = múltiplo inteiro de 48; CSS derivado do backing
+  (backing px == device px mesmo em DPR fracionado).
+- **Um único ticker rAF** (`anim.js`); culling por IntersectionObserver;
+  cleanup em unmount; texturas decodificadas 1 vez (cache).
+- `setAnim` desconhecido → `idle` (strip nunca morre).
 
-Layout da sheet master (linhas 0-6): idle, walk, attack, ability,
-jump/fall/land, hurt/death, sense. Células separadas por linhas de grade
-brancas finas; fundo chapado **magenta chroma-key `#ff00ff`** (keying
-determinístico por cor modal + remoção de barras de grade). Magenta é distante
-de qualquer paleta de herói (o navy `#10142c` falhou para personagens pretos:
-simbionte sombreado era comido pelo keying). Sheets legacy navy permanecem
-válidas onde já extraídas; gerações novas usam magenta.
+## 5. Back blings (12 itens)
+- Sheet única `art2/bling_sheet.png` (3 linhas × 4 colunas) com 12
+  equipamentos icônicos — nunca rostos.
+- Catalog: `gliders[] = {id,name,rarity,art,anim,attach}` com
+  `attach = {dx,dy,s,layer,perHero{hid:{...}}}`; `s ∈ {0.5,1,2}`,
+  `layer ∈ {behind,front}`; default renderer `{dx:0,dy:8,s:1,behind}`.
+- Tamanho adaptado ao herói: `heroes[].size ∈ {S,M,L}` + overrides `perHero`
+  (antman 0.5; hulk 2 p/ gear pequeno, 1 p/ gear grande).
+- Capitão América: escudo NÃO equipado por default.
+- Locker mostra o **ícone** do bling (não o bling montado no herói); o palco
+  do locker continua compondo herói+bling equipados com os assets de jogo.
 
-Reparo determinístico em build: célula ilegível (máscara < 24px de altura ou
-< 9600 px²) é substituída pelo frame válido mais próximo da mesma animação,
-com log `! <hero> <anim> f<n> cell unreadable`.
+## 6. Herói vs Skin / Locker / Shop
+- `heroes[].skins = []`; skins aparecem DENTRO do card do herói no rack HERÓI
+  do locker (chips clicáveis), nunca como rack/duplicata própria.
+- Shop: scroll vertical livre, 5 seções por categoria, cards compactos,
+  obtido substitui preço, sem etiquetas Epic/Outfit/New, sem emotes.
 
-## 5. Regras de renderização
-- `imageSmoothingEnabled = false` em todo canvas; escala sempre inteira
-  (×1, ×2, ×3, ×4) ou meia (×0.5) — nunca frações que borram.
-- **Um único ticker rAF** (`anim.js`) alimenta todos os canvases visíveis;
-  culling por IntersectionObserver; cleanup em unmount.
-- Texturas cacheadas por herói (strip decodificado 1 vez).
-- Sem truques de blur/opacity/ghosting para esconder defeito de animação:
-  defeito se corrige no asset ou no renderer.
-
-## 6. Back blings (gliders)
-- Apenas equipamento/objeto icônico — **nunca rosto/cabeça**.
-- Proporcionados ao herói; metadados de attach **data-driven** no catalog:
-  `gliders[].attach = { dx, dy, s, layer }` com `s ∈ {0.5, 1, 2}` e
-  `layer ∈ {behind, front}`. Renderer não hard-coda posição por id.
-- Default do renderer: `{dx:0, dy:8, s:1, layer:'behind'}`.
-- Capitão América: escudo **não** equipado por default (só ao equipar/throw).
-- Blings de herói usam o mesmo pixel art e paleta do herói.
-
-## 7. Herói vs Skin (dados)
-- `heroes[]` = identidade + stats. `heroes[].skins = []` = visuais alternativos
-  da MESMA identidade/stats (visual-only). Shop lista skins em células
-  próprias; locker rack de skins nunca lista o herói base.
-- `heroes[].ability = { id, name, desc }` descreve a habilidade única
-  (slot de design por herói); spiderman tem passiva extra `danger_sense`
-  representada pela anim `sense`.
-
-## 8. Shop / Locker
-- Shop: scroll vertical livre, seções por categoria (5), cards compactos,
-  fundos por raridade/tipo contidos, obtido substitui preço, sem etiquetas
-  Épico/Traje/Novo, sem emotes.
-- Locker v2: hub com preview animado usando os MESMOS assets de gameplay
-  (idle do strip), slots de loadout, busca + filtros.
-
-## 9. Checklist de auditoria final (por herói)
-1. strip 2016×48, 42 frames, alpha binário;
-2. idle/walk/sense sem drift de chão (>tol) e sem drift de topo >8px;
-3. jump/fall aéreos (pés ≥3px acima da baseline);
-4. death termina abaixado (deitado);
-5. walk loop seamless (f6→f12 contínuo);
-6. bling sem rosto, attach metadata presente;
-7. ícone codificado `public/assets/spr/<hero>.png` intocado pelo pipeline;
-8. smoke 68/68 + validator `ALL ASSETS VALID`.
+## 7. Checklist de auditoria final (por herói, executável)
+1. strip 1152×48, 24 frames, alpha binário;
+2. idle/walk/attack sem drift de chão (tol 1/2/3) e sem drift de topo >8px;
+3. walk anda de verdade (diff de silhueta mediano ≥40 px) e loopa
+   (diff wrap ≤3× mediana; sem frames duplicados);
+4. sem frame esparso (<35% da mediana de px) ou stunted em segmentos upright;
+5. blings: 12 ícones sem rosto, attach metadata, sem recorte de borda;
+6. smoke 69/69 + validator `ALL ASSETS VALID`;
+7. inspeção visual por contact sheet (`.shot/va_<hero>.png`).
