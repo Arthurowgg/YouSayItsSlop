@@ -128,6 +128,23 @@ def audit_strip(path, hid, frames=24):
             bad(f'strip {hid}: frame {f} too sparse ({px_f} px vs median {med_px}) - partial/garbage cell')
         if f in UPRIGHT and h_f < 0.45 * med_h:
             bad(f'strip {hid}: frame {f} stunted (h {h_f} vs median {med_h}) - cut pose')
+    widths = {}
+    for f in sorted(feet):
+        fa = a[:, f * 48:(f + 1) * 48]
+        ys, xs = np.where(fa > 24)
+        widths[f] = int(xs.max() - xs.min() + 1)
+        rgbf = np.array(im.convert('RGBA'))[:, f * 48:(f + 1) * 48]
+        op = rgbf[:, :, 3] > 24
+        ch = rgbf[:, :, :3].astype(np.int16)
+        neutral = (ch.max(axis=2) - ch.min(axis=2)) <= 24
+        lum = ch.mean(axis=2)
+        res = int((op & neutral & (lum > 96) & (lum < 240)).sum())
+        if op.sum() and res > 0.15 * op.sum():
+            bad(f'strip {hid}: frame {f} has backdrop-checker residue ({res} px)')
+    med_w = int(np.median(list(widths.values())))
+    for f in sorted(feet):
+        if f in UPRIGHT and (widths[f] < 0.5 * med_w or widths[f] > 1.7 * med_w):
+            bad(f'strip {hid}: frame {f} width {widths[f]} vs median {med_w} - sliced/merged pose')
     ground = max(feet[f] for f in range(0, 6) if f in feet)
     for name, lo, hi, kind in SEGMENTS:
         seg_f = [feet[f] for f in range(lo, hi + 1) if f in feet]
@@ -157,7 +174,7 @@ def audit_strip(path, hid, frames=24):
         bad(f'strip {hid}: walk frames barely change (median diff {med}) - not walking')
     if wrap > 3 * max(med, 40):
         bad(f'strip {hid}: walk loop break (wrap diff {wrap} vs median {med})')
-    if len(set(map(tuple, (sil(f) for f in range(6, 12))))) < 5:
+    if len({sil(f).tobytes() for f in range(6, 12)}) < 5:
         bad(f'strip {hid}: walk has duplicate frames (pause in cycle)')
     ok(f'strip  {hid:22s} {w}x{h} frames {frames} ground {ground} feet {min(feet.values())}-{max(feet.values())} '
        f'tops {min(tops.values())}-{max(tops.values())} px/frame {int(sum(counts) / len(counts))}')

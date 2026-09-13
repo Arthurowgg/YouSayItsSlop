@@ -85,13 +85,26 @@ def mask_of(rgb):
     order = np.argsort(-counts)
     total = counts.sum()
     bks, cum = [], 0.0
-    for i2 in order:                       # cumulative backdrop buckets
-        share = counts[i2] / total
-        if share < 0.12:
+    for i2 in order:           # cumulative backdrop buckets (checkerboards
+        share = counts[i2] / total   # and gradients need several tones)
+        if share < 0.08 or cum > 0.85:
             break
         bks.append(keys[i2]); cum += share
-        if cum > 0.55:
-            break
+    # adjacent neutral tones of the same checker/gradient join the backdrop
+    changed = True
+    while changed:
+        changed = False
+        for i2 in order:
+            k = keys[i2]
+            if any((k == b).all() for b in bks):
+                continue
+            if counts[i2] / total < 0.03:
+                continue
+            cen = k * 24 + 12
+            if int(cen.max() - cen.min()) > 40:      # saturated = character
+                continue
+            if min(int(np.abs(cen - (b * 24 + 12)).max()) for b in bks) <= 56:
+                bks.append(k); changed = True
     if not bks:
         bks = [keys[order[0]]]
     centres = np.array([k * 24 + 12 for k in bks], np.int32)
