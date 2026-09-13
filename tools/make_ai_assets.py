@@ -363,10 +363,30 @@ def _quantize(rgb, sil, pal):
 
 
 def hero_palette(cuts, n=14):
-    """Top exact colours across all of a hero's source poses (masked only)."""
-    px = np.concatenate([c[c[:, :, 3] > 128][:, :3] for c in cuts if (c[:, :, 3] > 128).any()])
-    keys, counts = np.unique(px, axis=0, return_counts=True)
-    return keys[np.argsort(-counts)[:n]].astype(np.float32)
+    """Flat colour palette per hero: k-means over masked source pixels.
+
+    Exact-colour counting fails here because the AI fills carry per-pixel
+    grain, so the only exact colours frequent enough to make a top-N are
+    the flat outline tones and every pixel snaps to silhouette-dark.
+    Cluster means recover the true fill tones; snapping BOX means to them
+    keeps the frames flat AND correctly coloured."""
+    px = np.concatenate([c[c[:, :, 3] > 128][:, :3] for c in cuts
+                         if (c[:, :, 3] > 128).any()])[::2].astype(np.float32)
+    if not len(px):
+        return np.zeros((1, 3), np.float32)
+    buck = (px // 24).astype(np.int32)
+    keys, inv, counts = np.unique(buck, axis=0, return_inverse=True,
+                                  return_counts=True)
+    order = np.argsort(-counts)[:n]
+    cen = np.array([px[inv == o].mean(axis=0) for o in order], np.float32)
+    for _ in range(8):
+        d = ((px[:, None, :] - cen[None, :, :]) ** 2).sum(axis=2)
+        lab = np.argmin(d, axis=1)
+        for j in range(len(cen)):
+            m = lab == j
+            if m.sum():
+                cen[j] = px[m].mean(axis=0)
+    return cen
 
 
 def _squeeze(px, nw, nh, pal=None):
