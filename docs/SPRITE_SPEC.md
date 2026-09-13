@@ -51,8 +51,11 @@ confiável apenas com grades simples; grades 6×6 mistas degeneram):
 
 Layout da sheet master (linhas 0-6): idle, walk, attack, ability,
 jump/fall/land, hurt/death, sense. Células separadas por linhas de grade
-brancas finas; fundo chapado `#10142c` (keying determinístico por cor modal +
-remoção de barras de grade).
+brancas finas; fundo chapado **magenta chroma-key `#ff00ff`** (keying
+determinístico por cor modal + remoção de barras de grade). Magenta é distante
+de qualquer paleta de herói (o navy `#10142c` falhou para personagens pretos:
+simbionte sombreado era comido pelo keying). Sheets legacy navy permanecem
+válidas onde já extraídas; gerações novas usam magenta.
 
 Reparo determinístico em build: célula ilegível (máscara < 24px de altura ou
 < 9600 px²) é substituída pelo frame válido mais próximo da mesma animação,

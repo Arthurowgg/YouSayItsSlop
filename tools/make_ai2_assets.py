@@ -60,7 +60,7 @@ BLING_OF = {
 
 
 def has_art2(hid):
-    return os.path.exists(os.path.join(ART2, 'sheet_%s.png' % hid))
+    return os.path.exists(os.path.join(ART2, 's1_%s.png' % hid))
 
 
 def load_rgb(path):
