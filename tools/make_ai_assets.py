@@ -301,8 +301,9 @@ def scale_px(px, ratio, pal=None):
     sil = al > 0.45
     if m.sum():
         if pal is not None:
-            rgb = _quantize(rgb, sil, pal)
-        rgb = _restore_contour(rgb, px, sil, ratio)
+            rgb = _flat(rgb, sil, pal)
+        else:
+            rgb = _restore_contour(rgb, px, sil, ratio)
     res = np.dstack([rgb, np.where(sil, 255, 0).astype(np.uint8)])
     return res
 
@@ -351,14 +352,56 @@ def _restore_contour(rgb, src, sil, ratio):
     return rgb
 
 
-def _quantize(rgb, sil, pal):
-    """Snap every pixel to the hero's own flat colours: the game draws these
-    frames at 5-7x, so half-blended BOX pixels read as blur. Flat palette
-    pixels = crisp pixel art. Palette holds only masked source colours, so
-    near neighbours (charcoal suit vs navy backdrop) can never swap."""
+def _smooth_labels(lab, sil):
+    """Mode-filter the label map so grain checkerboards collapse into flat
+    regions, while ties keep the original label - 1px lines and eye rims
+    always tie in their 3x3 window, so they survive untouched."""
+    k = int(lab.max()) + 1
+    cnt = np.stack([ndimage.convolve(lab == j, np.ones((3, 3)),
+                                     mode='constant', cval=0)
+                    for j in range(k)], axis=2)
+    mode = np.argmax(cnt, axis=2)
+    moden = np.take_along_axis(cnt, mode[:, :, None], axis=2)[:, :, 0]
+    own = np.take_along_axis(cnt, lab[:, :, None], axis=2)[:, :, 0]
+    # ties keep the original label: 1px lines/rims always tie (3-3-3 or
+    # 3-line vs 3+3), grain checkerboards do not (5-4, 6-3...).
+    return np.where(sil & (own < moden), mode, lab).astype(lab.dtype)
+
+
+def _despeckle(lab, sil, rounds=2):
+    """Kill 1-2px grain speckle in the label map: a pixel whose own colour
+    appears <=2 times in its 3x3 window joins the dominant neighbour colour
+    (>=6 of 9). 1px lines survive (a line pixel sees 3+ of its own)."""
+    k = int(lab.max()) + 1
+    for _ in range(rounds):
+        cnt = np.stack([ndimage.convolve(lab == j, np.ones((3, 3)),
+                                         mode='constant', cval=0)
+                        for j in range(k)], axis=2)
+        own = np.take_along_axis(cnt, lab[:, :, None], axis=2)[:, :, 0]
+        cnt_o = cnt.copy()
+        np.put_along_axis(cnt_o, lab[:, :, None], -1, axis=2)
+        dom = np.argmax(cnt_o, axis=2)
+        domn = np.take_along_axis(cnt_o, dom[:, :, None], axis=2)[:, :, 0]
+        cond = sil & (own <= 2) & (domn >= 6)
+        if not cond.any():
+            break
+        lab = np.where(cond, dom, lab)
+    return lab
+
+
+def _flat(rgb, sil, pal):
+    """Snap every pixel to the hero's own flat colours, despeckle the grain,
+    and give the silhouette one uniform 1px outline (the darkest palette
+    tone) - the OG pixel-art look. The game draws these frames at 5-7x, so
+    half-blended or grain-scattered pixels read as blur."""
     d = ((rgb.astype(np.float32)[:, :, None, :] - pal[None, None, :, :]) ** 2).sum(axis=3)
+    lab = np.argmin(d, axis=2)
+    lab = _smooth_labels(lab, sil)
+    lab = _despeckle(lab, sil)
     out = rgb.copy()
-    out[sil] = pal[np.argmin(d, axis=2)][sil]
+    out[sil] = pal[lab][sil]
+    edge = sil & ~ndimage.binary_erosion(sil, structure=np.ones((3, 3)))
+    out[edge] = pal[np.argmin(pal.sum(axis=1))].astype(np.uint8)
     return out
 
 
@@ -386,6 +429,20 @@ def hero_palette(cuts, n=14):
             m = lab == j
             if m.sum():
                 cen[j] = px[m].mean(axis=0)
+    # single-linkage merge: grain makes k-means split one fill tone into
+    # several near clusters (5 reds for spidey) which then speckle against
+    # each other. Closer than 45 RGB = one flat tone; real region borders
+    # (red|blue, white|rim, skin|blond) stay apart.
+    w = np.array([np.sum(lab == j) for j in range(len(cen))], np.float32)
+    while len(cen) > 2:
+        dd = ((cen[:, None, :] - cen[None, :, :]) ** 2).sum(2) + np.eye(len(cen)) * 1e9
+        i, j = np.unravel_index(np.argmin(dd), dd.shape)
+        if dd[i, j] >= 45 ** 2:
+            break
+        cen[i] = (cen[i] * w[i] + cen[j] * w[j]) / (w[i] + w[j])
+        w[i] += w[j]
+        cen = np.delete(cen, j, 0)
+        w = np.delete(w, j)
     return cen
 
 
@@ -404,7 +461,7 @@ def _squeeze(px, nw, nh, pal=None):
     rgb[m] = np.clip(out[:, :, :3][m] / al[m][:, None], 0, 255).astype(np.uint8)
     sil = al > 0.45
     if pal is not None and m.sum():
-        rgb = _quantize(rgb, sil, pal)
+        rgb = _flat(rgb, sil, pal)
     return np.dstack([rgb, np.where(sil, 255, 0).astype(np.uint8)])
 
 
