@@ -118,11 +118,34 @@ def main_row(rgb):
     return rgb[a:b]
 
 
+KEY_COLOR = np.array([255, 0, 255], np.int32)  # chroma-key backdrop
+
+
+def inpaint_key_leaks(rgb, m):
+    """Models sometimes paint the chroma key INSIDE the character (accents,
+    glows). Those pixels would survive as opaque magenta or leave holes.
+    Deterministic repair: recolor key-ish pixels inside the sprite blob with
+    the nearest non-key sprite colour (nearest-neighbour fill, pixel-safe)."""
+    from scipy import ndimage as ndi
+    kd = np.abs(rgb.astype(np.int32) - KEY_COLOR).max(axis=2)
+    keyish = (kd < 96) & m
+    if not keyish.any():
+        return rgb
+    known = m & ~keyish
+    if not known.any():
+        return rgb
+    _, inds = ndi.distance_transform_edt(~known, return_indices=True)
+    out = rgb.copy()
+    out[keyish] = out[inds[0][keyish], inds[1][keyish]]
+    return out
+
+
 def keyed_cut(rgb):
     """Tight-bbox RGBA crop of one cell / image."""
     m = mask_of(rgb)
     if m.sum() < 64:
         return None
+    rgb = inpaint_key_leaks(rgb, m)
     ys, xs = np.where(m)
     y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
     return np.dstack([rgb[y0:y1, x0:x1],

@@ -120,6 +120,16 @@ def audit_strip(path, hid, frames=42):
         feet[f] = int(ys.max())
         tops[f] = int(ys.min())
         counts.append(int(m.sum()))
+    med_px = int(np.median(counts))
+    med_h = int(np.median([feet[f] - tops[f] for f in feet]))
+    UPRIGHT = set(range(0, 24)) | set(range(30, 32)) | set(range(36, 42))
+    for f in sorted(feet):
+        h_f = feet[f] - tops[f]
+        px_f = int((a[:, f * 48:(f + 1) * 48] > 24).sum())
+        if px_f < 0.35 * med_px:
+            bad(f'strip {hid}: frame {f} too sparse ({px_f} px vs median {med_px}) - partial/garbage cell')
+        if f in UPRIGHT and h_f < 0.45 * med_h:
+            bad(f'strip {hid}: frame {f} stunted (h {h_f} vs median {med_h}) - cut pose')
     ground = max(feet[f] for f in range(0, 6) if f in feet)
     for name, lo, hi, kind in SEGMENTS:
         seg_f = [feet[f] for f in range(lo, hi + 1) if f in feet]
