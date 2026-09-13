@@ -512,110 +512,163 @@ function buyButton(type, id, price, after) {
   return el('span', { class: 'ownedTag' }, '★ EQUIPADO');
 }
 
-/* ------------------------------ LOCKER (owned only) ------------------------------ */
+/* ------------------------------ LOCKER v2: character customization hub ------------------------------ */
 export function renderLocker() {
   killAnim();
+  const CATS = [['hero', 'HERÓIS'], ['skin', 'SKINS'], ['glider', 'BACK BLING'], ['pick', 'RELÍQUIAS'], ['style', 'ESTILOS']];
   let cat = 'hero';
-  const cats = [['hero', 'HERÓIS'], ['glider', 'BACK BLING'], ['pick', 'RELÍQUIAS'], ['style', 'ESTILOS']];
+  let lkQ = '', lkRar = '';
+
+  // hero/skin families come from the shop category data (spiderman -> classic/miles/gwen)
+  const families = () => (C().shopCats || []).map((c) => c.families || []).flat();
+  const familyOf = (hid) => families().find((f) => f.hero === hid || (f.skins || []).includes(hid));
+  const baseHeroes = () => families().map((f) => f.hero);
 
   const canvas = el('canvas', { class: 'hero pixel' });
-  const seriesTag = el('div', { class: 'lkSeries' }, '');
   const nameTag = el('div', { class: 'lkName' }, '');
   const quoteTag = el('div', { class: 'lkQuote' }, '');
-  const loadoutRow = el('div', { class: 'lkLoadout' });
+  const slotsRow = el('div', { class: 'lk2Slots' });
+  const gridWrap = el('div', { class: 'lk2Grid scroll' });
+  const headCount = el('span', { class: 'catCount' }, '');
 
-  function syncLoadout() {
-    loadoutRow.innerHTML = '';
-    const g = C().gliders.find((x) => x.id === gliderOf());
-    const p = C().picks.find((x) => x.id === store.data.equipped.pick);
-    [[g, 'BACK BLING'], [p, 'RELÍQUIA']].forEach(([it, label]) => {
-      loadoutRow.append(el('div', { class: 'lkSlot', title: label },
-        it ? el('img', { class: 'pixel', src: it.art, alt: '' }) : el('span', { class: 'lkEmpty' }, '—'),
-        el('span', {}, it ? it.name : `SEM ${label}`)));
-    });
-  }
-
-  const stageBox = el('div', { class: 'lockerPrev2' },
+  const stage = el('div', { class: 'lk2Stage' },
     el('div', { class: 'floorGlow', style: { '--rc': rar(heroOf().rarity).color } }),
     canvas,
-    el('div', { class: 'lkPlate' }, seriesTag, nameTag, quoteTag));
-  const chips = animChips(stageBox);
+    el('div', { class: 'lkPlate' }, nameTag, quoteTag));
+  const chips = animChips(stage);
   chips.classList.add('lkChips');
+
+  anim = new Animator(canvas, 7);
 
   function syncPreview() {
     const h = heroOf(); const Rr = rar(h.rarity);
-    seriesTag.textContent = `${Rr.label} SÉRIE`;
-    seriesTag.style.color = Rr.color;
     nameTag.textContent = h.name;
     quoteTag.textContent = `“${h.quote || ''}”`;
-    stageBox.querySelector('.floorGlow').style.setProperty('--rc', Rr.color);
+    quoteTag.style.display = store.data.settings.showQuotes ? '' : 'none';
+    stage.querySelector('.floorGlow').style.setProperty('--rc', Rr.color);
     canvas.style.filter = styleOf().filter === 'none' ? '' : styleOf().filter;
     if (anim) anim.load(h.id, gliderOf());
-    syncLoadout();
   }
-  anim = new Animator(canvas, 7);
-  syncPreview();
 
-  const catCol = el('div', { class: 'lkCats' });
-  const headRow = el('div', { class: 'lkHead' });
-  const gridWrap = el('div', { class: 'f2grid small lockerGrid' });
-  let lkQ = '', lkRar = '';
-  const lkTools = el('div', { class: 'lkTools' },
-    el('input', { class: 'lkSearch', placeholder: 'PESQUISAR NO ARMÁRIO…', oninput: (ev) => { lkQ = ev.target.value.toLowerCase(); drawGrid(); } }));
-  ['', 'common', 'uncommon', 'rare', 'epic', 'legendary', 'marvel'].forEach((r) => {
-    lkTools.append(el('button', {
-      class: `lkF ${r === '' ? 'sel' : ''}`, style: r ? { '--rc': rar(r).color } : {},
-      onclick: (ev) => { sfx.tab(); lkRar = r; [...lkTools.querySelectorAll('.lkF')].forEach((b) => b.classList.remove('sel')); ev.currentTarget.classList.add('sel'); drawGrid(); }
-    }, r ? rar(r).label : 'TODOS'));
+  /* ---- equipped-item slots: compact, rarity-tinted, click to browse ---- */
+  function slotCard(label, catId, previewNode, nm, rarity, empty) {
+    return el('button', {
+      class: `s3card lk2Slot r-${rarity || 'common'} ${cat === catId ? 'sel' : ''} ${empty ? 'empty' : ''}`,
+      style: { '--rc': rar(rarity || 'common').color },
+      onclick: () => { sfx.tab(); cat = catId; drawSlots(); drawGrid(); },
+    },
+      el('span', { class: 'slotLbl' }, label),
+      el('span', { class: 'slotIco' }, previewNode),
+      el('span', { class: 'slotNm' }, nm));
+  }
+  function drawSlots() {
+    slotsRow.innerHTML = '';
+    const h = heroOf();
+    const g = C().gliders.find((x) => x.id === gliderOf());
+    const pk = C().picks.find((x) => x.id === store.data.equipped.pick);
+    const st = styleOf();
+    // integer scales only: 96px icons at 48 (1/2), 32px blings at 64 (x2)
+  const ico = (src, filter, size = 48) => el('img', {
+    class: 'pixel', src, alt: '',
+    style: Object.assign({ width: size + 'px', height: size + 'px' }, filter ? { filter } : {}),
   });
-
-  function drawCats() {
-    catCol.innerHTML = '';
-    cats.forEach(([id, label]) => catCol.append(el('button', {
-      class: `lkCat ${id === cat ? 'sel' : ''}`,
-      onclick: () => { sfx.tab(); cat = id; drawCats(); drawGrid(); }
-    }, label)));
+    slotsRow.append(
+      slotCard('SKIN', 'skin', ico(portraitOf(h.id)), h.name, h.rarity),
+      g ? slotCard('BLING', 'glider', ico(`assets/anim/${g.id}.png`, '', 64), g.name, g.rarity)
+        : slotCard('BLING', 'glider', el('span', { class: 'lkEmpty' }, '—'), 'SEM BLING', 'common', true),
+      pk ? slotCard('RELÍQUIA', 'pick', ico(pk.art), pk.name, pk.rarity)
+        : slotCard('RELÍQUIA', 'pick', el('span', { class: 'lkEmpty' }, '—'), 'SEM RELÍQUIA', 'common', true),
+      slotCard('ESTILO', 'style', ico(portraitOf(h.id), st.filter === 'none' ? '' : st.filter), st.name, 'rare'));
+    slotsRow.querySelectorAll('.lk2Slot').forEach((b, i) => b.classList.toggle('sel', CATS[i][0] === cat));
   }
+
+  /* ---- inventory browser: owned items of the active category ---- */
+  function listFor() {
+    if (cat === 'style') return C().styles;
+    if (cat === 'hero') return C().heroes.filter((h) => baseHeroes().includes(h.id) && store.owns('hero', h.id));
+    if (cat === 'skin') {
+      const f = familyOf(heroOf().id);
+      if (!f) return [];
+      return C().heroes.filter((h) => (h.id === f.hero || (f.skins || []).includes(h.id)) && store.owns('hero', h.id));
+    }
+    if (cat === 'pick') return C().picks.filter((x) => store.owns('pick', x.id));
+    return C().gliders.filter((x) => store.owns('glider', x.id));
+  }
+  const matches = (x) => (!lkQ || (x.name || '').toLowerCase().includes(lkQ)) && (!lkRar || x.rarity === lkRar);
+
+  function equipOf(catId, id) {
+    if (catId === 'style') return store.data.equipped.style === id;
+    if (catId === 'hero' || catId === 'skin') return store.data.equipped.hero === id;
+    return store.data.equipped[catId] === id;
+  }
+
   function drawGrid() {
     gridWrap.innerHTML = '';
-    let list;
-    if (cat === 'style') list = C().styles;
-    else if (cat === 'hero') list = C().heroes.filter((x) => store.owns('hero', x.id));
-    else if (cat === 'pick') list = C().picks.filter((x) => store.owns('pick', x.id));
-    else list = C().gliders.filter((x) => store.owns('glider', x.id));
-    list = list.filter((x) => (!lkQ || (x.name || '').toLowerCase().includes(lkQ)) && (!lkRar || x.rarity === lkRar));
-    headRow.innerHTML = '';
-    headRow.append(el('span', { class: 'lkAll' }, `TODOS (${list.length})`));
-    if (!list.length) {
-      headRow.append(el('span', { class: 'lkNone' }, ' — NADA OBTIDO AINDA, VISITE A LOJA'));
+    let list = listFor().filter(matches);
+    headCount.textContent = `${list.length} ${cat === 'style' ? 'ESTILOS' : 'ITENS'}`;
+
+    if (cat === 'glider') {
+      // "none" option so the slot can be emptied straight from the locker
+      gridWrap.append(el('button', {
+        class: `s3card empty lkNone ${gliderOf() ? '' : 'equipped'}`,
+        onclick: () => { sfx.equip(); store.data.equipped.glider = null; store.bump('equips'); syncPreview(); drawSlots(); drawGrid(); },
+      },
+        el('div', { class: 'c3art' }, el('span', { class: 'lkEmpty big' }, '—')),
+        el('div', { class: 'c3bar' }, el('span', { class: 'c3nm' }, 'SEM BACK BLING'))));
+    }
+    if (!list.length && cat !== 'glider') {
+      gridWrap.append(el('div', { class: 'lkVoid' }, cat === 'skin' ? 'ESTE HERÓI NÃO TEM SKINS OBTIDAS' : 'NADA OBTIDO NESTA CATEGORIA — VISITE A LOJA'));
       return;
     }
-    list.forEach((it, i) => {
+
+    list.forEach((it) => {
       const Rr = rar(it.rarity);
-      const eq = cat === 'style' ? store.data.equipped.style === it.id : store.data.equipped[cat === 'hero' ? 'hero' : cat] === it.id;
-      const art = cat === 'hero'
-        ? el('img', { class: 'pixel f2img', src: portraitOf(it.id), alt: '' })
-        : cat === 'style'
-          ? el('img', { class: 'pixel f2img item', src: heroOf().art, style: { filter: it.filter }, alt: '' })
-          : el('img', { class: 'pixel f2img item', src: it.art, alt: '' });
+      const eq = equipOf(cat, it.id);
+      let art;
+      if (cat === 'hero' || cat === 'skin') art = cropWrap(liveHeroCanvas(it.id, 2), 2);
+      else if (cat === 'glider') art = cropWrap(blingCanvas(heroOf().id, it.id, 2), 2, 40, 44, 4, 4);
+      else if (cat === 'pick') art = el('div', { class: 'c3art pick' }, el('img', { class: 'pixel pIco', src: it.art, alt: '' }));
+      else art = el('div', { class: 'c3art pick' }, el('img', { class: 'pixel pIco', src: portraitOf(heroOf().id), alt: '', style: it.filter === 'none' ? {} : { filter: it.filter } }));
+      const isSkin = cat === 'skin' && familyOf(it.id) && familyOf(it.id).hero !== it.id;
       gridWrap.append(el('button', {
-        class: `fcard2 ${eq ? 'equipped' : ''}`,
-        style: { '--rc': Rr.color, animationDelay: `${i * 20}ms` },
+        class: `s3card lk2Card r-${it.rarity} ${eq ? 'equipped' : ''}`,
+        style: { '--rc': Rr.color },
         onclick: () => {
-          sfx.equip(); store.equip(cat === 'hero' ? 'hero' : cat, it.id);
-          drawGrid(); syncPreview();
-        }
+          sfx.equip();
+          if (cat === 'style') store.equip('style', it.id);
+          else if (cat === 'hero' || cat === 'skin') {
+            store.equip('hero', it.id);
+            // hero picked -> jump straight into its skin rack (Fortnite-style flow)
+            if (cat === 'hero') { const f = familyOf(it.id); if (f && f.skins && f.skins.length) cat = 'skin'; }
+          } else store.equip(cat, it.id);
+          syncPreview(); drawSlots(); drawGrid();
+        },
       },
-        el('div', { class: 'f2art' }, art,
-          eq ? el('span', { class: 'eqTag' }, 'EQUIPADO') : null),
-        el('div', { class: 'f2bar' }, el('span', { class: 'f2nm' }, it.name))));
+        el('div', { class: 'c3art' }, art, isSkin ? el('span', { class: 'skinTag' }, 'SKIN') : null),
+        el('div', { class: 'c3bar' }, el('span', { class: 'c3nm', title: it.name }, it.name))));
     });
   }
-  drawCats(); drawGrid();
 
-  const left = el('div', { class: 'lkLeft' }, stageBox, chips, loadoutRow);
-  const right = el('div', { class: 'lkRight' }, catCol, el('div', { class: 'col', style: { flex: '1', minWidth: '0', gap: '10px' } }, lkTools, headRow, gridWrap));
-  return el('div', { class: 'cols screen-anim in-locker lockerWrap' }, left, right);
+  /* ---- head: title + search + rarity dots (colour-only, no labels) ---- */
+  const dots = el('div', { class: 'lkRars' });
+  ['', 'common', 'uncommon', 'rare', 'epic', 'legendary', 'marvel'].forEach((r) => {
+    dots.append(el('button', {
+      class: `lkF ${r === '' ? 'sel' : ''}`, style: r ? { '--rc': rar(r).color } : {},
+      title: r ? rar(r).label : 'TODOS',
+      onclick: (ev) => { sfx.tab(); lkRar = r; [...dots.querySelectorAll('.lkF')].forEach((b) => b.classList.remove('sel')); ev.currentTarget.classList.add('sel'); drawGrid(); },
+    }));
+  });
+  const head = el('div', { class: 'lk2Head' },
+    el('span', { class: 'lk2Title' }, 'ARMÁRIO'),
+    el('input', { class: 'lkSearch', placeholder: 'PESQUISAR…', oninput: (ev) => { lkQ = ev.target.value.toLowerCase(); drawGrid(); } }),
+    dots,
+    headCount);
+
+  syncPreview(); drawSlots(); drawGrid();
+
+  const left = el('div', { class: 'lk2Left' }, stage, slotsRow);
+  const right = el('div', { class: 'lk2Right' }, head, gridWrap);
+  return el('div', { class: 'cols screen-anim in-locker locker2' }, left, right);
 }
 
 /* ------------------------------ TASKS (categorized) ------------------------------ */

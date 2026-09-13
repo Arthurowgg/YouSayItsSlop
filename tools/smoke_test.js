@@ -152,17 +152,19 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   // locker with combined backbling
   tabBtns()[2].click(); await sleep(30);
   ok(!!$('#screen canvas.hero'), 'locker animated preview');
-  ok($$('.lockerGrid .fcard2').length === 4, 'locker shows only owned outfits (4 after test buys)');
-  ok($('.lkLoadout') && $$('.lkSlot').length === 2, 'loadout row shows equipped cosmetics');
+  ok($$('.lk2Grid .s3card:not(.empty)').length === 4, 'locker hero rack shows only owned base heroes (4 after test buys)');
+  ok($$('.lk2Slot').length === 4 && $$('.lk2Slot')[0].textContent.includes('HOMEM DE FERRO'), 'equipped loadout visible in 4 customization slots');
   ok(!!$('.lkSearch') && $$('.lkF').length === 7, 'locker search + 7 rarity filters');
   $('.lkSearch').value = 'aranha'; $('.lkSearch').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(20);
-  ok($$('.lockerGrid .fcard2').length >= 1 && $$('.lockerGrid .fcard2').every((c) => c.textContent.toLowerCase().includes('aranha')), 'locker search filters');
+  ok($$('.lk2Grid .s3card:not(.empty)').length >= 1 && $$('.lk2Grid .s3card:not(.empty)').every((c) => c.textContent.toLowerCase().includes('aranha')), 'locker search filters');
   $('.lkSearch').value = ''; $('.lkSearch').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(20);
-  const catBling = $$('.lkCat').find((c) => c.textContent === 'BACK BLING');
-  catBling.click(); await sleep(30);
-  $$('.lockerGrid .fcard2').find((c) => c.textContent.includes('ESCUDO DO CAPITÃO')).click(); await sleep(30);
-  ok($$('.lockerGrid .fcard2').some((c) => c.classList.contains('equipped')), 'glider equipped (combines on hero)');
-  ok($('.lkLoadout').textContent.includes('ESCUDO DO CAPITÃO'), 'loadout shows equipped back bling');
+  $$('.lk2Slot')[1].click(); await sleep(30);
+  ok($$('.lk2Grid .s3card').length === 2, 'bling rack lists owned bling + empty slot');
+  $$('.lk2Grid .s3card').find((c) => c.textContent.includes('ESCUDO DO CAPITÃO')).click(); await sleep(30);
+  ok($$('.lk2Grid .s3card').some((c) => c.classList.contains('equipped')), 'glider equipped (combines on hero)');
+  ok($$('.lk2Slot')[1].textContent.includes('ESCUDO DO CAPITÃO'), 'bling slot shows equipped accessory');
+  $$('.lk2Slot')[0].click(); await sleep(30);
+  ok($$('.lk2Grid .s3card').some((c) => c.textContent.includes('MILES') || c.textContent.includes('GWEN') || c.classList.contains('equipped')), 'skin rack opens for the equipped family');
 
   // tasks categories + level
   tabBtns()[3].click(); await sleep(30);
