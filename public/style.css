@@ -1101,7 +1101,7 @@ body.reduce-motion .p2card.sel .p2tile { animation: none; }
 .lk2Stage .floorGlow { width: 300px; height: 34px; margin-top: -18px; background: radial-gradient(50% 50% at 50% 50%, var(--rc, var(--cyan)) 0%, transparent 70%); opacity: .5; }
 .lk2Stage canvas.hero { position: relative; image-rendering: pixelated; filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .5)); }
 .lk2Stage .lkChips { position: absolute; top: 10px; left: 10px; }
-.lk2Slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.lk2Slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .lk2Slot { align-items: center; text-align: center; padding: 16px 6px 7px; gap: 4px; }
 .lk2Slot.sel { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 0 14px rgba(53, 224, 255, .3); }
 .slotLbl { position: absolute; top: 4px; left: 7px; font-size: 9px; letter-spacing: 1.5px; color: var(--dim); }

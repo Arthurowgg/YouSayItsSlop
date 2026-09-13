@@ -153,7 +153,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   tabBtns()[2].click(); await sleep(30);
   ok(!!$('#screen canvas.hero'), 'locker animated preview');
   ok($$('.lk2Grid .s3card:not(.empty)').length === 4, 'locker hero rack shows only owned base heroes (4 after test buys)');
-  ok($$('.lk2Slot').length === 4 && $$('.lk2Slot')[0].textContent.includes('HOMEM DE FERRO'), 'equipped loadout visible in 4 customization slots');
+  ok($$('.lk2Slot').length === 3 && $$('.lk2Slot')[0].textContent.includes('HOMEM DE FERRO'), 'equipped loadout visible in 3 customization slots');
   ok(!!$('.lkSearch') && $$('.lkF').length === 7, 'locker search + 7 rarity filters');
   $('.lkSearch').value = 'aranha'; $('.lkSearch').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(20);
   ok($$('.lk2Grid .s3card:not(.empty)').length >= 1 && $$('.lk2Grid .s3card:not(.empty)').every((c) => c.textContent.toLowerCase().includes('aranha')), 'locker search filters');
@@ -164,7 +164,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok($$('.lk2Grid .s3card').some((c) => c.classList.contains('equipped')), 'glider equipped (combines on hero)');
   ok($$('.lk2Slot')[1].textContent.includes('ESCUDO DO CAPITÃO'), 'bling slot shows equipped accessory');
   $$('.lk2Slot')[0].click(); await sleep(30);
-  ok($$('.lk2Grid .s3card').some((c) => c.textContent.includes('MILES') || c.textContent.includes('GWEN') || c.classList.contains('equipped')), 'skin rack opens for the equipped family');
+  ok($$('.lk2Grid .s3card').length === 0 || $$('.lk2Grid .s3card').every((c) => !c.textContent.includes('HOMEM DE FERRO')), 'skin rack lists only skins, never the base hero');
 
   // tasks categories + level
   tabBtns()[3].click(); await sleep(30);
