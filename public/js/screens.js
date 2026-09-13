@@ -60,7 +60,7 @@ function statBars(id) {
 
 function animChips(stageEl) {
   const chips = el('div', { class: 'animChips' });
-  [['idle', 'PARADO'], ['walk', 'ANDAR'], ['attack', 'ATACAR'], ['ability', 'ESPECIAL'], ['jump', 'SALTO'], ['hurt', 'DANO']].forEach(([id, label], i) => {
+  [['idle', 'PARADO'], ['walk', 'ANDAR'], ['attack', 'ATACAR'], ['ability', 'ESPECIAL']].forEach(([id, label], i) => {
     chips.append(el('button', {
       class: `chip ${i === 0 ? 'sel' : ''}`,
       onclick: (e) => {
@@ -523,7 +523,7 @@ function buyButton(type, id, price, after) {
 /* ------------------------------ LOCKER v2: character customization hub ------------------------------ */
 export function renderLocker() {
   killAnim();
-  const CATS = [['hero', 'HERÓIS'], ['skin', 'SKINS'], ['glider', 'BACK BLING'], ['pick', 'RELÍQUIAS']];
+  const CATS = [['hero', 'HERÓI'], ['glider', 'BACK BLING'], ['pick', 'RELÍQUIAS']];
   let cat = 'hero';
   let lkQ = '', lkRar = '';
 
@@ -579,7 +579,7 @@ export function renderLocker() {
     style: Object.assign({ width: size + 'px', height: size + 'px' }, filter ? { filter } : {}),
   });
     slotsRow.append(
-      slotCard('SKIN', 'skin', ico(portraitOf(h.id)), h.name, h.rarity),
+      slotCard('HERÓI', 'hero', ico(portraitOf(h.id)), h.name, h.rarity),
       g ? slotCard('BLING', 'glider', ico(`assets/anim/${g.id}.png`, '', 64), g.name, g.rarity)
         : slotCard('BLING', 'glider', el('span', { class: 'lkEmpty' }, '—'), 'SEM BLING', 'common', true),
       pk ? slotCard('RELÍQUIA', 'pick', ico(pk.art), pk.name, pk.rarity)
@@ -590,10 +590,6 @@ export function renderLocker() {
   /* ---- inventory browser: owned items of the active category ---- */
   function listFor() {
     if (cat === 'hero') return C().heroes.filter((h) => baseHeroes().includes(h.id) && store.owns('hero', h.id));
-    if (cat === 'skin') {
-      // only real skins here: the base hero lives in the HERÓIS rack
-      return C().heroes.filter((h) => skinsOf(heroOf().id).includes(h.id) && store.owns('hero', h.id));
-    }
     if (cat === 'pick') return C().picks.filter((x) => store.owns('pick', x.id));
     return C().gliders.filter((x) => store.owns('glider', x.id));
   }
@@ -601,7 +597,7 @@ export function renderLocker() {
 
   function equipOf(catId, id) {
     if (catId === 'style') return store.data.equipped.style === id;
-    if (catId === 'hero' || catId === 'skin') return store.data.equipped.hero === id;
+    if (catId === 'hero') return store.data.equipped.hero === id;
     return store.data.equipped[catId] === id;
   }
 
@@ -620,7 +616,7 @@ export function renderLocker() {
         el('div', { class: 'c3bar' }, el('span', { class: 'c3nm' }, 'SEM BACK BLING'))));
     }
     if (!list.length && cat !== 'glider') {
-      gridWrap.append(el('div', { class: 'lkVoid' }, cat === 'skin' ? 'ESTE HERÓI NÃO TEM SKINS OBTIDAS' : 'NADA OBTIDO NESTA CATEGORIA — VISITE A LOJA'));
+      gridWrap.append(el('div', { class: 'lkVoid' }, 'NADA OBTIDO NESTA CATEGORIA — VISITE A LOJA'));
       return;
     }
 
@@ -629,24 +625,31 @@ export function renderLocker() {
       const eq = equipOf(cat, it.id);
       let art;
       if (cat === 'hero' || cat === 'skin') art = cropWrap(liveHeroCanvas(it.id, 2), 2);
-      else if (cat === 'glider') art = cropWrap(blingCanvas(heroOf().id, it.id, 2), 2, 40, 44, 4, 4);
+      else if (cat === 'glider') art = el('div', { class: 'c3art' }, el('img', { class: 'pixel pIco', src: it.art, alt: '' }));
       else art = el('div', { class: 'c3art pick' }, el('img', { class: 'pixel pIco', src: it.art, alt: '' }));
-      const isSkin = cat === 'skin';
+      // skins appear WITH their hero inside the HERO rack (never as dupes)
+      const skinChips = cat === 'hero' ? (skinsOf(it.id).filter((sid) => store.owns('hero', sid))
+        .map((sid) => {
+          const sk = C().heroes.find((x) => x.id === sid);
+          return el('button', {
+            class: `skinChip ${store.data.equipped.hero === sid ? 'equipped' : ''}`,
+            title: sk ? sk.name : sid,
+            onclick: (ev) => { ev.stopPropagation(); sfx.equip(); store.equip('hero', sid); syncPreview(); drawSlots(); drawGrid(); },
+          }, el('img', { class: 'pixel', src: portraitOf(sid), alt: '' }));
+        })) : [];
       gridWrap.append(el('button', {
         class: `s3card lk2Card r-${it.rarity} ${eq ? 'equipped' : ''}`,
         style: { '--rc': Rr.color },
         onclick: () => {
           sfx.equip();
-          if (cat === 'hero' || cat === 'skin') {
-            store.equip('hero', it.id);
-            // hero picked -> jump straight into its skin rack (Fortnite-style flow)
-            if (cat === 'hero') { const f = familyOf(it.id); if (f && f.skins && f.skins.length) cat = 'skin'; }
-          } else store.equip(cat, it.id);
+          if (cat === 'hero') store.equip('hero', it.id);
+          else store.equip(cat, it.id);
           syncPreview(); drawSlots(); drawGrid();
         },
       },
-        el('div', { class: 'c3art' }, art, isSkin ? el('span', { class: 'skinTag' }, 'SKIN') : null),
-        el('div', { class: 'c3bar' }, el('span', { class: 'c3nm', title: it.name }, it.name))));
+        el('div', { class: 'c3art' }, art),
+        el('div', { class: 'c3bar' }, el('span', { class: 'c3nm', title: it.name }, it.name)),
+        skinChips.length ? el('div', { class: 'skinChips' }, ...skinChips) : null));
     });
   }
 

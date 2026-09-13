@@ -45,7 +45,8 @@
           "name": "SENTIDO DE PERIGO",
           "desc": "Avisa ataques iminentes por um breve instante."
         }
-      }
+      },
+      "size": "M"
     },
     {
       "id": "venom",
@@ -60,7 +61,8 @@
         "id": "symbiote_lunge",
         "name": "BOTE SIMBIONTE",
         "desc": "Avançada curta e pesada com mordida de simbionte."
-      }
+      },
+      "size": "L"
     },
     {
       "id": "ironman",
@@ -75,7 +77,8 @@
         "id": "repulsor_blast",
         "name": "RAJO REPULSOR",
         "desc": "Carga curta e tiro de energia de longo alcance."
-      }
+      },
+      "size": "M"
     },
     {
       "id": "capamerica",
@@ -90,7 +93,8 @@
         "id": "shield_throw",
         "name": "ARREMESSO RICOCHETE",
         "desc": "Escudo vai, bate e volta na mão."
-      }
+      },
+      "size": "M"
     },
     {
       "id": "hulk",
@@ -105,7 +109,8 @@
         "id": "ground_smash",
         "name": "ESMAGAR DO SOLO",
         "desc": "Salto e impacto que gera onda de choque."
-      }
+      },
+      "size": "L"
     },
     {
       "id": "wolverine",
@@ -120,7 +125,8 @@
         "id": "claw_dash",
         "name": "DASH DE GARRAS",
         "desc": "Investida rápida que corta por onde passa."
-      }
+      },
+      "size": "M"
     },
     {
       "id": "drstrange",
@@ -135,7 +141,8 @@
         "id": "mystic_portal",
         "name": "PORTAL MÍSTICO",
         "desc": "Abre portal e reposiciona em um instante."
-      }
+      },
+      "size": "M"
     },
     {
       "id": "blackpanther",
@@ -150,7 +157,8 @@
         "id": "shadow_pounce",
         "name": "BOTE DA SOMBRA",
         "desc": "Salto curto e certeiro com garras de vibranium."
-      }
+      },
+      "size": "M"
     },
     {
       "id": "antman",
@@ -165,7 +173,8 @@
         "id": "shrink",
         "name": "ENCOLHER",
         "desc": "Fica pequeno: hitbox menor e movimento mais rápido."
-      }
+      },
+      "size": "S"
     }
   ],
   "bundles": [
@@ -177,7 +186,7 @@
       "desc": "O Amigão da Vizinhança e o plano de teias completo — bling de teia incluído.",
       "items": [
         "spiderman",
-        "glider_h_spider",
+        "bling_webdrone",
         "pick_web"
       ]
     },
@@ -190,7 +199,7 @@
       "items": [
         "capamerica",
         "ironman",
-        "glider_shield"
+        "bling_shield"
       ]
     },
     {
@@ -201,7 +210,7 @@
       "desc": "Wolverine com as asas de garra e a garra de adamantium. Dia longo, lobby curto.",
       "items": [
         "wolverine",
-        "glider_h_wolverine",
+        "bling_claws",
         "pick_h_wolverine"
       ]
     },
@@ -213,7 +222,7 @@
       "desc": "Pantera Negra com a sombra do pantera e o golpe de vibranium.",
       "items": [
         "blackpanther",
-        "glider_panther",
+        "bling_dagger",
         "pick_h_panther"
       ]
     },
@@ -225,7 +234,7 @@
       "desc": "Doutor Estranho, o portal místico e a lâmina mística. A realidade agradece.",
       "items": [
         "drstrange",
-        "glider_portal",
+        "bling_relic",
         "pick_h_strange"
       ]
     }
@@ -474,297 +483,351 @@
   ],
   "gliders": [
     {
-      "id": "glider_shield",
-      "name": "ESCUDO DO CAPITÃO",
-      "art": "assets/spr/glider_shield.png",
-      "rarity": "epic",
-      "price": 1000,
-      "desc": "Redondo. Icônico. Quase indestrutível.",
-      "attach": {
-        "dx": -8,
-        "dy": 10,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_wings",
-      "name": "ASAS DE ANJO",
-      "art": "assets/spr/glider_wings.png",
-      "rarity": "legendary",
+      "id": "bling_webdrone",
+      "name": "DRONE-ARANHA",
+      "type": "glider",
+      "rarity": "rare",
       "price": 1200,
-      "desc": "Descida com plumas.",
-      "attach": {
-        "dx": 0,
-        "dy": 8,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_cosmic",
-      "name": "CAPA CÓSMICA",
-      "art": "assets/spr/glider_cosmic.png",
-      "rarity": "epic",
-      "price": 900,
-      "desc": "Vista o céu noturno.",
-      "attach": {
-        "dx": -9,
-        "dy": 10,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_claws",
-      "name": "ESTANDARTE DO PANTERA",
-      "art": "assets/spr/glider_claws.png",
-      "rarity": "rare",
-      "price": 700,
-      "desc": "Bandeira de guerra marcada por garras.",
-      "attach": {
-        "dx": 8,
-        "dy": 9,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_portal",
-      "name": "PORTAL MÍSTICO",
-      "desc": "Um atalho por outra dimensão.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_portal.png",
-      "attach": {
-        "dx": 8,
-        "dy": 9,
-        "s": 1,
-        "layer": "front"
-      }
-    },
-    {
-      "id": "glider_webwings",
-      "name": "ASAS DE TEIA",
-      "desc": "Plane como uma aranha.",
-      "rarity": "rare",
-      "price": 500,
-      "art": "assets/spr/glider_webwings.png",
-      "attach": {
-        "dx": 0,
-        "dy": 7,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_storm",
-      "name": "NUVEM DE TEMPESTADE",
-      "desc": "Chove só em você.",
-      "rarity": "legendary",
-      "price": 1200,
-      "art": "assets/spr/glider_storm.png",
-      "attach": {
-        "dx": -9,
-        "dy": 9,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_panther",
-      "name": "SOMBRA DO PANTERA",
-      "desc": "Desce em silêncio.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_panther.png",
-      "attach": {
-        "dx": 0,
-        "dy": 9,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_holo",
-      "name": "CUBO HOLO",
-      "desc": "Flutuação assistida por holograma.",
-      "rarity": "marvel",
-      "price": 1500,
-      "art": "assets/spr/glider_holo.png",
-      "attach": {
-        "dx": -7,
-        "dy": 9,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_valkyrie",
-      "name": "ELMO ALADO",
-      "desc": "Digno de Valhalla.",
-      "rarity": "rare",
-      "price": 500,
-      "art": "assets/spr/glider_valkyrie.png",
-      "attach": {
-        "dx": 0,
-        "dy": 7,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_spider",
-      "name": "PARAQUEDAS DE TEIA",
-      "desc": "Paraquedas que balança em teia.",
-      "rarity": "rare",
-      "price": 500,
-      "art": "assets/spr/glider_h_spider.png",
-      "attach": {
-        "dx": 0,
-        "dy": 9,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_classic",
-      "name": "TEIA CLÁSSICA",
-      "desc": "Descida vintage.",
-      "rarity": "rare",
-      "price": 500,
-      "art": "assets/spr/glider_h_classic.png",
-      "attach": {
-        "dx": 0,
-        "dy": 9,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_venom",
-      "name": "MANTO SIMBIONTE",
-      "desc": "Tentáculos seguram você.",
-      "rarity": "legendary",
-      "price": 1200,
-      "art": "assets/spr/glider_h_venom.png",
-      "attach": {
-        "dx": -6,
-        "dy": 10,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_iron",
-      "name": "PROPULSORES MARK VII",
-      "desc": "Pouso com repulsores.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_iron.png",
-      "attach": {
-        "dx": 0,
-        "dy": 8,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_cap",
-      "name": "PARAQUEDAS ESTRELADO",
-      "desc": "Listras e estrelas.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_cap.png",
-      "attach": {
-        "dx": -8,
-        "dy": 10,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_hulk",
-      "name": "NUVEM GAMA",
-      "desc": "Queda sísmica.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_hulk.png",
-      "attach": {
-        "dx": 0,
-        "dy": 12,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_wolverine",
-      "name": "ASAS DE GARRA",
-      "desc": "Lâminas que planam.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_wolverine.png",
-      "attach": {
-        "dx": 7,
-        "dy": 9,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_strange",
-      "name": "MANTO DE LEVITAÇÃO",
-      "desc": "Ele escolhe o caminho.",
-      "rarity": "legendary",
-      "price": 1200,
-      "art": "assets/spr/glider_h_strange.png",
-      "attach": {
-        "dx": 0,
-        "dy": 8,
-        "s": 1,
-        "layer": "front"
-      }
-    },
-    {
-      "id": "glider_h_panther",
-      "name": "JATO DE WAKANDA",
-      "desc": "Tecnologia de vibranium.",
-      "rarity": "marvel",
-      "price": 1500,
-      "art": "assets/spr/glider_h_panther.png",
-      "attach": {
-        "dx": -7,
-        "dy": 9,
-        "s": 1,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_antman",
-      "name": "ASAS DE FORMIGA",
-      "desc": "Voo em escala.",
-      "rarity": "epic",
-      "price": 800,
-      "art": "assets/spr/glider_h_antman.png",
-      "attach": {
-        "dx": 6,
-        "dy": 7,
-        "s": 0.5,
-        "layer": "behind"
-      }
-    },
-    {
-      "id": "glider_h_antman_unmasked",
-      "name": "HÉLICES PIM",
-      "desc": "Hélices pequenas.",
-      "rarity": "rare",
-      "price": 500,
-      "art": "assets/spr/glider_h_antman_unmasked.png",
+      "art": "assets/spr/bling_webdrone.png",
+      "anim": "assets/anim/bling_webdrone.png",
       "attach": {
         "dx": 0,
         "dy": 6,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 6,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 6,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_cocoon",
+      "name": "CASULO SIMBIONTE",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_cocoon.png",
+      "anim": "assets/anim/bling_cocoon.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_gamma",
+      "name": "TANQUE GAMA",
+      "type": "glider",
+      "rarity": "rare",
+      "price": 1200,
+      "art": "assets/spr/bling_gamma.png",
+      "anim": "assets/anim/bling_gamma.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_shield",
+      "name": "ESCUDO ESTRELA",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_shield.png",
+      "anim": "assets/anim/bling_shield.png",
+      "attach": {
+        "dx": -2,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": -2,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": -2,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_reactor",
+      "name": "REATOR DE BOLSO",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_reactor.png",
+      "anim": "assets/anim/bling_reactor.png",
+      "attach": {
+        "dx": 0,
+        "dy": 7,
         "s": 0.5,
-        "layer": "behind"
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 7,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 7,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_claws",
+      "name": "BAINHA DE ADAMANTIUM",
+      "type": "glider",
+      "rarity": "rare",
+      "price": 1200,
+      "art": "assets/spr/bling_claws.png",
+      "anim": "assets/anim/bling_claws.png",
+      "attach": {
+        "dx": 1,
+        "dy": 9,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 1,
+            "dy": 9,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 1,
+            "dy": 9,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_capsules",
+      "name": "CÁPSULAS PYM",
+      "type": "glider",
+      "rarity": "rare",
+      "price": 1200,
+      "art": "assets/spr/bling_capsules.png",
+      "anim": "assets/anim/bling_capsules.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_dagger",
+      "name": "ADAGA DE VIBRANIUM",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_dagger.png",
+      "anim": "assets/anim/bling_dagger.png",
+      "attach": {
+        "dx": 1,
+        "dy": 9,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 1,
+            "dy": 9,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 1,
+            "dy": 9,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_relic",
+      "name": "RELICÁRIO MÍSTICO",
+      "type": "glider",
+      "rarity": "legendary",
+      "price": 2000,
+      "art": "assets/spr/bling_relic.png",
+      "anim": "assets/anim/bling_relic.png",
+      "attach": {
+        "dx": 0,
+        "dy": 7,
+        "s": 0.5,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 7,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 7,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_tacpack",
+      "name": "MOCHILA TÁTICA",
+      "type": "glider",
+      "rarity": "common",
+      "price": 800,
+      "art": "assets/spr/bling_tacpack.png",
+      "anim": "assets/anim/bling_tacpack.png",
+      "attach": {
+        "dx": 0,
+        "dy": 8,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 8,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 8,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_wings",
+      "name": "ASAS DE AÇO",
+      "type": "glider",
+      "rarity": "legendary",
+      "price": 2000,
+      "art": "assets/spr/bling_wings.png",
+      "anim": "assets/anim/bling_wings.png",
+      "attach": {
+        "dx": 0,
+        "dy": 4,
+        "s": 1,
+        "layer": "behind",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 4,
+            "s": 0.5,
+            "layer": "behind"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 4,
+            "s": 1,
+            "layer": "behind"
+          }
+        }
+      }
+    },
+    {
+      "id": "bling_holo",
+      "name": "MANTO HOLOGRÁFICO",
+      "type": "glider",
+      "rarity": "epic",
+      "price": 1600,
+      "art": "assets/spr/bling_holo.png",
+      "anim": "assets/anim/bling_holo.png",
+      "attach": {
+        "dx": 0,
+        "dy": 5,
+        "s": 1,
+        "layer": "front",
+        "perHero": {
+          "antman": {
+            "dx": 0,
+            "dy": 5,
+            "s": 0.5,
+            "layer": "front"
+          },
+          "hulk": {
+            "dx": 0,
+            "dy": 5,
+            "s": 1,
+            "layer": "front"
+          }
+        }
       }
     }
   ],
@@ -945,10 +1008,8 @@
       "tag": "Teias e simbiontes",
       "bundle": "b_spiderverse",
       "gliders": [
-        "glider_webwings",
-        "glider_h_spider",
-        "glider_h_classic",
-        "glider_h_venom"
+        "bling_webdrone",
+        "bling_cocoon"
       ],
       "picks": [
         "pick_web",
@@ -975,15 +1036,10 @@
       "tag": "Os mais poderosos do lobby",
       "bundle": "b_avengers",
       "gliders": [
-        "glider_shield",
-        "glider_wings",
-        "glider_storm",
-        "glider_valkyrie",
-        "glider_h_cap",
-        "glider_h_iron",
-        "glider_h_hulk",
-        "glider_h_antman",
-        "glider_h_antman_unmasked"
+        "bling_shield",
+        "bling_reactor",
+        "bling_wings",
+        "bling_tacpack"
       ],
       "picks": [
         "pick_axe",
@@ -1022,7 +1078,7 @@
       "tag": "O gene X pixelado",
       "bundle": "b_mutants",
       "gliders": [
-        "glider_h_wolverine"
+        "bling_claws"
       ],
       "picks": [
         "pick_h_wolverine",
@@ -1042,9 +1098,8 @@
       "tag": "Vibranium e silêncio",
       "bundle": "b_shadow",
       "gliders": [
-        "glider_claws",
-        "glider_panther",
-        "glider_h_panther"
+        "bling_dagger",
+        "bling_capsules"
       ],
       "picks": [
         "pick_shadow",
@@ -1065,10 +1120,9 @@
       "tag": "Portais e relíquias",
       "bundle": "b_mystic",
       "gliders": [
-        "glider_cosmic",
-        "glider_portal",
-        "glider_holo",
-        "glider_h_strange"
+        "bling_relic",
+        "bling_holo",
+        "bling_gamma"
       ],
       "picks": [
         "pick_quantum",

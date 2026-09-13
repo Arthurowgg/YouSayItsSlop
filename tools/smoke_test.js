@@ -93,7 +93,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   const shopTxt = $('.shop3').textContent;
   ok(!shopTxt.includes('EMOTES') && !shopTxt.includes('ÉPICO') && !shopTxt.includes('NOVO') && !shopTxt.includes('TRAJE'), 'no emotes / épico / novo / traje written in shop');
   ok($$('.s3card.bundle').length === 5, 'shop shows 5 bundle cards (one per category)');
-  ok($$('.catBlings canvas').length === 21, 'every back bling previewed riding a hero');
+  ok($$('.catBlings canvas').length === 12, 'every back bling previewed riding a hero');
   ok($$('.s3card.hero').length === 9 && $$('.s3card.skin').length === 0, '9 hero cards, skins listed separately (none yet)');
   ok($$('.catPicks .s3card').length === 30, 'all picks listed by category');
   ok($$('.s3card.owned .ownBadge').length >= 2 && $$('.s3card.owned').every((c) => !c.querySelector('.c3bar .price')), 'owned overrides the price tag');
@@ -138,7 +138,7 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   ok(!!$('.show2 .shItem'), 'gear showcase shows large inspectable icon');
   ok(!!$('.show2 .shPlatform'), 'gear showcase has platform');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
-  $$('#screen .s3card.gear').find((c) => c.textContent.includes('ESCUDO DO CAPITÃO')).click(); await sleep(30);
+  $$('#screen .s3card.gear').find((c) => c.textContent.includes('ESCUDO ESTRELA')).click(); await sleep(30);
   ok(!!$('.show2 .shStage') && !$('.show2 .shItem'), 'back bling showcase rides the equipped hero');
   $$('.pageHead .btn').find((b) => b.textContent.includes('VOLTAR')).click(); await sleep(30);
 
@@ -160,11 +160,12 @@ require(process.env.BUNDLE || '/tmp/mpr_bundle.js');
   $('.lkSearch').value = ''; $('.lkSearch').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(20);
   $$('.lk2Slot')[1].click(); await sleep(30);
   ok($$('.lk2Grid .s3card').length === 2, 'bling rack lists owned bling + empty slot');
-  $$('.lk2Grid .s3card').find((c) => c.textContent.includes('ESCUDO DO CAPITÃO')).click(); await sleep(30);
+  $$('.lk2Grid .s3card').find((c) => c.textContent.includes('ESCUDO ESTRELA')).click(); await sleep(30);
   ok($$('.lk2Grid .s3card').some((c) => c.classList.contains('equipped')), 'glider equipped (combines on hero)');
-  ok($$('.lk2Slot')[1].textContent.includes('ESCUDO DO CAPITÃO'), 'bling slot shows equipped accessory');
+  ok($$('.lk2Slot')[1].textContent.includes('ESCUDO ESTRELA'), 'bling slot shows equipped accessory');
   $$('.lk2Slot')[0].click(); await sleep(30);
-  ok($$('.lk2Grid .s3card').length === 0 || $$('.lk2Grid .s3card').every((c) => !c.textContent.includes('HOMEM DE FERRO')), 'skin rack lists only skins, never the base hero');
+  ok($$('.lk2Grid .s3card:not(.empty)').length === 4 && $$('.lk2Grid .s3card:not(.empty)').some((c) => c.textContent.includes('HOMEM DE FERRO')), 'hero rack lists owned base heroes (skins live inside them)');
+  ok($$('.lk2Grid .skinChip').length === 0, 'no owned skins yet - chips appear with their hero when owned');
 
   // tasks categories + level
   tabBtns()[3].click(); await sleep(30);

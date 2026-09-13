@@ -28,6 +28,7 @@ body {
 }
 img.pixel, .pixel { image-rendering: pixelated; }
 canvas.pixel { image-rendering: pixelated; }
+canvas { image-rendering: pixelated; }  /* round 9: never resample game canvases smoothly */
 button { font-family: var(--ui); color: inherit; background: none; border: none; cursor: pointer; font-size: 20px; }
 .pix { font-family: var(--pix); }
 #fx { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
@@ -1131,3 +1132,9 @@ body.reduce-motion .p2card.sel .p2tile { animation: none; }
   .lk2Stage { min-height: 300px; flex: none; }
   .lk2Grid { max-height: 46vh; }
 }
+
+/* locker: skins live inside the hero card */
+.skinChips { display: flex; gap: 6px; margin-top: 6px; justify-content: center; }
+.skinChip { width: 30px; height: 30px; padding: 2px; background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.25); border-radius: 6px; cursor: pointer; }
+.skinChip img { width: 100%; height: 100%; image-rendering: pixelated; }
+.skinChip.equipped { border-color: var(--gold); box-shadow: 0 0 6px rgba(255,210,90,.6); }

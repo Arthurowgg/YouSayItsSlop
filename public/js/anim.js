@@ -17,18 +17,12 @@
 //
 // Strip layout (36 frames of 48px) - see docs/SPRITE_SPEC.md.
 export const FRAME = 48;
-export const STRIP_FRAMES = 42;
+export const STRIP_FRAMES = 24;
 export const ANIMS = {
-  idle:    { start: 0,  frames: 6, fps: 4,  loop: true  },
-  walk:    { start: 6,  frames: 6, fps: 9,  loop: true  },
-  attack:  { start: 12, frames: 6, fps: 10, loop: false },
-  ability: { start: 18, frames: 6, fps: 8,  loop: false },
-  jump:    { start: 24, frames: 2, fps: 8,  loop: false },
-  fall:    { start: 26, frames: 2, fps: 6,  loop: true  },
-  land:    { start: 28, frames: 2, fps: 10, loop: false },
-  hurt:    { start: 30, frames: 2, fps: 10, loop: false },
-  death:   { start: 32, frames: 4, fps: 6,  loop: false },
-  sense:   { start: 36, frames: 6, fps: 6,  loop: false }
+  idle:    { start: 0,  count: 6, fps: 4,  loop: true  },
+  walk:    { start: 6,  count: 6, fps: 9,  loop: true  },
+  attack:  { start: 12, count: 6, fps: 10, loop: false },
+  ability: { start: 18, count: 6, fps: 8,  loop: false }
 };
 let FPS_CAP = 60;
 export function setFpsCap(n) { FPS_CAP = Math.max(10, n | 0) || 60; }
@@ -178,7 +172,9 @@ export class Animator {
 
   setAnim(a, onEnd) {
     if (onEnd !== undefined) this.onEnd = onEnd;
-    if (this.anim !== a) { this.anim = a; this.frame = 0; this.acc = 0; this.dirty = true; }
+    // unknown state -> idle, never a dead strip
+    const name = ANIMS[a] ? a : 'idle';
+    if (this.anim !== name) { this.anim = name; this.frame = 0; this.acc = 0; this.dirty = true; }
   }
 
   step(d = 1) {

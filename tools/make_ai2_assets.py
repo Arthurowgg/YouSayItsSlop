@@ -23,33 +23,24 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import make_ai_assets as M
 
 ART2 = os.path.join(M.ROOT, 'art2')
-CYCLES = [('idle', 6), ('walk', 6), ('attack', 6), ('ability', 6), ('jump', 2),
-          ('fall', 2), ('land', 2), ('hurt', 2), ('death', 4), ('sense', 6)]
+CYCLES = [('idle', 6), ('walk', 6), ('attack', 6), ('ability', 6)]
 # one sheet per hero: 6 rows x 6 cols of EQUAL cells, row-major cell map:
 #  r0 idle1-4 jump1-2 | r1 walk1-6 | r2 fall1-2 land1-2 attack1-2
 #  r3 attack3-4 hurt1-2 death1-2 | r4 death3-4 ability1-4 | r5 ability5-6 sense1-4
-# Generation is chunked into 3 simple grids (reliable for the image model);
-# the pipeline stitches them into ONE master sheet art2/sheet_<hero>.png
-# (7 rows x 6 cols = 42 equal cells) which is the single source of truth.
-CHUNKS = [  # (file, rows, cellmap rows: list of (row, [(cyc,frame,col)...]))
-    ('s1', 2, [(0, [('idle', i, i) for i in range(6)]),
-               (1, [('walk', i, i) for i in range(6)])]),
-    ('s2', 2, [(0, [('attack', i, i) for i in range(6)]),
-               (1, [('ability', i, i) for i in range(6)])]),
-    ('s3', 3, [(0, [('jump', 0, 0), ('jump', 1, 1), ('fall', 0, 2), ('fall', 1, 3),
-                    ('land', 0, 4), ('land', 1, 5)]),
-               (1, [('hurt', 0, 0), ('hurt', 1, 1), ('death', 0, 2), ('death', 1, 3),
-                    ('death', 2, 4), ('death', 3, 5)]),
-               (2, [('sense', i, i) for i in range(6)])]),
-]
-CELLMAP = [(cyc, f) for _, _, rows in CHUNKS for _, items in rows for cyc, f, _ in items]
-# strip output order = ANIMS starts: idle0 walk6 attack12 ability18 jump24 fall26 land28 hurt30 death32 sense36
+# ONE generated sheet per hero (same character/style guaranteed):
+# art2/hero_<id>.png = 4 rows x 6 cols = 24 equal cells, transparent or
+# chroma-key backdrop. Extraction is deterministic fixed rects only.
+SHEET_ROWS = [(0, [('idle', i, i) for i in range(6)]),
+              (1, [('walk', i, i) for i in range(6)]),
+              (2, [('attack', i, i) for i in range(6)]),
+              (3, [('ability', i, i) for i in range(6)])]
+CELLMAP = [(cyc, f) for _, items in SHEET_ROWS for cyc, f, _ in items]
+# strip output order = ANIMS starts: idle0 walk6 attack12 ability18
 STRIP_ORDER = ([(('idle'), i) for i in range(6)] + [('walk', i) for i in range(6)]
-               + [('attack', i) for i in range(6)] + [('ability', i) for i in range(6)]
-               + [('jump', i) for i in range(2)] + [('fall', i) for i in range(2)]
-               + [('land', i) for i in range(2)] + [('hurt', i) for i in range(2)]
-               + [('death', i) for i in range(4)] + [('sense', i) for i in range(6)])
-DY = {'walk': M.WALK_BOB, 'jump': [-3, -7], 'fall': [-9, -7], 'land': [-2, 0]}
+               + [('attack', i) for i in range(6)] + [('ability', i) for i in range(6)])
+# 12 back blings live in ONE sheet: art2/bling_sheet.png = 3 rows x 4 cols
+BLING_ROWS, BLING_COLS = 3, 4
+DY = {'walk': M.WALK_BOB}
 BLING_OF = {
     'spiderman': 'glider_h_spider', 'venom': 'glider_h_venom',
     'capamerica': 'glider_h_cap', 'ironman': 'glider_h_iron',
@@ -60,7 +51,81 @@ BLING_OF = {
 
 
 def has_art2(hid):
-    return os.path.exists(os.path.join(ART2, 's1_%s.png' % hid))
+    return os.path.exists(os.path.join(ART2, 'hero_%s.png' % hid))
+
+
+def load_rgba(path):
+    im = Image.open(path).convert('RGBA')
+    return np.array(im)
+
+
+def sprite_mask(rgba):
+    """Mask from REAL alpha when the source carries transparency, else fall
+    back to the flat-backdrop modal key (magenta/white)."""
+    a = rgba[:, :, 3]
+    if (a == 0).sum() > 0.15 * a.size and (a > 200).sum() > 0.01 * a.size:
+        return a > 127
+    return mask_of(rgba[:, :, :3])
+
+
+def load_rgb(path):
+    return np.array(Image.open(path).convert('RGB'))
+
+
+def mask_of(rgb):
+    """Robust mask for flat/checked backdrops: background = the dominant
+    backdrop buckets (flat colour OR fake-transparency checkerboard / soft
+    gradient, which together cover most of the sheet). Sprite = pixels far
+    from every backdrop bucket AND far from the white divider grid; largest
+    blob kept, holes filled, thin ground bars dropped."""
+    from scipy import ndimage as ndi
+    h, w, _ = rgb.shape
+    q = (rgb // 24).astype(np.int32).reshape(-1, 3)
+    keys, counts = np.unique(q, axis=0, return_counts=True)
+    order = np.argsort(-counts)
+    total = counts.sum()
+    bks, cum = [], 0.0
+    for i2 in order:                       # cumulative backdrop buckets
+        share = counts[i2] / total
+        if share < 0.12:
+            break
+        bks.append(keys[i2]); cum += share
+        if cum > 0.55:
+            break
+    if not bks:
+        bks = [keys[order[0]]]
+    centres = np.array([k * 24 + 12 for k in bks], np.int32)
+    d = np.abs(rgb.astype(np.int32)[:, :, None, :] - centres[None, None, :, :]).max(axis=3).min(axis=2)
+    dw = np.abs(rgb.astype(np.int32) - 255).max(axis=2)
+    m = (d > 16) & (dw > 28)   # tight tolerance keeps outlines
+    if m.sum() < 0.02 * m.size or m.sum() > 0.6 * m.size:
+        m = (d > 28) & (dw > 28)  # fallback if the sheet came out gradient-y
+    for y in range(h):  # thin full-width ground bars
+        if m[y].mean() > 0.85:
+            m[y] = False
+    for x in range(w):  # thin full-height divider bars
+        if m[:, x].mean() > 0.85:
+            m[:, x] = False
+    lab, n = ndi.label(m, structure=np.ones((3, 3), int))
+    if n > 1:
+        sizes = ndi.sum(m, lab, range(1, n + 1))
+        m = lab == (int(np.argmax(sizes)) + 1)
+    m = ndi.binary_fill_holes(m)
+    return m
+
+
+def load_rgba(path):
+    im = Image.open(path).convert('RGBA')
+    return np.array(im)
+
+
+def sprite_mask(rgba):
+    """Mask from REAL alpha when the source carries transparency, else fall
+    back to the flat-backdrop modal key (magenta/white)."""
+    a = rgba[:, :, 3]
+    if (a == 0).sum() > 0.15 * a.size and (a > 200).sum() > 0.01 * a.size:
+        return a > 127
+    return mask_of(rgba[:, :, :3])
 
 
 def load_rgb(path):
@@ -140,6 +205,18 @@ def inpaint_key_leaks(rgb, m):
     return out
 
 
+def keyed_cut_rgba(rgba):
+    """Tight-bbox RGBA crop of one RGBA cell (alpha or keyed backdrop)."""
+    m = sprite_mask(rgba)
+    if m.sum() < 64:
+        return None
+    rgb = inpaint_key_leaks(rgba[:, :, :3], m)
+    ys, xs = np.where(m)
+    y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    return np.dstack([rgb[y0:y1, x0:x1],
+                      np.where(m[y0:y1, x0:x1], 255, 0).astype(np.uint8)])
+
+
 def keyed_cut(rgb):
     """Tight-bbox RGBA crop of one cell / image."""
     m = mask_of(rgb)
@@ -165,32 +242,53 @@ def centre_on(px, canvas):
     return out
 
 
+def _cell_cut(rgba, band_y0, band_y1, cellx, gw, w):
+    """Fixed-rect cell extraction with deterministic straddle repair: the
+    frame rectangle never changes, but when the generator draws a pose
+    across a grid line we attribute the whole connected character blob to
+    the cell it overlaps most (searched in a +-half-cell window), so frames
+    are never sliced in half."""
+    from scipy import ndimage as ndi
+    x0 = max(0, cellx - gw // 2)
+    x1 = min(w, cellx + gw + gw // 2)
+    win = rgba[band_y0:band_y1, x0:x1]
+    m = sprite_mask(win)
+    if m.sum() < 64:
+        return None
+    lab, n = ndi.label(m, structure=np.ones((3, 3), int))
+    if n == 0:
+        return None
+    cx0, cx1 = cellx - x0, min(x1, cellx + gw) - x0
+    best, bestov = None, 0
+    for k in range(1, n + 1):
+        ov = int((lab[:, cx0:cx1] == k).sum())
+        if ov > bestov:
+            best, bestov = k, ov
+    if best is None or bestov < 64:
+        m2 = m[:, cx0:cx1]
+        if m2.sum() < 64:
+            return None
+        best = None
+        m = m2
+        win = win[:, cx0:cx1]
+    if best is not None:
+        m = lab == best
+    ys, xs = np.where(m)
+    y0, y1 = ys.min(), ys.max() + 1
+    x0b, x1b = xs.min(), xs.max() + 1
+    rgb = inpaint_key_leaks(win[:, :, :3], m)
+    return np.dstack([rgb[y0:y1, x0b:x1b],
+                      np.where(m[y0:y1, x0b:x1b], 255, 0).astype(np.uint8)])
+
+
 def build_hero(hid):
-    chunks = []
-    for name, rows, rowmap in CHUNKS:
-        pth = os.path.join(ART2, '%s_%s.png' % (name, hid))
-        if not os.path.exists(pth):
-            print('  (skip %s: missing %s)' % (hid, os.path.basename(pth)))
-            return False
-        chunks.append((name, rows, rowmap, load_rgb(pth)))
-    # stitch the single master sheet: 7 rows x 6 cols of equal cells
-    ch = max(img.shape[0] // rows for _, rows, _, img in chunks)
-    cw = max(img.shape[1] // 6 for _, _, _, img in chunks)
-    master = np.zeros((ch * 7, cw * 6, 3), np.uint8)
+    rgba = load_rgba(os.path.join(ART2, 'hero_%s.png' % hid))
+    h, w = rgba.shape[:2]
+    gh, gw = h // 4, w // 6
     cuts = {}
-    mr = 0
-    for name, rows, rowmap, img in chunks:
-        gh, gw = img.shape[0] // rows, img.shape[1] // 6
-        for r, items in rowmap:
-            for cyc, f, col in items:
-                cell_img = img[r * gh:(r + 1) * gh, col * gw:(col + 1) * gw]
-                tile = master[(mr + r) * ch:(mr + r + 1) * ch, col * cw:(col + 1) * cw]
-                th, tw = tile.shape[0], tile.shape[1]
-                tile[:min(ch, cell_img.shape[0]), :min(cw, cell_img.shape[1])] = \
-                    cell_img[:min(ch, cell_img.shape[0]), :min(cw, cell_img.shape[1])]
-                cuts[(cyc, f)] = keyed_cut(cell_img)
-        mr += rows
-    Image.fromarray(master).save(os.path.join(ART2, 'sheet_%s.png' % hid))
+    for r, items in SHEET_ROWS:
+        for cyc, f, col in items:
+            cuts[(cyc, f)] = _cell_cut(rgba, r * gh, (r + 1) * gh, col * gw, gw, w)
     cuts_by_cyc = {}
     for cyc, n in CYCLES:
         cells = [cuts.get((cyc, f)) for f in range(n)]
@@ -207,13 +305,13 @@ def build_hero(hid):
             cells[f] = near if near is not None else c
         cuts_by_cyc[cyc] = cells
     allcuts = [c for cyc, _ in CYCLES for c in cuts_by_cyc[cyc]]
-    assert len(STRIP_ORDER) == 42
+    assert len(STRIP_ORDER) == 24
     pal = M.hero_palette(allcuts)
 
     tallest = max(c.shape[0] for c in allcuts)
     ratio = max(2, int(round(tallest / M.TARGET_H)))
 
-    strip = np.zeros((M.FRAME, M.FRAME * 42, 4), np.uint8)
+    strip = np.zeros((M.FRAME, M.FRAME * 24, 4), np.uint8)
     for i, (cyc, f) in enumerate(STRIP_ORDER):
         px = M.scale_px(cuts_by_cyc[cyc][f], ratio, pal)
         dy = (DY.get(cyc) or [0] * 8)[f % 8]
@@ -223,25 +321,38 @@ def build_hero(hid):
     print('  -> %s  [art2] ratio %d' % (hid, ratio))
 
 
-def build_bling(hid):
-    gid = BLING_OF[hid]
-    src = os.path.join(ART2, 'bling_%s.png' % hid)
+def build_blings():
+    src = os.path.join(ART2, 'bling_sheet.png')
     if not os.path.exists(src):
-        return
-    c = keyed_cut(load_rgb(src))
-    pal = M.hero_palette([c], n=12)
-    # shop icon (96px, grounded like the rest)
-    r_i = max(1, -(-c.shape[0] // M.ICON_MAX))
-    px = M.scale_px(c, r_i, pal) if r_i > 1 else M._flat(c[:, :, :3], c[:, :, 3] > 0, pal)
-    Image.fromarray(M.place(px, ground=93, canvas=M.ICON_CANVAS, pal=pal),
-                    'RGBA').save(os.path.join(M.SPR, gid + '.png'))
-    # native 32px back-bling sprite for the animator
-    r_b = max(2, int(round(c.shape[0] / 28)))
-    small = M.scale_px(c, r_b, pal)
-    if small.shape[0] > 32 or small.shape[1] > 32:
-        small = M._squeeze(small, min(small.shape[1], 32), min(small.shape[0], 32), pal)
-    Image.fromarray(centre_on(small, 32), 'RGBA').save(os.path.join(M.ANIM, gid + '.png'))
-    print('  -> %s  [art2 bling]' % gid)
+        return 0
+    import json
+    cat = json.load(open(os.path.join(M.PUB, 'data', 'catalog.json')))
+    rgba = load_rgba(src)
+    h, w = rgba.shape[:2]
+    gh, gw = h // BLING_ROWS, w // BLING_COLS
+    n = 0
+    for idx, g in enumerate(cat['gliders']):
+        r, c = divmod(idx, BLING_COLS)
+        if r >= BLING_ROWS:
+            break
+        cell = rgba[r * gh:(r + 1) * gh, c * gw:(c + 1) * gw]
+        cut = keyed_cut_rgba(cell)
+        if cut is None:
+            print('  ! bling cell %d (%s) unreadable' % (idx, g['id']))
+            continue
+        pal = M.hero_palette([cut], n=12)
+        r_i = max(1, -(-cut.shape[0] // M.ICON_MAX), -(-cut.shape[1] // M.ICON_MAX))
+        px = M.scale_px(cut, r_i, pal) if r_i > 1 else cut
+        Image.fromarray(M.place(px, ground=93, canvas=M.ICON_CANVAS, pal=pal),
+                        'RGBA').save(os.path.join(M.SPR, g['id'] + '.png'))
+        r_b = max(2, int(round(cut.shape[0] / 28)))
+        small = M.scale_px(cut, r_b, pal)
+        if small.shape[0] > 32 or small.shape[1] > 32:
+            small = M._squeeze(small, min(small.shape[1], 32), min(small.shape[0], 32), pal)
+        Image.fromarray(centre_on(small, 32), 'RGBA').save(os.path.join(M.ANIM, g['id'] + '.png'))
+        print('  -> %s  [bling sheet cell %d]' % (g['id'], idx))
+        n += 1
+    return n
 
 
 def main():
@@ -251,9 +362,9 @@ def main():
     for hid in heroes:
         if has_art2(hid):
             build_hero(hid)
-            build_bling(hid)
             done += 1
-    print('done: %d heroes rebuilt from art2 sheets.' % done)
+    nb = build_blings()
+    print('done: %d heroes rebuilt, %d blings built.' % (done, nb))
 
 
 if __name__ == '__main__':

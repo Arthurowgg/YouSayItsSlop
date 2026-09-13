@@ -84,16 +84,14 @@ def audit_icon(path, kind, max_frags=3):
        f'fill {fill:.2f} frags {len(big)}')
 
 
-SEGMENTS = [  # (name, first, last, kind) over the 42-frame universal strip
-    ('idle', 0, 5, 'ground'), ('walk', 6, 11, 'ground'), ('attack', 12, 17, 'ground'),
-    ('ability', 18, 23, 'free'), ('jump', 24, 25, 'air'), ('fall', 26, 27, 'air'),
-    ('land', 28, 29, 'ground'), ('hurt', 30, 31, 'ground'), ('death', 32, 35, 'free'),
-    ('sense', 36, 41, 'ground'),
+SEGMENTS = [  # (name, first, last, kind) over the 24-frame universal strip
+    ('idle', 0, 5, 'ground'), ('walk', 6, 11, 'ground'),
+    ('attack', 12, 17, 'ground'), ('ability', 18, 23, 'free'),
 ]
-GROUND_TOL = {'idle': 1, 'walk': 2, 'attack': 3, 'land': 3, 'hurt': 4, 'sense': 2}
+GROUND_TOL = {'idle': 1, 'walk': 2, 'attack': 3}
 
 
-def audit_strip(path, hid, frames=42):
+def audit_strip(path, hid, frames=24):
     if not os.path.exists(path):
         bad(f'strip {hid}: missing')
         return None
@@ -122,7 +120,7 @@ def audit_strip(path, hid, frames=42):
         counts.append(int(m.sum()))
     med_px = int(np.median(counts))
     med_h = int(np.median([feet[f] - tops[f] for f in feet]))
-    UPRIGHT = set(range(0, 24)) | set(range(30, 32)) | set(range(36, 42))
+    UPRIGHT = set(range(0, 24))
     for f in sorted(feet):
         h_f = feet[f] - tops[f]
         px_f = int((a[:, f * 48:(f + 1) * 48] > 24).sum())
@@ -148,14 +146,25 @@ def audit_strip(path, hid, frames=42):
                 bad(f'strip {hid}: {name} not airborne (feet {max(seg_f)} vs ground {ground})')
         if name in ('idle', 'walk', 'sense') and max(seg_t) - min(seg_t) > 8:
             bad(f'strip {hid}: {name} head-top drifts {min(seg_t)}..{max(seg_t)} (mis-crop)')
-    if tops.get(35, 99) < tops.get(0, 0) + 6:
-        bad(f'strip {hid}: death end pose not lowered (lying down expected)')
+    # walk must ACTUALLY walk and loop: consecutive silhouette changes are
+    # all significant and the wrap-around step matches them (no pause frame).
+    def sil(f):
+        return (a[:, f * 48:(f + 1) * 48] > 24).astype(np.int16)
+    diffs = [int(np.abs(sil(f) - sil(f + 1)).sum()) for f in range(6, 11)]
+    wrap = int(np.abs(sil(11) - sil(6)).sum())
+    med = int(np.median(diffs)) if diffs else 0
+    if med < 40:
+        bad(f'strip {hid}: walk frames barely change (median diff {med}) - not walking')
+    if wrap > 3 * max(med, 40):
+        bad(f'strip {hid}: walk loop break (wrap diff {wrap} vs median {med})')
+    if len(set(map(tuple, (sil(f) for f in range(6, 12))))) < 5:
+        bad(f'strip {hid}: walk has duplicate frames (pause in cycle)')
     ok(f'strip  {hid:22s} {w}x{h} frames {frames} ground {ground} feet {min(feet.values())}-{max(feet.values())} '
        f'tops {min(tops.values())}-{max(tops.values())} px/frame {int(sum(counts) / len(counts))}')
     return a
 
 
-def sheet(a, name, frames=42, scale=3, per_row=14):
+def sheet(a, name, frames=24, scale=3, per_row=12):
     """contact sheet (rows of per_row frames) for frame-by-frame visual review"""
     rgba = np.dstack([a, np.full(a.shape[:2], 255, np.uint8)]) if a.ndim == 2 else a
     n = min(frames, rgba.shape[1] // 48)

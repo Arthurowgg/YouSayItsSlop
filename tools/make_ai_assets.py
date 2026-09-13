@@ -278,37 +278,16 @@ def sheet_ratio(rows, want=TARGET_H):
 
 
 def scale_px(px, ratio, pal=None):
-    """Area-average (premultiplied BOX) downscale + hard alpha.
-
-    The sheets are fine-grained pixel art (1px line work): NEAREST decimation
-    would drop outline pixels and read as dotted/blurry. Box filtering keeps
-    every source pixel's contribution; the alpha threshold keeps the
-    silhouette crisp and semi-free.
-    """
+    """True pixel-art downscale: integer-ratio NEAREST decimation (centre
+    sample). No area averaging - BOX filtering anti-aliases pixel clusters
+    and reads as blur in game. Crisp chunky pixels only."""
+    ratio = max(1, int(ratio))
     h, w = px.shape[:2]
     nw, nh = max(1, w // ratio), max(1, h // ratio)
-    arr = px.astype(np.float32)
-    a = arr[:, :, 3:4] / 255.0
-    prem = np.concatenate([arr[:, :, :3] * a, arr[:, :, 3:4]], axis=2)
-    out = np.empty((nh, nw, 4), np.float32)
-    for i in range(4):
-        band = Image.fromarray(prem[:, :, i], 'F').resize((nw, nh), Image.BOX)
-        out[:, :, i] = np.array(band)
-    al = out[:, :, 3] / 255.0
-    rgb = np.zeros((nh, nw, 3), np.uint8)
-    m = al > 1e-3
-    rgb[m] = np.clip(out[:, :, :3][m] / al[m][:, None], 0, 255).astype(np.uint8)
-    sil = al > 0.45
-    if m.sum():
-        if pal is not None:
-            rgb = _flat(rgb, sil, pal)
-        else:
-            rgb = _restore_contour(rgb, px, sil, ratio)
-    res = np.dstack([rgb, np.where(sil, 255, 0).astype(np.uint8)])
-    return res
-
-
-# ----------------------------------------------------------------- frames
+    ys = np.arange(nh) * ratio + ratio // 2
+    xs = np.arange(nw) * ratio + ratio // 2
+    ys = np.clip(ys, 0, h - 1); xs = np.clip(xs, 0, w - 1)
+    return np.ascontiguousarray(px[ys][:, xs])
 def _anchor_crop(px, limit):
     """Trim an over-long frame to `limit` px around its body: the body is
     the densest run of column/row mass, far fx (beams) get cut first."""
@@ -447,24 +426,13 @@ def hero_palette(cuts, n=14):
 
 
 def _squeeze(px, nw, nh, pal=None):
-    """Pre-multiplied BOX resize to an exact size (gentle squash, no cuts)."""
-    arr = px.astype(np.float32)
-    a = arr[:, :, 3:4] / 255.0
-    prem = np.concatenate([arr[:, :, :3] * a, arr[:, :, 3:4]], axis=2)
-    out = np.empty((nh, nw, 4), np.float32)
-    for i in range(4):
-        band = Image.fromarray(prem[:, :, i], 'F').resize((nw, nh), Image.BOX)
-        out[:, :, i] = np.array(band)
-    al = out[:, :, 3] / 255.0
-    rgb = np.zeros((nh, nw, 3), np.uint8)
-    m = al > 1e-3
-    rgb[m] = np.clip(out[:, :, :3][m] / al[m][:, None], 0, 255).astype(np.uint8)
-    sil = al > 0.45
-    if pal is not None and m.sum():
-        rgb = _flat(rgb, sil, pal)
-    return np.dstack([rgb, np.where(sil, 255, 0).astype(np.uint8)])
-
-
+    """Nearest decimation to at most nw x nh (integer stride), centre crop."""
+    h, w = px.shape[:2]
+    r = max(1, -(-h // nh), -(-w // nw))
+    small = scale_px(px, r)
+    sh, sw = small.shape[:2]
+    y0 = max(0, (sh - nh) // 2); x0 = max(0, (sw - nw) // 2)
+    return np.ascontiguousarray(small[y0:y0 + nh, x0:x0 + nw])
 def place(px, dx=0, dy=0, mirror=False, ground=GROUND, canvas=FRAME, pal=None):
     """Mirror / ground / centre a scaled frame onto the 48px canvas."""
     if mirror:
