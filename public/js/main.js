@@ -2,7 +2,7 @@
 import { el, fmt, coinDataURL } from './util.js';
 import { store } from './store.js';
 import { startParticles, setParticlesEnabled, setVolume, setHoverEnabled, sfx, toggleMute, isMuted } from './fx.js';
-import { setFpsCap, initEmoteAnims, debugPause, debugStep } from './anim.js';
+import { setFpsCap, debugPause, debugStep } from './anim.js';
 import { renderPlay, renderShop, renderLocker, renderTasks, renderDev, toast, modal, shopHome } from './screens.js';
 import { setAnimDebug, getAnimDebug } from './anim.js';
 import { bus } from './bus.js';
@@ -189,7 +189,6 @@ function openSettings() {
       listEl.append(
         el('h2', { class: 'setSec' }, 'GAMEPLAY'),
         toggle('confirmBuys', 'CONFIRMAR COMPRAS', 'Mostra uma confirmação antes de gastar moedas.'),
-        toggle('emoteNotes', 'NOTAS DE EMOTE', 'Mostra notas musicais ao usar emotes.'),
         choice('heroSize', 'TAMANHO DO HERÓI', ['S', 'M', 'L'], (v) => ({ S: 'PEQUENO', M: 'MÉDIO', L: 'GRANDE' })[v], 'Quão grande seu herói fica no lobby.'),
         toggle('fpsMeter', 'MEDIDOR DE FPS', 'Mostra um contador de FPS ao vivo no canto.'));
     } else if (tab === 'ui') {
@@ -258,7 +257,6 @@ const storeMod = { defaultSave: null };
 
 async function boot() {
   await store.load();
-  initEmoteAnims(store.catalog.emotes);
 
   const ci = document.getElementById('coinIcon');
   ci.addEventListener('error', () => { ci.src = coinDataURL(18); }, { once: true });

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Asset validation & debug report for the cosmetic sprite system.
 
-Audits EVERY cosmetic in the catalog (heroes, picks, gliders, emotes) plus
+Audits EVERY cosmetic in the catalog (heroes, picks, gliders) plus
 every animation strip, and reports per asset:
   type, file, frame count, frame dims, bounding box, pivot/ground line,
   transparency status (border must be empty), fill ratio, fragment count.
@@ -152,7 +152,7 @@ def main():
         audit_icon(os.path.join(PUB, p['art']), 'pick')
     for g in cat['gliders']:
         audit_icon(os.path.join(PUB, g['art']), 'glider')
-    for e in cat['emotes']:
+    for e in cat.get('emotes', []):
         audit_icon(os.path.join(PUB, e['art']), 'emote')
         if not e.get('anim') or not e['anim'].get('frames'):
             bad(f"emote {e['id']}: missing animation metadata")
@@ -165,7 +165,7 @@ def main():
 
     print('== emote metadata (generic system) ==')
     seen = set()
-    for e in cat['emotes']:
+    for e in cat.get('emotes', []):
         a = e.get('anim', {})
         key = (a.get('start'), a.get('frames'))
         if key in seen:

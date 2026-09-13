@@ -16,8 +16,7 @@
 //     synchronously, so UI updates never flash a blank canvas.
 //
 // Strip layout (78 frames of 48px): idle[0..3] walk[4..9] attack[10..13]
-// power[14..17] + 10 emotes x 6 frames starting at 18, registered
-// data-driven from catalog metadata (no per-emote hardcoded code).
+// power[14..17]; frames 18+ are legacy emote poses, no longer surfaced.
 export const FRAME = 48;
 export const STRIP_FRAMES = 78;
 export const ANIMS = {
@@ -26,20 +25,6 @@ export const ANIMS = {
   attack: { start: 10, count: 4, fps: 10, loop: false },
   power:  { start: 14, count: 4, fps: 8,  loop: false },
 };
-
-// generic emote system: entries come from catalog emote metadata.
-export function initEmoteAnims(emotes) {
-  for (const e of emotes || []) {
-    const a = e.anim || {};
-    ANIMS['e_' + String(e.id).replace('emote_', '')] = {
-      start: a.start || 0,
-      count: a.frames || 6,
-      fps: a.fps || 9,
-      loop: a.loop !== false,
-    };
-  }
-  return ANIMS;
-}
 
 let FPS_CAP = 60;
 export function setFpsCap(n) { FPS_CAP = Math.max(10, n | 0) || 60; }
@@ -74,12 +59,11 @@ export function preloadHero(id) {
 
 // back-bling carry offsets in frame px (native 32px sprites drawn behind
 // the hero); anything unmapped rides centred on the back.
-const GLIDER_OFF = {
+export const GLIDER_OFF = {
   glider_wings: { dx: 0, dy: 8 }, glider_shield: { dx: -8, dy: 10 },
-  glider_cosmic: { dx: 0, dy: 8 }, glider_claws: { dx: 8, dy: 9 },
+  glider_cosmic: { dx: -9, dy: 10 }, glider_claws: { dx: 8, dy: 9 },
   glider_portal: { dx: 8, dy: 9 }, glider_webwings: { dx: 0, dy: 7 },
   glider_storm: { dx: -9, dy: 9 }, glider_panther: { dx: 0, dy: 9 },
-  glider_cosmic: { dx: -9, dy: 10 },
   glider_holo: { dx: -7, dy: 9 }, glider_valkyrie: { dx: 0, dy: 7 },
 };
 
